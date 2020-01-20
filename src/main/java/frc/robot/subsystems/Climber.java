@@ -7,33 +7,19 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
-import frc.robot.commands.EnterLowGear;
-
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
  */
-public class Shifter extends SubsystemBase {
+public class Climber extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  Solenoid shifter_Piston;
+  
 
-  public Shifter(){
-    shifter_Piston = new Solenoid(RobotMap.SHIFTER_SOLENOID);
+  public Climber(){
+    
   }
 
-  public void lowGear(){
-    shifter_Piston.set(false);
-  }
-
-  public void highGear(){
-    shifter_Piston.set(true);
-  }
-
-  public Boolean shifterStatus(){
-    return shifter_Piston.get();
-  }
 }

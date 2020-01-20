@@ -14,12 +14,13 @@ package frc.robot;
  * floating around.
  */
 public class RobotMap {
-  public static int RIGHT_MOTOR_ONE = 0;
-  public static int RIGHT_MOTOR_TWO = 1;
-  public static int LEFT_MOTOR_ONE = 2;
-  public static int LEFT_MOTOR_TWO = 3;
+  public static int SPINNER_MOTOR = 0;
+  public static int RIGHT_MOTOR_ONE = 1;
+  public static int RIGHT_MOTOR_TWO = 2;
+  public static int LEFT_MOTOR_ONE = 3;
+  public static int LEFT_MOTOR_TWO = 4;
 
-  public static int SHIFTER_SOLENOID = 9;
+  public static int SHIFTER_SOLENOID = 0;
 
   public static int DRIVER_CONTROLLER = 0;
   public static int OPERATOR_CONTROLLER = 1;

@@ -7,18 +7,17 @@
 
 package frc.robot.subsystems;
 
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
@@ -46,12 +45,6 @@ public class Drivetrain extends Subsystem {
     rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
 
     NavX = new AHRS(SPI.Port.kMXP);
-  }
-
-  @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
   }
 
   public void stop(){

@@ -7,24 +7,26 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
+import frc.robot.subsystems.Shifter;
 
 /**
  * An example command.  You can replace me with your own command.
  */
-public class EnterLowGear extends InstantCommand {
-  public EnterLowGear() {
-    // Use requires() here to declare subsystem dependencies
-    super();
-    requires(Robot.shift);
+public class EnterLowGear extends CommandBase {
+  private final Shifter ShiftingGearbox;
+  public EnterLowGear(final Shifter shift) {
+    ShiftingGearbox = shift;
+    addRequirements(ShiftingGearbox);
   }
 
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-    Robot.shift.lowGear();
+  public void initialize(){
+    ShiftingGearbox.lowGear();
+  }
+
+  public boolean isFinished(){
+    return true;
   }
 
 }
