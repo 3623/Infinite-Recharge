@@ -8,7 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
+import frc.robot.Constants.ClimberConstants;
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
  */

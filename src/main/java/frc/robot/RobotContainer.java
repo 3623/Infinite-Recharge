@@ -7,10 +7,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.IOConstants;
+import edu.wpi.first.wpilibj2.command.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -20,7 +24,14 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-
+  private final XboxController driver = new XboxController(IOConstants.DRIVER_CONTROLLER);
+  private final XboxController operator = new XboxController(IOConstants.OPERATOR_CONTROLLER);
+  private final Climber climb = new Climber();
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final Intake intake = new Intake();
+  private final Shifter shifter = new Shifter();
+  private final Shooter shooter = new Shooter();
+  private final Spinner spinner = new Spinner();
 
 
 
@@ -28,6 +39,7 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -39,6 +51,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    JoystickButton driverAButton = new JoystickButton(driver, Button.kA.value);
+    JoystickButton driverBButton = new JoystickButton(driver, 2);
   }
 
 

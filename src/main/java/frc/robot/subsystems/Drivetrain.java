@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
+import frc.robot.Constants.DrivetrainConstants;
 
 public class Drivetrain extends SubsystemBase {
   // Put methods for controlling this subsystem
@@ -26,21 +26,21 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDrive Drivetrain;
   Encoder leftSide,rightSide;
 
-  private final double DISTANCE_PER_PULSE = RobotMap.WHEEL_RADIUS*Math.PI*2/2048.0;
+  private final double DISTANCE_PER_PULSE = DrivetrainConstants.WHEEL_RADIUS*Math.PI*2/2048.0;
 
   AHRS NavX;
 
   public Drivetrain(){
-    rightMotor1 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR_ONE);
-    rightMotor2 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR_TWO);
-    leftMotor1 = new WPI_TalonSRX(RobotMap.LEFT_MOTOR_ONE);
-    leftMotor2 = new WPI_TalonSRX(RobotMap.LEFT_MOTOR_TWO);
+    rightMotor1 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_ONE);
+    rightMotor2 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_TWO);
+    leftMotor1 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_ONE);
+    leftMotor2 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_TWO);
     right = new SpeedControllerGroup(rightMotor1, rightMotor2);
     left = new SpeedControllerGroup(leftMotor1, leftMotor2);
     Drivetrain = new DifferentialDrive(left, right);
 
-    leftSide = new Encoder(RobotMap.ENCODER_LEFT_A,RobotMap.ENCODER_LEFT_B,true,Encoder.EncodingType.k2X);
-    rightSide = new Encoder(RobotMap.ENCODER_RIGHT_A,RobotMap.ENCODER_RIGHT_B,true,Encoder.EncodingType.k2X);
+    leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A,DrivetrainConstants.ENCODER_LEFT_B,true,Encoder.EncodingType.k2X);
+    rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A,DrivetrainConstants.ENCODER_RIGHT_B,true,Encoder.EncodingType.k2X);
     leftSide.setDistancePerPulse(DISTANCE_PER_PULSE);
     rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
 

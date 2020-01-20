@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -23,13 +23,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.*;
 
-import frc.robot.RobotMap;
+import frc.robot.Constants.SpinnerConstants;
 import frc.robot.commands.EnterLowGear;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
  */
-public class Spinner extends SubsystemBase {
+public class Spinner extends CommandBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
@@ -56,7 +56,7 @@ public class Spinner extends SubsystemBase {
     colorMatcher.addColorMatch(kGreenTarget);
     colorMatcher.addColorMatch(kRedTarget);
     colorMatcher.addColorMatch(kYellowTarget);
-    spinnerMotor = new TalonSRX(RobotMap.SPINNER_MOTOR);
+    spinnerMotor = new TalonSRX(SpinnerConstants.SPINNER_MOTOR);
   }
 
   public String getColorMatch(){

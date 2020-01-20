@@ -9,8 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
-import frc.robot.commands.EnterLowGear;
+import frc.robot.Constants.ShifterConstants;
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -22,7 +21,7 @@ public class Shifter extends SubsystemBase {
   Solenoid shifter_Piston;
 
   public Shifter(){
-    shifter_Piston = new Solenoid(RobotMap.SHIFTER_SOLENOID);
+    shifter_Piston = new Solenoid(ShifterConstants.SHIFTER_SOLENOID);
   }
 
   public void lowGear(){
