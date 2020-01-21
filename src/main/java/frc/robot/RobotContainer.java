@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.IOConstants;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -33,7 +34,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Spinner spinner = new Spinner();
 
-
+  private JoystickButton driverAButton;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -51,8 +52,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton driverAButton = new JoystickButton(driver, Button.kA.value);
-    JoystickButton driverBButton = new JoystickButton(driver, 2);
+    driverAButton = new JoystickButton(driver, Button.kA.value);
+    driverAButton.whenPressed(new InstantCommand())
   }
 
 
