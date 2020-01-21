@@ -10,12 +10,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.IOConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -53,7 +54,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverAButton = new JoystickButton(driver, Button.kA.value);
-    driverAButton.whenPressed(new InstantCommand(shifter::highGear, shifter));
+    driverAButton.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
   }
 
 
