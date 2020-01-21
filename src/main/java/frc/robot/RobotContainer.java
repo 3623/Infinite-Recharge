@@ -40,7 +40,7 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
+    shifter.setDefaultCommand(new InstantCommand(shifter::lowGear,shifter));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -53,7 +53,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverAButton = new JoystickButton(driver, Button.kA.value);
-    driverAButton.whenPressed(new InstantCommand(shifter::lowGear, shifter));
+    driverAButton.whenPressed(new InstantCommand(shifter::highGear, shifter));
   }
 
 
@@ -62,7 +62,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  //public Command getAutonomousCommand() {
-    
-  //}
+  public Command getAutonomousCommand() {
+    return null;
+  }
 }
