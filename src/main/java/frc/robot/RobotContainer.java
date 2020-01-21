@@ -53,7 +53,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     driverAButton = new JoystickButton(driver, Button.kA.value);
-    driverAButton.whenPressed(new InstantCommand())
+    driverAButton.whenPressed(new InstantCommand(shifter::lowGear, shifter));
   }
 
 
