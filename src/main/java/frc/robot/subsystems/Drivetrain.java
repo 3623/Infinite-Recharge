@@ -22,15 +22,15 @@ public class Drivetrain extends SubsystemBase {
   // here. Call these from Commands.
 
   WPI_TalonSRX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
-  SpeedControllerGroup right,left;
+  SpeedControllerGroup right, left;
   DifferentialDrive Drivetrain;
-  Encoder leftSide,rightSide;
+  Encoder leftSide, rightSide;
 
-  private final double DISTANCE_PER_PULSE = DrivetrainConstants.WHEEL_RADIUS*Math.PI*2/2048.0;
+  private final double DISTANCE_PER_PULSE = DrivetrainConstants.WHEEL_RADIUS * Math.PI * 2 / 2048.0;
 
   AHRS NavX;
 
-  public Drivetrain(){
+  public Drivetrain() {
     rightMotor1 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_ONE);
     rightMotor2 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_TWO);
     leftMotor1 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_ONE);
@@ -39,37 +39,43 @@ public class Drivetrain extends SubsystemBase {
     left = new SpeedControllerGroup(leftMotor1, leftMotor2);
     Drivetrain = new DifferentialDrive(left, right);
 
-    leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A,DrivetrainConstants.ENCODER_LEFT_B,true,Encoder.EncodingType.k2X);
-    rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A,DrivetrainConstants.ENCODER_RIGHT_B,true,Encoder.EncodingType.k2X);
+    leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
+        Encoder.EncodingType.k2X);
+    rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A, DrivetrainConstants.ENCODER_RIGHT_B, true,
+        Encoder.EncodingType.k2X);
     leftSide.setDistancePerPulse(DISTANCE_PER_PULSE);
     rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
 
     NavX = new AHRS(SPI.Port.kMXP);
   }
 
-  public void stop(){
+  // ################### This is old code, the path-following repo has the
+  // up-to-date
+  // and more functional drivetrain code
+
+  public void stop() {
     left.disable();
     right.disable();
   }
 
-  public void openLoopControl(double xSpeed, double rSpeed, Boolean quickTurn){
-      Drivetrain.curvatureDrive(-xSpeed, rSpeed, quickTurn);
+  public void openLoopControl(double xSpeed, double rSpeed, Boolean quickTurn) {
+    Drivetrain.curvatureDrive(-xSpeed, rSpeed, quickTurn);
   }
 
-  public void directMotorControl(double leftSpeed, double rightSpeed){
-      Drivetrain.tankDrive(leftSpeed, rightSpeed, false);
+  public void directMotorControl(double leftSpeed, double rightSpeed) {
+    Drivetrain.tankDrive(leftSpeed, rightSpeed, false);
   }
 
-  public void zeroAllSensors(){
+  public void zeroAllSensors() {
     zeroEncoders();
     zeroNavX();
   }
 
-  public void zeroNavX(){
+  public void zeroNavX() {
     NavX.reset();
   }
 
-  public void zeroEncoders(){
+  public void zeroEncoders() {
     leftSide.reset();
     rightSide.reset();
   }
