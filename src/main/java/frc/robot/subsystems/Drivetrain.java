@@ -130,8 +130,8 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
-		setOpenLoop(0.0, 0.0);
-		// setOpenLoop(xSpeed, rSpeed);
+		// setOpenLoop(0.0, 0.0);
+		setOpenLoop(xSpeed, rSpeed);
 	}
 
 	private void update() {

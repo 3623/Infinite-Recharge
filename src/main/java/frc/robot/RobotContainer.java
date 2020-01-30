@@ -64,6 +64,8 @@ public class RobotContainer {
     driverRB = new JoystickButton(driver, Button.kBumperRight.value);
     driverRB.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
 
+    driverX = new JoystickButton(driver, Button.kX.value);
+    driverX.whenPressed(new InstantCommand(drivetrain::zeroSensors,drivetrain));
   }
 
 
