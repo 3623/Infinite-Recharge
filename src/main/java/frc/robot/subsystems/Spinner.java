@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -24,31 +24,23 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.*;
 
 import frc.robot.Constants.SpinnerConstants;
-import frc.robot.commands.EnterLowGear;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
  */
-public class Spinner extends CommandBase {
+public class Spinner extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
   Port i2cPort = I2C.Port.kOnboard;
   ColorSensorV3 Sensor;
-  ShuffleboardTab tab = Shuffleboard.getTab("SmartDashboard");
   final ColorMatch colorMatcher = new ColorMatch();
   final Color kBlueTarget = ColorMatch.makeColor(.12, .41, .47);
   final Color kGreenTarget = ColorMatch.makeColor(.16, .58, .26);
   final Color kRedTarget = ColorMatch.makeColor(.53, .33, .13);
   final Color kYellowTarget = ColorMatch.makeColor(.33, .53, .14);
   TalonSRX spinnerMotor;
-  
-  NetworkTableEntry colorDetected = tab.add("Sensor Sees", "Unknown")
-      .getEntry();
-  NetworkTableEntry DetectionConfidence = tab.add("Match Confidence", 0)
-    .withWidget(BuiltInWidgets.kNumberBar)
-    .withProperties(Map.of("min", 0, "max", 1))
-    .getEntry();
+
   
   public Spinner(){
     Sensor = new ColorSensorV3(i2cPort);
@@ -80,8 +72,18 @@ public class Spinner extends CommandBase {
     else {
       colorString = "Unknown Color";
     }
-    colorDetected.setString(colorString);
-    DetectionConfidence.setNumber(match.confidence);
+    Shuffleboard.getTab("SmartDashboard")
+      .addBoolean("isRed", () -> match.color == kRedTarget)
+      .withProperties(Map.of("colorWhenTrue", "red"));
+    Shuffleboard.getTab("SmartDashboard")
+      .addBoolean("isYellow", () -> match.color == kYellowTarget)
+      .withProperties(Map.of("colorWhenTrue", "yellow"));
+    Shuffleboard.getTab("SmartDashboard")
+      .addBoolean("isBlue", () -> match.color == kBlueTarget)
+      .withProperties(Map.of("colorWhenTrue", "blue"));
+    Shuffleboard.getTab("SmartDashboard")
+      .addBoolean("isGreen", () -> match.color == kGreenTarget)
+      .withProperties(Map.of("colorWhenTrue", "green"));
     return colorString;
   }
 

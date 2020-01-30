@@ -16,6 +16,7 @@ import frc.robot.Constants.IOConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -35,13 +36,13 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Spinner spinner = new Spinner();
 
-  private JoystickButton driverAButton;
+  private JoystickButton driverA, driverB, driverX, driverY, driverLB, driverRB, driverStart, driverBack, driverL3, driverR3,
+                          operatorA, operatorB, operatorX, operatorY, operatorLB, operatorRB, operatorStart, operatorBack, operatorL3, operatorR3;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    shifter.setDefaultCommand(new InstantCommand(shifter::lowGear,shifter));
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -53,8 +54,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverAButton = new JoystickButton(driver, Button.kA.value);
-    driverAButton.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
+    driverRB = new JoystickButton(driver, Button.kBumperRight.value);
+    driverRB.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
+
+    drivetrain.setDefaultCommand(new RunCommand(() -> 
+      drivetrain.openLoopControl(driver.getY(XboxController.Hand.kLeft),
+        driver.getX(XboxController.Hand.kRight),
+        false),
+        drivetrain));
   }
 
 

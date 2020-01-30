@@ -21,7 +21,7 @@ public class Drivetrain extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  WPI_TalonSRX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
+  WPI_TalonFX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
   SpeedControllerGroup right,left;
   DifferentialDrive Drivetrain;
   Encoder leftSide,rightSide;
@@ -31,13 +31,18 @@ public class Drivetrain extends SubsystemBase {
   AHRS NavX;
 
   public Drivetrain(){
-    rightMotor1 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-    rightMotor2 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-    leftMotor1 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_ONE);
-    leftMotor2 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_TWO);
+    rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
+    rightMotor1.setInverted(true);
+    rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
+    rightMotor2.setInverted(true);
+    leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
+    leftMotor1.setInverted(false);
+    leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+    leftMotor2.setInverted(false);
     right = new SpeedControllerGroup(rightMotor1, rightMotor2);
     left = new SpeedControllerGroup(leftMotor1, leftMotor2);
     Drivetrain = new DifferentialDrive(left, right);
+    Drivetrain.setRightSideInverted(false);
 
     leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A,DrivetrainConstants.ENCODER_LEFT_B,true,Encoder.EncodingType.k2X);
     rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A,DrivetrainConstants.ENCODER_RIGHT_B,true,Encoder.EncodingType.k2X);
@@ -45,6 +50,10 @@ public class Drivetrain extends SubsystemBase {
     rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
 
     NavX = new AHRS(SPI.Port.kMXP);
+  }
+
+  public void periodic(){
+
   }
 
   public void stop(){
@@ -73,4 +82,6 @@ public class Drivetrain extends SubsystemBase {
     leftSide.reset();
     rightSide.reset();
   }
+
+  
 }

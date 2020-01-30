@@ -17,10 +17,10 @@ package frc.robot;
  */
 public final class Constants {
     public static final class DrivetrainConstants{
-        public static int RIGHT_MOTOR_ONE = 1;
-        public static int RIGHT_MOTOR_TWO = 2;
-        public static int LEFT_MOTOR_ONE = 3;
-        public static int LEFT_MOTOR_TWO = 4;
+        public static int RIGHT_MOTOR_ONE = 0;
+        public static int RIGHT_MOTOR_TWO = 1;
+        public static int LEFT_MOTOR_ONE = 2;
+        public static int LEFT_MOTOR_TWO = 3;
         public static double WHEEL_RADIUS = 2.0;
         public static int ENCODER_LEFT_A = 0;
         public static int ENCODER_LEFT_B = 1;
