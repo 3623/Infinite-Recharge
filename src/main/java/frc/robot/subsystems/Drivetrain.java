@@ -21,13 +21,8 @@ public class Drivetrain extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-<<<<<<< HEAD
   WPI_TalonFX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
   SpeedControllerGroup right,left;
-=======
-  WPI_TalonSRX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
-  SpeedControllerGroup right, left;
->>>>>>> 36b9baf23977a76c17ebc946d5e1395a22ace06f
   DifferentialDrive Drivetrain;
   Encoder leftSide, rightSide;
 
@@ -35,7 +30,6 @@ public class Drivetrain extends SubsystemBase {
 
   AHRS NavX;
 
-<<<<<<< HEAD
   public Drivetrain(){
     rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
     rightMotor1.setInverted(true);
@@ -45,13 +39,6 @@ public class Drivetrain extends SubsystemBase {
     leftMotor1.setInverted(false);
     leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
     leftMotor2.setInverted(false);
-=======
-  public Drivetrain() {
-    rightMotor1 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-    rightMotor2 = new WPI_TalonSRX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-    leftMotor1 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_ONE);
-    leftMotor2 = new WPI_TalonSRX(DrivetrainConstants.LEFT_MOTOR_TWO);
->>>>>>> 36b9baf23977a76c17ebc946d5e1395a22ace06f
     right = new SpeedControllerGroup(rightMotor1, rightMotor2);
     left = new SpeedControllerGroup(leftMotor1, leftMotor2);
     Drivetrain = new DifferentialDrive(left, right);
@@ -67,19 +54,15 @@ public class Drivetrain extends SubsystemBase {
     NavX = new AHRS(SPI.Port.kMXP);
   }
 
-<<<<<<< HEAD
   public void periodic(){
 
   }
 
-  public void stop(){
-=======
   // ################### This is old code, the path-following repo has the
   // up-to-date
   // and more functional drivetrain code
 
   public void stop() {
->>>>>>> 36b9baf23977a76c17ebc946d5e1395a22ace06f
     left.disable();
     right.disable();
   }

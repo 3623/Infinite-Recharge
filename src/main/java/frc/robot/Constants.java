@@ -18,26 +18,17 @@ package frc.robot;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-<<<<<<< HEAD
     public static final class DrivetrainConstants{
         public static int RIGHT_MOTOR_ONE = 0;
         public static int RIGHT_MOTOR_TWO = 1;
         public static int LEFT_MOTOR_ONE = 2;
         public static int LEFT_MOTOR_TWO = 3;
-        public static double WHEEL_RADIUS = 3.0;
-=======
-    public static final class DrivetrainConstants {
-        public static int RIGHT_MOTOR_ONE = 1;
-        public static int RIGHT_MOTOR_TWO = 2;
-        public static int LEFT_MOTOR_ONE = 3;
-        public static int LEFT_MOTOR_TWO = 4;
-        public static double WHEEL_RADIUS = 2.0; // this is wrong, wheel radius is in m for the
+        public static double WHEEL_RADIUS = 3.0; // this is wrong, wheel radius is in m for the
                                                  // purpose of odometry
                                                  // also in general i dont like defining constants
                                                  // like this as i found it to be unneccesary
                                                  // and even more obscure, especially for something
                                                  // like the drivetrain which is very independent
->>>>>>> 36b9baf23977a76c17ebc946d5e1395a22ace06f
         public static int ENCODER_LEFT_A = 0;
         public static int ENCODER_LEFT_B = 1;
         public static int ENCODER_RIGHT_A = 2;
