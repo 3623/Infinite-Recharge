@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -36,6 +37,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Spinner spinner = new Spinner();
 
+
   private JoystickButton driverA, driverB, driverX, driverY, driverLB, driverRB, driverStart, driverBack, driverL3, driverR3,
                           operatorA, operatorB, operatorX, operatorY, operatorLB, operatorRB, operatorStart, operatorBack, operatorL3, operatorR3;
 
@@ -43,8 +45,13 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
+    // Configure the button bindings'
+    drivetrain.setDefaultCommand(
+      new DriverControl(
+        drivetrain, 
+        () -> driver.getY(Hand.kLeft), 
+        () -> driver.getY(Hand.kRight)));
+      configureButtonBindings();
   }
 
   /**
@@ -57,11 +64,6 @@ public class RobotContainer {
     driverRB = new JoystickButton(driver, Button.kBumperRight.value);
     driverRB.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
 
-    drivetrain.setDefaultCommand(new RunCommand(() -> 
-      drivetrain.openLoopControl(driver.getY(XboxController.Hand.kLeft),
-        driver.getX(XboxController.Hand.kRight),
-        false),
-        drivetrain));
   }
 
 
