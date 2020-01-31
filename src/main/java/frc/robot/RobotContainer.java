@@ -45,12 +45,13 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Configure the button bindings'
+    
     drivetrain.setDefaultCommand(
       new DriverControl(
         drivetrain, 
         () -> driver.getY(Hand.kLeft), 
         () -> driver.getY(Hand.kRight)));
+      // Configure the button bindings, tying button presses to commands.
       configureButtonBindings();
   }
 
@@ -61,9 +62,13 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Shifter Commands. Inline Command Declaration.
     driverRB = new JoystickButton(driver, Button.kBumperRight.value);
-    driverRB.whenPressed(new ConditionalCommand(new InstantCommand(shifter::lowGear, shifter), new InstantCommand(shifter::highGear, shifter),shifter::shifterStatus));
+    driverRB.whenPressed(new InstantCommand(shifter::lowGear, shifter));
+    driverLB = new JoystickButton(driver, Button.kBumperLeft.value); 
+    driverLB.whenPressed(new InstantCommand(shifter::highGear, shifter));
 
+    // Zero Sensors. Inline Command Declaration.
     driverX = new JoystickButton(driver, Button.kX.value);
     driverX.whenPressed(new InstantCommand(drivetrain::zeroSensors,drivetrain));
   }

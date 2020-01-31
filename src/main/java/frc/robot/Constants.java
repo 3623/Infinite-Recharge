@@ -23,8 +23,6 @@ public final class Constants {
         public static int RIGHT_MOTOR_TWO = 1;
         public static int LEFT_MOTOR_ONE = 2;
         public static int LEFT_MOTOR_TWO = 3;
-        public static double WHEEL_RADIUS = 3.0; // this is wrong, wheel radius is in m for the
-                                                 // purpose of odometry
                                                  // also in general i dont like defining constants
                                                  // like this as i found it to be unneccesary
                                                  // and even more obscure, especially for something

@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Spinner;
 
-/**
- * An example command.  You can replace me with your own command.
- */
 
 public class SpinToWin extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -23,18 +20,23 @@ public class SpinToWin extends CommandBase {
   private char targetColor;
   private char LastState;
   private double spins;
+
+  /* Constructor of The Command
+      Arguments - Spinner Subsystem
+  */
   public SpinToWin(Spinner colorSpinner){
     ColorWheelSpinner = colorSpinner;
-    addRequirements(colorSpinner);
+    addRequirements(ColorWheelSpinner);
     ColorData = DriverStation.getInstance().getGameSpecificMessage();
   }
 
+  // Initialize is called immediately when the command is scheduled.
   public void initialize() {
     spins = 0.0;
-    if (ColorData.length() > 0){
-      switch(ColorData.charAt(0)){
-        case 'b' :
-          targetColor = 'r';
+    if (ColorData.length() > 0){ // If there is Color Data, we are in Stage 3 for the Color Wheel.
+      switch(ColorData.charAt(0)){ // By choosing the opposite color on the wheel as our target,
+        case 'b' :                // we know that the color that we want is under the field sensor.
+          targetColor = 'r';      // Red is Opposite Blue, Yellow is Opposite Green.
           break;
         case 'g' :
           targetColor = 'y';
@@ -46,10 +48,10 @@ public class SpinToWin extends CommandBase {
           targetColor = 'g';
           break;
         default:
-          LastState = 'f';
+          LastState = 'f'; // Defaults to f if color data is corrupt, failed and will end the command after the first run.
       }
     }
-      String ColorSeen = ColorWheelSpinner.getColorMatch();
+      String ColorSeen = ColorWheelSpinner.getColorMatch(); // Figure out where we are on the wheel right now.
       switch (ColorSeen){
         case "Blue" :
           LastState = 'b';
@@ -67,19 +69,19 @@ public class SpinToWin extends CommandBase {
           LastState = 'f';
           break;
       }
-      ColorWheelSpinner.Spin(0.5);
+      ColorWheelSpinner.Spin(0.5); // Start the spinner
     }
 
   public void execute(){
     if (LastState != 'f'){
-      if (ColorData.length() > 0){
+      if (ColorData.length() > 0){ // Stage 3 Execution. Continue until we get what we want.
         String CurrentColor = ColorWheelSpinner.getColorMatch();
         if (Character.toLowerCase(CurrentColor.charAt(0)) == targetColor){
-          LastState = 'f';
+          LastState = 'f'; // End the command if we're where we want to be.
         }
       }
-      else {
-        String CurrentColor = ColorWheelSpinner.getColorMatch();
+      else { // Stage 2 Execution. Use the Color Sensor to determine how many spins we've done. 
+        String CurrentColor = ColorWheelSpinner.getColorMatch(); // TODO: Implement Encoder Tracking for this, Color Sensor Backup
         if (Character.toLowerCase(CurrentColor.charAt(0)) != LastState){
           switch (LastState){
             case 'b' :
@@ -119,7 +121,7 @@ public class SpinToWin extends CommandBase {
           }
           LastState = Character.toLowerCase(CurrentColor.charAt(0));
           if (spins > 3.0){
-            LastState = 'f';
+            LastState = 'f'; // If we've reached the requisite number of spins, end the command
           }
         }
       }

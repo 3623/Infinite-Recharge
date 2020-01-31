@@ -20,17 +20,12 @@ import edu.wpi.first.wpilibj.util.Color;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.*;
 
 import frc.robot.Constants.SpinnerConstants;
 
-/**
- * An example subsystem. You can replace me with your own Subsystem.
- */
 public class Spinner extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 
   Port i2cPort = I2C.Port.kOnboard;
   ColorSensorV3 Sensor;
@@ -39,7 +34,7 @@ public class Spinner extends SubsystemBase {
   final Color kGreenTarget = ColorMatch.makeColor(.16, .58, .26);
   final Color kRedTarget = ColorMatch.makeColor(.53, .33, .13);
   final Color kYellowTarget = ColorMatch.makeColor(.33, .53, .14);
-  TalonSRX spinnerMotor;
+  VictorSPX spinnerMotor;
 
   
   public Spinner(){
@@ -48,7 +43,7 @@ public class Spinner extends SubsystemBase {
     colorMatcher.addColorMatch(kGreenTarget);
     colorMatcher.addColorMatch(kRedTarget);
     colorMatcher.addColorMatch(kYellowTarget);
-    spinnerMotor = new TalonSRX(SpinnerConstants.SPINNER_MOTOR);
+    spinnerMotor = new VictorSPX(SpinnerConstants.SPINNER_MOTOR);
   }
 
   public String getColorMatch(){
@@ -72,6 +67,7 @@ public class Spinner extends SubsystemBase {
     else {
       colorString = "Unknown Color";
     }
+    // Shuffleboard Output Shows Black or the Color that's Matched.
     Shuffleboard.getTab("SmartDashboard")
       .addBoolean("isRed", () -> match.color == kRedTarget)
       .withProperties(Map.of("colorWhenTrue", "red"));

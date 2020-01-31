@@ -120,7 +120,7 @@ public class Drivetrain extends SubsystemBase {
 
 		SmartDashboard.putNumber("Left Out 1", leftSpeed);
 		SmartDashboard.putNumber("Right Out 1", rightSpeed);
-		setVoltages(leftSpeed, leftSpeed);
+		setVoltages(leftSpeed, leftSpeed /*Is this Right???*/ );
 	}
 
 	public void zeroSensors() {
