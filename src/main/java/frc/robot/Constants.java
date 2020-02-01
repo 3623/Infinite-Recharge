@@ -46,7 +46,7 @@ public final class Constants {
     }
 
     public static final class ShifterConstants {
-        public static int SHIFTER_SOLENOID = 0;
+        public static int SHIFTER_SOLENOID = 1;
     }
 
     public static final class ClimberConstants {

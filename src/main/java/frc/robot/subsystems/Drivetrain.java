@@ -13,11 +13,17 @@ import java.io.IOException;
 
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.controls.CubicSplineFollower;
@@ -45,6 +51,22 @@ public class Drivetrain extends SubsystemBase {
 
   private DriveControlState controlState = DriveControlState.DISABLED;
 
+  private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
+
+  NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
+                                                                              // of data to Network Tables.
+		NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
+  		NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
+  		NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
+		NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
+		  
+	AnalogInput transducer = new AnalogInput(0);
+	
+	NetworkTableEntry mainPressure = 
+		shuffle.add("Main System Pressure", 0)
+			.getEntry();
+	double x,y,area,valid;
+
 	private enum DriveControlState {
 		OPEN_LOOP, // open loop voltage control
 		PATH_FOLLOWING, // velocity PID control
@@ -58,8 +80,6 @@ public class Drivetrain extends SubsystemBase {
     leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
     Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
     Left = new SpeedControllerGroup(leftMotor1, leftMotor2);
-    Drivetrain = new DifferentialDrive(Left, Right);
-    Drivetrain.setRightSideInverted(false);
 
     leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
         Encoder.EncodingType.k2X);
@@ -141,7 +161,13 @@ public class Drivetrain extends SubsystemBase {
 		this.updatePosition(deltaTime);
 		this.monitor();
 		SmartDashboard.putNumber("DT", deltaTime);
+		
+		x = tx.getDouble(0.0);
+		y = ty.getDouble(0.0);
+		area = ta.getDouble(0.0);
+		valid = tv.getDouble(0.0);
 
+		mainPressure.setDouble(250*(transducer.getVoltage()/5)-25);
 
 		switch (controlState) {
 		case OPEN_LOOP:
@@ -164,7 +190,7 @@ public class Drivetrain extends SubsystemBase {
 
 	private void setMotorControllers(double left, double right) {
 		Left.set(left);
-		Right.set(-right);
+		Right.set(right);
 	}
 
 	private void setMotorControllers(Tuple out) {

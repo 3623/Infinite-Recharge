@@ -7,21 +7,28 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Solenoid;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-/**
- * An example subsystem.  You can replace me with your own Subsystem.
- */
 public class Shooter extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-
+  private CANSparkMax shooterLeft, shooterRight;
   
 
   public Shooter(){
-    
+    shooterLeft = new CANSparkMax(1, MotorType.kBrushless);
+    shooterRight = new CANSparkMax(2, MotorType.kBrushless);
+  }
+
+  public void run(double speed){
+    shooterLeft.set(speed);
+    shooterRight.set(-speed);
   }
 
 

@@ -50,7 +50,7 @@ public class RobotContainer {
       new DriverControl(
         drivetrain, 
         () -> driver.getY(Hand.kLeft), 
-        () -> driver.getY(Hand.kRight)));
+        () -> driver.getY(Hand.kRight))); 
       // Configure the button bindings, tying button presses to commands.
       configureButtonBindings();
   }
