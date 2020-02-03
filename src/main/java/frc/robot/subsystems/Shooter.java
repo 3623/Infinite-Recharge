@@ -18,8 +18,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
+  private final int UPDATE_RATE = 200;
   private CANSparkMax shooterLeft, shooterRight;
-  
+
+  NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
+                                                                              // of data to Network Tables.
+		NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
+  	NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
+  	NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
+		NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
+    double x,y,area,valid;
 
   public Shooter(){
     shooterLeft = new CANSparkMax(1, MotorType.kBrushless);
@@ -31,5 +39,30 @@ public class Shooter extends SubsystemBase {
     shooterRight.set(-speed);
   }
 
+  private void updateThreadStart() {
+		Thread t = new Thread(() -> {
+			while (!Thread.interrupted()) {
+				this.update();
+				try {
+					Thread.sleep(1000 / UPDATE_RATE);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+	}
 
+  private void update(){
+    x = tx.getDouble(0.0);
+		y = ty.getDouble(0.0);
+		area = ta.getDouble(0.0);
+    valid = tv.getDouble(0.0);
+    this.monitor();
+  }
+
+  private void monitor(){
+
+  }
 }
