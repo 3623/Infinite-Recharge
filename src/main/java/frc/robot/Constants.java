@@ -34,15 +34,21 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-
+        public static int SHOOTER_LEFT_MOTOR_NEO = 1;
+        public static int SHOOTER_RIGHT_MOTOR_NEO = 2;
+        public static int SHOOTER_TURRET_MOTOR_SRX = 1;
+        public static int SHOOTER_HOOD_MOTOR_SPX = 1;
     }
 
     public static final class IntakeConstants {
-
+        public static int INTAKE_COLLECTOR_MOTOR_SPX = 2;
+        public static int INTAKE_DROP_MOTOR_SPX = 3;
+        public static int INTAKE_DROP_SOLENOID = 4;
+        public static int INTAKE_INDEXER_MOTOR_SRX = 2;
     }
 
     public static final class SpinnerConstants {
-        public static int SPINNER_MOTOR = 0;
+        public static int SPINNER_MOTOR_SPX = 4;
     }
 
     public static final class ShifterConstants {
@@ -50,7 +56,8 @@ public final class Constants {
     }
 
     public static final class ClimberConstants {
-
+        public static int CLIMBER_LOCK_SOLENOID = 2;
+        public static int CLIMBER_PTO_SOLENOID = 3;
     }
 
     public static final class IOConstants {

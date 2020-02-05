@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -14,12 +16,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   private final int UPDATE_RATE = 200;
   private CANSparkMax shooterLeft, shooterRight;
+  private TalonSRX turret;
+  private Encoder turretEnc;
 
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
                                                                               // of data to Network Tables.
@@ -32,11 +37,17 @@ public class Shooter extends SubsystemBase {
   public Shooter(){
     shooterLeft = new CANSparkMax(1, MotorType.kBrushless);
     shooterRight = new CANSparkMax(2, MotorType.kBrushless);
+    turret = new TalonSRX(1);
+    turretEnc = new Encoder(4, 5);
   }
 
-  public void run(double speed){
+  public void runShooter(double speed){
     shooterLeft.set(speed);
     shooterRight.set(-speed);
+  }
+
+  public void runTurret(double speed){
+    turret.set(ControlMode.PercentOutput, speed);
   }
 
   private void updateThreadStart() {

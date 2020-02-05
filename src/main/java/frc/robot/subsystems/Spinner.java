@@ -43,7 +43,7 @@ public class Spinner extends SubsystemBase {
     colorMatcher.addColorMatch(kGreenTarget);
     colorMatcher.addColorMatch(kRedTarget);
     colorMatcher.addColorMatch(kYellowTarget);
-    spinnerMotor = new VictorSPX(SpinnerConstants.SPINNER_MOTOR);
+    spinnerMotor = new VictorSPX(SpinnerConstants.SPINNER_MOTOR_SPX);
   }
 
   public String getColorMatch(){
