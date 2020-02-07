@@ -45,12 +45,14 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    
+    driverB = new JoystickButton(driver, XboxController.Button.kB.value);
+
     drivetrain.setDefaultCommand(
       new DriverControl(
         drivetrain, 
         () -> driver.getY(Hand.kLeft), 
-        () -> driver.getX(Hand.kRight))); 
+        () -> driver.getX(Hand.kRight),
+        () -> driverB.get())); 
       // Configure the button bindings, tying button presses to commands.
       configureButtonBindings();
   }

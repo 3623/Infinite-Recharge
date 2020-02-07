@@ -12,6 +12,7 @@ import com.kauailabs.navx.frc.AHRS;
 import java.io.IOException;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -72,10 +73,14 @@ public class Drivetrain extends SubsystemBase {
 	}
 
   public Drivetrain(){
-    rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-    rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-    leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
-    leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+	rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
+	rightMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+	rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
+	rightMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+	leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
+	leftMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+	leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+	leftMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
 	Left = new SpeedControllerGroup(leftMotor1, leftMotor2);
 	DT = new DifferentialDrive(Left, Right);
@@ -151,6 +156,10 @@ public class Drivetrain extends SubsystemBase {
 	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
 		// setOpenLoop(0.0, 0.0);
 		//setOpenLoop(xSpeed, rSpeed);
+		if (controlState != DriveControlState.OPEN_LOOP) {
+			System.out.println("Switching to open loop control, time: " + time);
+			controlState = DriveControlState.OPEN_LOOP;
+		}
 		DT.curvatureDrive(xSpeed, rSpeed, quickTurn);
 	}
 

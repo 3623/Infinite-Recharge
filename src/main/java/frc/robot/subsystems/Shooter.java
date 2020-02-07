@@ -26,6 +26,16 @@ public class Shooter extends SubsystemBase {
   private TalonSRX turret;
   private Encoder turretEnc;
 
+  private boolean targetAcquired;
+
+  /* Shooter States:
+      0: Idle. Waiting for Commands
+      1: Revving Up. Running Motors to Prepare for shooting
+      2: Ready to Fire. At speed, and target acquired.
+      3: Revving Down. Motor Output to 0, status 0 when stopped.
+  */
+  private int state;
+
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
                                                                               // of data to Network Tables.
 		NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
@@ -39,6 +49,8 @@ public class Shooter extends SubsystemBase {
     shooterRight = new CANSparkMax(2, MotorType.kBrushless);
     turret = new TalonSRX(1);
     turretEnc = new Encoder(4, 5);
+
+    this.updateThreadStart();
   }
 
   public void runShooter(double speed){
@@ -48,6 +60,22 @@ public class Shooter extends SubsystemBase {
 
   public void runTurret(double speed){
     turret.set(ControlMode.PercentOutput, speed);
+  }
+
+  public int getState(){
+    return state;
+  }
+
+  public boolean isTargetAcquired(){
+    return targetAcquired;
+  }
+
+  public void setTargetAcquired(boolean isAcquired){
+    targetAcquired = isAcquired;
+  }
+
+  public void setState(int stateToSet){
+    state = stateToSet;
   }
 
   private void updateThreadStart() {
