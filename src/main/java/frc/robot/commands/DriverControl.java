@@ -24,6 +24,7 @@ public class DriverControl extends CommandBase {
     NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
                                                                                     // of data to Network Tables.
     NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
+    NetworkTableEntry tv = Lime.getEntry("tv");
 
     private final double kP = -0.1; // proportional control for target seeking
     private final double minCommand = 0.05; // apply minimum to make bot move as output approaches 0; 
@@ -52,7 +53,7 @@ public class DriverControl extends CommandBase {
             quickTurn = false;
         // quickTurn = true;
 
-        if (m_seekTarget.getAsBoolean()){
+        if (m_seekTarget.getAsBoolean()&&tv.getDouble(0.0)>0){
             double x = tx.getDouble(0.0);
             double headingError = -tx.getDouble(0.0);
             double steeringAdjust = 0.0;
@@ -62,7 +63,7 @@ public class DriverControl extends CommandBase {
             if (x > 1.0){
                 steeringAdjust = kP*headingError - minCommand;
             }
-            else if (x < 1.0){
+            else if (x < -1.0){
                 steeringAdjust = kP*headingError + minCommand;
             }
             leftOutput += steeringAdjust;
