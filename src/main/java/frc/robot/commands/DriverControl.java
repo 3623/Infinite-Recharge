@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriverControl extends CommandBase {
@@ -52,7 +53,12 @@ public class DriverControl extends CommandBase {
         else
             quickTurn = false;
         // quickTurn = true;
-
+        if (m_seekTarget.getAsBoolean()){
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
+        } 
+        else{
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+        }
         if (m_seekTarget.getAsBoolean()&&tv.getDouble(0.0)>0){
             double x = tx.getDouble(0.0);
             double headingError = -tx.getDouble(0.0);
