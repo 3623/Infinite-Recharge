@@ -98,11 +98,25 @@ public class Drivetrain extends SubsystemBase {
 		this.updateThreadStart();
 	}
 
-	public void disable() {
-		if (controlState != DriveControlState.DISABLED) {
-			controlState = DriveControlState.DISABLED;
+	private void update() {
+		double time = Timer.getFPGATimestamp();
+		double deltaTime = time - this.time;
+		this.time = time;
+		this.updatePosition(deltaTime);
+		this.monitor();
+		SmartDashboard.putNumber("DT", deltaTime);
+
+		mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
+
+		switch (controlState) {
+		case OPEN_LOOP:
+			break;
+		case PATH_FOLLOWING:
+			driveWaypointNavigator();
+			break;
+		case DISABLED:
+			break;
 		}
-		setMotorControllers(new Tuple(0.0, 0.0));
 	}
 
 	private void updateThreadStart() {
@@ -126,58 +140,59 @@ public class Drivetrain extends SubsystemBase {
 		model.updatePosition(time);
 	}
 
-	public void startPathFollowing() {
-		controlState = DriveControlState.PATH_FOLLOWING;
-	}
-
-	private void driveWaypointNavigator() {
-		Tuple output = waypointNav.updatePursuit(model.center);
-		Tuple limitedOut = model.limitAcceleration(output);
-		// double leftSpeed = limitedOut.left;
-		// double rightSpeed = limitedOut.right;
-		double leftSpeed = output.left;
-		double rightSpeed = output.right;
-
-		SmartDashboard.putNumber("Left Out 1", leftSpeed);
-		SmartDashboard.putNumber("Right Out 1", rightSpeed);
-		setVoltages(leftSpeed, leftSpeed /* Is this Right??? */ );
-	}
-
 	public void zeroSensors() {
 		leftSide.reset();
 		rightSide.reset();
 		NavX.reset();
 	}
 
+	public void disable() {
+		if (controlState != DriveControlState.DISABLED) {
+			controlState = DriveControlState.DISABLED;
+		}
+		setMotorControllers(new Tuple(0.0, 0.0));
+	}
+
+	public void startPathFollowing() {
+		controlState = DriveControlState.PATH_FOLLOWING;
+	}
+
+	private void driveWaypointNavigator() {
+		Tuple output = waypointNav.updatePursuit(model.center);
+		double leftSpeed = output.left;
+		double rightSpeed = output.right;
+
+		SmartDashboard.putNumber("Left Out 1", leftSpeed);
+		SmartDashboard.putNumber("Right Out 1", rightSpeed);
+		setVoltages(leftSpeed, leftSpeed /* Is this Right??? */ );
+		// BANANA: No, i updated so that path following now returns speed in m/s for
+		// each side
+		// of the drivetrain. This speed should be used in FPID (or motion magic)
+		// everything else looks good
+	}
+
 	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
-		// setOpenLoop(0.0, 0.0);
-		// setOpenLoop(xSpeed, rSpeed);
+		// BANANA: a todo would be customize this. In my experience, curvature drive was
+		// not always the best. Can easily copy paste some control code (arcade, cheesy,
+		// or whatnot)
+		// and modify it as needed. This gets rid of the hidden magic that
+		// the wpilib drivetrain class has.
+		// this is the only time DT is used, and im not a big fan
+		// we only need velocity pid control (for auto), voltage control (open loop)
+		// (for tele). If this was changed into say:
+		// func terribleDrive(forward, turn) {
+		// do this to get left right voltages
+		// setOpenLoop(left, right)
+		// i think it would be cleaner and more direct, and not much work (just copy
+		// paste)
+		// this provides a good backbone for doing other stuff to like PTR
+		// and drive following heading
 		if (controlState != DriveControlState.OPEN_LOOP) {
 			System.out.println("Switching to open loop control, time: " + time);
 			controlState = DriveControlState.OPEN_LOOP;
 		}
 		DT.curvatureDrive(xSpeed, rSpeed, quickTurn);
-	}
-
-	private void update() {
-		double time = Timer.getFPGATimestamp();
-		double deltaTime = time - this.time;
-		this.time = time;
-		this.updatePosition(deltaTime);
-		this.monitor();
-		SmartDashboard.putNumber("DT", deltaTime);
-
-		mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
-
-		switch (controlState) {
-		case OPEN_LOOP:
-			break;
-		case PATH_FOLLOWING:
-			driveWaypointNavigator();
-			break;
-		case DISABLED:
-			break;
-		}
+		// setOpenLoop(left, right);
 	}
 
 	public void setOpenLoop(double left, double right) {
