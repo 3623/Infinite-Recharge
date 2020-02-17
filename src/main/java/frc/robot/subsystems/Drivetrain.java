@@ -34,37 +34,33 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.util.*;
 
 public class Drivetrain extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+	// Put methods for controlling this subsystem
+	// here. Call these from Commands.
 
-  WPI_TalonFX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
-  SpeedControllerGroup Right,Left;
-  DifferentialDrive Drivetrain;
-  Encoder leftSide, rightSide;
-  DifferentialDrive DT;
+	WPI_TalonFX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
+	SpeedControllerGroup Right, Left;
+	DifferentialDrive Drivetrain;
+	Encoder leftSide, rightSide;
+	DifferentialDrive DT;
 
-  private final int UPDATE_RATE = 200;
+	private final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-  private final double DISTANCE_PER_PULSE = model.WHEEL_RADIUS * Math.PI * 2 / 2048.0;
+	private final double DISTANCE_PER_PULSE = model.WHEEL_RADIUS * Math.PI * 2 / 2048.0;
 
-  public CubicSplineFollower waypointNav;
+	public CubicSplineFollower waypointNav;
 
-  double time;
+	double time;
 
-  AHRS NavX;
+	AHRS NavX;
 
-  private DriveControlState controlState = DriveControlState.DISABLED;
+	private DriveControlState controlState = DriveControlState.DISABLED;
 
-  private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
-		  
+	private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
+
 	AnalogInput transducer = new AnalogInput(0);
-	
-	NetworkTableEntry mainPressure = 
-		shuffle.add("Main System Pressure", 0)
-			.withWidget(BuiltInWidgets.kDial)
-			.withProperties(Map.of("min", 0, "max", 130))
-			.getEntry();
-	
+
+	NetworkTableEntry mainPressure = shuffle.add("Main System Pressure", 0).withWidget(BuiltInWidgets.kDial)
+			.withProperties(Map.of("min", 0, "max", 130)).getEntry();
 
 	private enum DriveControlState {
 		OPEN_LOOP, // open loop voltage control
@@ -72,37 +68,37 @@ public class Drivetrain extends SubsystemBase {
 		DISABLED,
 	}
 
-  public Drivetrain(){
-	rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-	rightMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-	rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-	rightMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-	leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
-	leftMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-	leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
-	leftMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-    Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
-	Left = new SpeedControllerGroup(leftMotor1, leftMotor2);
-	DT = new DifferentialDrive(Left, Right);
+	public Drivetrain() {
+		rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
+		rightMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
+		rightMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
+		leftMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+		leftMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
+		Left = new SpeedControllerGroup(leftMotor1, leftMotor2);
+		DT = new DifferentialDrive(Left, Right);
 
-    leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
-        Encoder.EncodingType.k2X);
-    rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A, DrivetrainConstants.ENCODER_RIGHT_B, true,
-        Encoder.EncodingType.k2X);
-    leftSide.setDistancePerPulse(DISTANCE_PER_PULSE);
-    rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
+		leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
+				Encoder.EncodingType.k2X);
+		rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A, DrivetrainConstants.ENCODER_RIGHT_B, true,
+				Encoder.EncodingType.k2X);
+		leftSide.setDistancePerPulse(DISTANCE_PER_PULSE);
+		rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
 
-    model = new DrivetrainModel();
-    model.setPosition(0.0, 0.0, 0.0);
-    
-    waypointNav = new CubicSplineFollower();
+		model = new DrivetrainModel();
+		model.setPosition(0.0, 0.0, 0.0);
 
-    NavX = new AHRS(SPI.Port.kMXP);
+		waypointNav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
 
-    this.updateThreadStart();
-  }
+		NavX = new AHRS(SPI.Port.kMXP);
 
-  public void disable() {
+		this.updateThreadStart();
+	}
+
+	public void disable() {
 		if (controlState != DriveControlState.DISABLED) {
 			controlState = DriveControlState.DISABLED;
 		}
@@ -144,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
 
 		SmartDashboard.putNumber("Left Out 1", leftSpeed);
 		SmartDashboard.putNumber("Right Out 1", rightSpeed);
-		setVoltages(leftSpeed, leftSpeed /*Is this Right???*/ );
+		setVoltages(leftSpeed, leftSpeed /* Is this Right??? */ );
 	}
 
 	public void zeroSensors() {
@@ -155,7 +151,7 @@ public class Drivetrain extends SubsystemBase {
 
 	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
 		// setOpenLoop(0.0, 0.0);
-		//setOpenLoop(xSpeed, rSpeed);
+		// setOpenLoop(xSpeed, rSpeed);
 		if (controlState != DriveControlState.OPEN_LOOP) {
 			System.out.println("Switching to open loop control, time: " + time);
 			controlState = DriveControlState.OPEN_LOOP;
@@ -171,7 +167,7 @@ public class Drivetrain extends SubsystemBase {
 		this.monitor();
 		SmartDashboard.putNumber("DT", deltaTime);
 
-		mainPressure.setDouble(250*(transducer.getVoltage()/5)-25);
+		mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
 
 		switch (controlState) {
 		case OPEN_LOOP:

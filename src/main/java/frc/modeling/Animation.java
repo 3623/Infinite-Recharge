@@ -4,10 +4,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import frc.controls.CubicSplineFollower;
-import frc.controls.DrivetrainControls;
 import frc.controls.CubicSplineFollower.Waypoint;
 import frc.robot.subsystems.DrivetrainModel;
-import frc.util.Pose;
 import frc.util.Tuple;
 
 import java.awt.*;
@@ -18,6 +16,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Animation extends JPanel implements Runnable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) throws IOException {
 		JFrame frame = new JFrame("Drivetrain Simulation");
@@ -60,8 +63,8 @@ public class Animation extends JPanel implements Runnable {
 	protected double time = 0.0;
 
 	public Animation() throws IOException {
-		field = ImageIO.read(new File("2019-field-blue.png"));
-		robot = ImageIO.read(new File("robot-blue2.png"));
+		field = ImageIO.read(new File("sim/2019-field-blue.png"));
+		robot = ImageIO.read(new File("sim/robot-blue2.png"));
 
 		// Set the width and heigth and size
 		width = field.getWidth(this);
@@ -73,7 +76,7 @@ public class Animation extends JPanel implements Runnable {
 		y = height - 15; // y offset for drawing objects
 
 		model = new DrivetrainModel();
-		nav = new CubicSplineFollower();
+		nav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
 
 		this.setWaypoints();
 
@@ -121,12 +124,12 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(new Waypoint(-1.0, 5.6, -65.0, -1.0, true));
 		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
 
-		// Right Side of cargo ship x2
-		model.setPosition(1.2, 0.7, 0.0);
-		nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5, false));
-		nav.addWaypoint(new Waypoint(1.1, 6.6, -10.0, 1.0, true));
-		nav.addWaypoint(new Waypoint(3.3, 0.5, -10.0, -1.0, true));
-		nav.addWaypoint(new Waypoint(1.1, 7.2, -10.0, 1.0, true));
+		// // Right Side of cargo ship x2
+		// model.setPosition(1.2, 0.7, 0.0);
+		// nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5, false));
+		// nav.addWaypoint(new Waypoint(1.1, 6.6, -10.0, 1.0, true));
+		// nav.addWaypoint(new Waypoint(3.3, 0.5, -10.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(1.1, 7.2, -10.0, 1.0, true));
 
 		// // Left Side of cargo ship x2
 		// model.setPosition(-1.2, 0.7, -0.0);
@@ -135,15 +138,15 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(new Waypoint(-3.3, 0.5, 10.0, -1.0, true));
 		// nav.addWaypoint(new Waypoint(-1.1, 7.2, 10.0, 1.0, true));
 
-		// // Right rocket
-		// model.setPosition(1.2, 0.7, 0.0);
-		// nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5));
-		// nav.addWaypoint(new Waypoint(3.5, 6.7, 60.0, 1.0, true));
+		// Right rocket
+		model.setPosition(1.2, 0.7, 0.0);
+		nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5));
+		nav.addWaypoint(new Waypoint(3.5, 6.7, 60.0, 1.0, true));
 		// nav.addWaypoint(new Waypoint(2.8, 6.0, 30.0, -0.6));
-		// nav.addWaypoint(new Waypoint(3.4, 0.5, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(3.4, 3.0, 0.0, 1.0));
-		// nav.addWaypoint(new Waypoint(3.2, 4.7, -60.0, 0.6, true));
-		// nav.addWaypoint(new Waypoint(2.0, 7.2, 0.0, 0.6, true));
+		nav.addWaypoint(new Waypoint(3.4, 0.5, 0.0, -1.0, true));
+		nav.addWaypoint(new Waypoint(3.4, 4.2, 15.0, 0.6));
+		nav.addWaypoint(new Waypoint(3.1, 4.7, -60.0, 0.6, true));
+		nav.addWaypoint(new Waypoint(2.0, 7.2, 0.0, 0.6, true));
 
 		// // Left rocket
 		// model.setPosition(-1.2, 0.7, -0.0);
@@ -181,7 +184,7 @@ public class Animation extends JPanel implements Runnable {
 		int xCoordOffset = xCoord - (robotRotated.getWidth() / 2);
 		int yCoord = y - (int) Math.round(model.center.y * scale);
 		int yCoordOffset = yCoord - (robotRotated.getHeight() / 2);
-		if (!nav.getIsFinished())
+		if (!nav.isFinished)
 			trajectory.add(new Tuple(xCoord, yCoord));
 		offScreen.drawImage(robotRotated, xCoordOffset, yCoordOffset, this);
 
@@ -243,7 +246,7 @@ public class Animation extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		while (Thread.currentThread() == sim && nav.getIsFinished() == false) {
+		while (Thread.currentThread() == sim && nav.isFinished == false) {
 			repaint();
 			try {
 				Thread.sleep(1000 / FRAME_RATE);
@@ -258,14 +261,12 @@ public class Animation extends JPanel implements Runnable {
 			while (!Thread.interrupted()) {
 
 				Tuple output = nav.updatePursuit(model.center);
-				output = model.limitAcceleration(output);
-				leftVoltage = output.left * 12.0;
-				rightVoltage = output.right * 12.0;
+				model.updateSpeed(output.left, output.right, 1.0 / CONTROL_UPDATE_RATE);
 
 				// System.out.println("Left Voltage: " + leftVoltage + ", Right Voltage: " +
 				// rightVoltage);
 
-				if (nav.getIsFinished()) {
+				if (nav.isFinished) {
 				}
 
 				try {

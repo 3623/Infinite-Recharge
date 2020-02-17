@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 
 import frc.modeling.motors.CIMMotor;
-import frc.modeling.motors.Motor;
 import frc.util.Geometry;
 import frc.util.Pose;
 import frc.util.Tuple;
 import frc.util.Utils;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Model for a differential drivetrain, simulates mass and motor performance
@@ -20,13 +19,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DrivetrainModel {
 
 	private static final double DRIVETRAIN_MASS = 63.5; // kg
-	private static final double WHEEL_BASE = 0.67; // meters
+	public static final double MAX_SPEED = 3.3;
+	public static final double WHEEL_BASE = 0.67; // meters
 	private static final double CENTER_MASS = 0.335; // from left wheel
 	private Boolean COAST_MODE = false;
 	public Pose center;
 
 	private DrivetrainSide left, right;
-	final static double WHEEL_RADIUS = 0.0774; // meters
+	static final double WHEEL_RADIUS = 0.0774; // meters
 	private static final double CIMS_PER_SIDE = 2.0; // Minicim is 0.58
 	private static final double GEAR_RATIO = 10.75 / 1.0; // Reduction
 	private static final double DRIVETRAIN_FRICTION = 115;
@@ -185,7 +185,7 @@ public class DrivetrainModel {
 		double acceleration;
 		private double psuedoMass;
 		private Boolean coast;
-		private CIMMotor cim = new CIMMotor();
+		// private CIMMotor cim = new CIMMotor();
 
 		public DrivetrainSide() {
 			velocity = 0.0;
