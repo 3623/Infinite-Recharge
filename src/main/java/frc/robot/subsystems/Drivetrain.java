@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -37,7 +39,8 @@ public class Drivetrain extends SubsystemBase {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
-	WPI_TalonFX rightMotor1, rightMotor2, leftMotor1, leftMotor2;
+	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
+	TalonFX right;
 	SpeedControllerGroup Right, Left;
 	DifferentialDrive Drivetrain;
 	Encoder leftSide, rightSide;
@@ -69,17 +72,21 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Drivetrain() {
-		rightMotor1 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-		rightMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-		rightMotor2 = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-		rightMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-		leftMotor1 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
-		leftMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-		leftMotor2 = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
-		leftMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		rightMotorMaster = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
+		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		rightMotorFollower = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
+		rightMotorFollower.set(ControlMode.Follower, DrivetrainConstants.RIGHT_MOTOR_ONE);
+		leftMotorMaster = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
+		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		leftMotorFollower = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+		leftMotorFollower.set(ControlMode.Follower, DrivetrainConstants.LEFT_MOTOR_ONE);
 		Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
-		Left = new SpeedControllerGroup(leftMotor1, leftMotor2);
-		DT = new DifferentialDrive(Left, Right);
+		Left = new SpeedControllerGroup(leftMotor1, leftMotor2); // BANANA should just use follower?
+		DT = new DifferentialDrive(Left, Right); // BANANA get rid of this?
+		// BANANA current limiting? (This conrols max force and prevents slipping ..)
+
+		right = new TalonFX(0);
+		right.set(ControlMode.PercentOutput, 1.0);
 
 		leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
 				Encoder.EncodingType.k2X);
