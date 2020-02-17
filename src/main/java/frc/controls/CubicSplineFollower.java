@@ -85,27 +85,23 @@ public class CubicSplineFollower {
             }
             if (distanceFromWaypoint < kRadiusCritical || isFinished) {
                 ffSpeed = 0.0;
-                if (Utils.withinThreshold(robotPose.heading, curWaypoint.heading, kAngularErrorCritical)) {
-                    // at point and heading, we're done
+                // at point and heading, we're done
+                if (!isFinished)
+                    System.out.println("At Waypoint: " + index + " (" + curWaypoint.toString() + ")");
+                if (index == waypoints.size() - 1 || isFinished) {
                     if (!isFinished)
-                        System.out.println("At Waypoint: " + index + " (" + curWaypoint.toString() + ")");
-                    if (index == waypoints.size() - 1 || isFinished) {
-                        if (!isFinished)
-                            System.out.println("Finished Path Following");
-                        isFinished = true;
-                        return new Tuple(0.0, 0.0);
-                    } else {
-                        index++;
-                        curWaypoint = waypoints.get(index);
-                    }
-
-                } else {
-                    // // at point but not heading, just turn to the point
-                    // double ptrOutput = DrivetrainControls.turnToAngle(curWaypoint.heading,
-                    // robotPose.heading);
-                    // return DrivetrainControls.curvatureDrive(0.0, ptrOutput, true).scale(12.0);
+                        System.out.println("Finished Path Following");
+                    isFinished = true;
                     return new Tuple(0.0, 0.0);
+                } else {
+                    index++;
+                    curWaypoint = waypoints.get(index);
                 }
+
+                // if it is at point but not heading, the code originally called PTR
+                // Im deleting this a DrivetrainControls
+                // What should be done is PTR becomes a function in Drivetrain
+                // Then the command should dictate to use PTR or not
             }
         } else if (distanceFromWaypoint < kRadiusPath
                 && Utils.withinThreshold(robotPose.heading, curWaypoint.heading, kAngularErrorPath)) {
