@@ -28,6 +28,7 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
+    private double kMaxAccel = 0.2; // m/s^2
     private double kRadiusCritical = 0.05; // m
     private double kScaleRadiusPath = 0.1; // constant
     private double kRadiusPath = 0.0;
@@ -39,7 +40,7 @@ public class CubicSplineFollower {
     private Boolean debug;
 
     public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase, double updateRate, Boolean debug,
-            double goalRadius, double pathRadiusScale, double pathAngularError) {
+            double maxAccel, double goalRadius, double pathRadiusScale, double pathAngularError) {
         MAX_SPEED = robotMaxSpeed;
         WHEEL_BASE = robotWheelBase;
 
@@ -47,6 +48,7 @@ public class CubicSplineFollower {
 
         this.debug = debug;
 
+        kMaxAccel = maxAccel;
         kRadiusCritical = goalRadius;
         kScaleRadiusPath = pathRadiusScale;
         kAngularErrorPath = pathAngularError;
@@ -55,7 +57,7 @@ public class CubicSplineFollower {
     }
 
     public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase) {
-        this(robotMaxSpeed, robotWheelBase, 200.0, false, 0.05, 0.1, 5.0);
+        this(robotMaxSpeed, robotWheelBase, 200.0, false, 0.2, 0.05, 0.1, 5.0);
     }
 
     /**
@@ -153,12 +155,11 @@ public class CubicSplineFollower {
 
         // Convert from derivative to angle
 
-        double maxAccel = 0.1;
         double desiredSpeed = ffSpeed * MAX_SPEED;
-        if (desiredSpeed - robotPose.velocity > maxAccel)
-            desiredSpeed = robotPose.velocity + maxAccel;
-        else if (desiredSpeed - robotPose.velocity < -maxAccel)
-            desiredSpeed = robotPose.velocity - maxAccel;
+        if (desiredSpeed - robotPose.velocity > kMaxAccel)
+            desiredSpeed = robotPose.velocity + kMaxAccel;
+        else if (desiredSpeed - robotPose.velocity < -kMaxAccel)
+            desiredSpeed = robotPose.velocity - kMaxAccel;
         double lrSpeedDifference = omega * WHEEL_BASE;
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
