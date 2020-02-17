@@ -31,8 +31,7 @@ public class CubicSplineFollower {
     private double kRadiusCritical = 0.05; // m
     private double kScaleRadiusPath = 0.1; // constant
     private double kRadiusPath = 0.0;
-    private double kAngularErrorCritical = 5.0; // deg
-    private double kAngularErrorPath = 5.0; // deg
+    private double kAngularErrorPath = 5.0; // deg, keeping this because this dictates when the robot switches
     private double kMaxSplineAngle = Math.PI * 0.3;
 
     double ffSpeed = 0.0;
@@ -40,7 +39,7 @@ public class CubicSplineFollower {
     private Boolean debug;
 
     public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase, double updateRate, Boolean debug,
-            double goalRadius, double goalAngularError, double pathRadiusScale, double pathAngularError) {
+            double goalRadius, double pathRadiusScale, double pathAngularError) {
         MAX_SPEED = robotMaxSpeed;
         WHEEL_BASE = robotWheelBase;
 
@@ -49,7 +48,6 @@ public class CubicSplineFollower {
         this.debug = debug;
 
         kRadiusCritical = goalRadius;
-        kAngularErrorCritical = goalAngularError;
         kScaleRadiusPath = pathRadiusScale;
         kAngularErrorPath = pathAngularError;
 
@@ -57,7 +55,7 @@ public class CubicSplineFollower {
     }
 
     public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase) {
-        this(robotMaxSpeed, robotWheelBase, 200.0, false, 0.05, 5.0, 0.1, 5.0);
+        this(robotMaxSpeed, robotWheelBase, 200.0, false, 0.05, 0.1, 5.0);
     }
 
     /**
