@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -40,11 +42,7 @@ public class Drivetrain extends SubsystemBase {
 	// here. Call these from Commands.
 
 	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
-	TalonFX right;
-	SpeedControllerGroup Right, Left;
-	DifferentialDrive Drivetrain;
 	Encoder leftSide, rightSide;
-	DifferentialDrive DT;
 
 	private final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
@@ -73,20 +71,31 @@ public class Drivetrain extends SubsystemBase {
 
 	public Drivetrain() {
 		rightMotorMaster = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 		rightMotorFollower = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-		rightMotorFollower.set(ControlMode.Follower, DrivetrainConstants.RIGHT_MOTOR_ONE);
 		leftMotorMaster = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
-		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 		leftMotorFollower = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+		rightMotorFollower.set(ControlMode.Follower, DrivetrainConstants.RIGHT_MOTOR_ONE);
 		leftMotorFollower.set(ControlMode.Follower, DrivetrainConstants.LEFT_MOTOR_ONE);
-		Right = new SpeedControllerGroup(rightMotor1, rightMotor2);
-		Left = new SpeedControllerGroup(leftMotor1, leftMotor2); // BANANA should just use follower?
-		DT = new DifferentialDrive(Left, Right); // BANANA get rid of this?
+		rightMotorMaster.setInverted(true);
+		leftMotorMaster.setInverted(false);
+		rightMotorFollower.setInverted(InvertType.FollowMaster);
+		leftMotorFollower.setInverted(InvertType.FollowMaster);
+		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		// dont think this will work
+
 		// BANANA current limiting? (This conrols max force and prevents slipping ..)
 
-		right = new TalonFX(0);
-		right.set(ControlMode.PercentOutput, 1.0);
+		/*
+		 * Config the Velocity closed loop gains in slot0
+		 * 
+		 * _talon.config_kF(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kF,
+		 * Constants.kTimeoutMs); _talon.config_kP(Constants.kPIDLoopIdx,
+		 * Constants.kGains_Velocit.kP, Constants.kTimeoutMs);
+		 * _talon.config_kI(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kI,
+		 * Constants.kTimeoutMs); _talon.config_kD(Constants.kPIDLoopIdx,
+		 * Constants.kGains_Velocit.kD, Constants.kTimeoutMs);
+		 */
 
 		leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
 				Encoder.EncodingType.k2X);
@@ -157,11 +166,40 @@ public class Drivetrain extends SubsystemBase {
 		if (controlState != DriveControlState.DISABLED) {
 			controlState = DriveControlState.DISABLED;
 		}
-		setMotorControllers(new Tuple(0.0, 0.0));
+		setMotorPercents(0.0, 0.0);
+	}
+
+	public void test(TalonFX talon) {
+		Faults faults = new Faults();
+		/* update motor controller */
+		talon.set(ControlMode.PercentOutput, 1.0);
+		/* check our live faults */
+		talon.getFaults(faults);
+		System.out.println("Sensor Vel:" + talon.getSelectedSensorVelocity());
+		System.out.println("Sensor Pos:" + talon.getSelectedSensorPosition());
+		System.out.println("Out %" + talon.getMotorOutputPercent());
+		System.out.println("Out Of Phase:" + faults.SensorOutOfPhase);
+	}
+
+	public void setBrakeMode(Boolean enabled) {
+		// BANANA TODO is half brake useful??
+		NeutralMode mode;
+		if (enabled)
+			mode = NeutralMode.Brake;
+		else
+			mode = NeutralMode.Coast;
+		rightMotorMaster.setNeutralMode(mode);
+		rightMotorFollower.setNeutralMode(mode);
+		leftMotorMaster.setNeutralMode(mode);
+		leftMotorFollower.setNeutralMode(mode);
 	}
 
 	public void startPathFollowing() {
-		controlState = DriveControlState.PATH_FOLLOWING;
+		if (controlState != DriveControlState.PATH_FOLLOWING) {
+			System.out.println("Switching to path following, time: " + time);
+			controlState = DriveControlState.PATH_FOLLOWING;
+		}
+		// BANANA TODO print waypoints
 	}
 
 	private void driveWaypointNavigator() {
@@ -171,11 +209,17 @@ public class Drivetrain extends SubsystemBase {
 
 		SmartDashboard.putNumber("Left Out 1", leftSpeed);
 		SmartDashboard.putNumber("Right Out 1", rightSpeed);
-		setVoltages(leftSpeed, leftSpeed /* Is this Right??? */ );
+		setSpeed(leftSpeed, rightSpeed);
 		// BANANA: No, i updated so that path following now returns speed in m/s for
 		// each side
 		// of the drivetrain. This speed should be used in FPID (or motion magic)
 		// everything else looks good
+
+		/*
+		 * double targetVelocity_UnitsPer100ms = leftYstick * 500.0 * 4096 / 600; 500
+		 * RPM in either direction _talon.set(ControlMode.Velocity,
+		 * targetVelocity_UnitsPer100ms);
+		 */
 	}
 
 	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
@@ -207,24 +251,12 @@ public class Drivetrain extends SubsystemBase {
 			System.out.println("Switching to open loop control, time: " + time);
 			controlState = DriveControlState.OPEN_LOOP;
 		}
-		setMotorControllers(left, right);
+		setMotorPercents(left, right);
 	}
 
-	private void setMotorControllers(double left, double right) {
-		Left.set(left);
-		Right.set(right);
-	}
-
-	private void setMotorControllers(Tuple out) {
-		setMotorControllers(out.left, out.right);
-	}
-
-	private void setVoltages(double left, double right) {
-		setMotorControllers(left / 12.0, right / 12.0);
-	}
-
-	private void setVoltages(Tuple voltages) {
-		setVoltages(voltages.left, voltages.right);
+	public void setMotorPercents(double left, double right) {
+		leftMotorMaster.set(ControlMode.PercentOutput, left);
+		rightMotorMaster.set(ControlMode.PercentOutput, right);
 	}
 
 	private void monitor() {
