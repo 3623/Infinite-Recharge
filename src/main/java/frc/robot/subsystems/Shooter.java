@@ -79,10 +79,6 @@ public class Shooter extends SubsystemBase {
     this.updateThreadStart();
   }
 
-  public void setSpeed(double speed) {
-    m_pidController.setReference(speed, ControlType.kVelocity);
-  }
-
   public void runShooterPID(double RPM) {
     shooterPID.setReference(RPM, ControlType.kVelocity);
   }
