@@ -28,11 +28,16 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private double kMaxAccel = 0.2; // m/s^2
-    private double kRadiusCritical = 0.05; // m
-    private double kScaleRadiusPath = 0.1; // constant
-    private double kRadiusPath = 0.0;
-    private double kAngularErrorPath = 5.0; // deg, keeping this because this dictates when the robot switches
+    private static final double kMaxAccelDefault = 0.05; // m/s^2 * 200
+    private double kMaxAccel;
+    private static final double kRadiusCriticalDefault = 0.05; // m
+    private double kRadiusCritical; // m
+    private static final double kScaleRadiusPathDefault = 0.1; // constant
+    private double kScaleRadiusPath; // constant
+    private double kRadiusPath = 0.0; // this updates dynamically
+    private static final double kAngularErrorPathDefault = 5.0;
+    // deg, keeping this because this dictates when the robot switches
+    private double kAngularErrorPath;
     private double kMaxSplineAngle = Math.PI * 0.3;
 
     double ffSpeed = 0.0;
@@ -57,7 +62,8 @@ public class CubicSplineFollower {
     }
 
     public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase) {
-        this(robotMaxSpeed, robotWheelBase, 200.0, false, 0.2, 0.05, 0.1, 5.0);
+        this(robotMaxSpeed, robotWheelBase, 200.0, false, kMaxAccelDefault, kRadiusCriticalDefault,
+                kScaleRadiusPathDefault, kAngularErrorPathDefault);
     }
 
     /**
