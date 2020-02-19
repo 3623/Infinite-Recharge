@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.IOConstants;
@@ -36,6 +38,10 @@ public class RobotContainer {
   private final Shifter shifter = new Shifter();
   private final Shooter shooter = new Shooter();
   private final Spinner spinner = new Spinner();
+
+  public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
+  public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
+  public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
 
 
   private JoystickButton driverA, driverB, driverX, driverY, driverLB, driverRB, driverStart, driverBack, driverL3, driverR3,

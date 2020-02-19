@@ -9,32 +9,44 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   private final int UPDATE_RATE = 200;
   private CANSparkMax shooterLeft, shooterRight;
+  private CANPIDController shooterPID;
   private TalonSRX turret;
   private Encoder turretEnc;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
   private boolean targetAcquired;
 
-  /* Shooter States:
-      0: Idle. Waiting for Commands
-      1: Revving Up. Running Motors to Prepare for shooting
-      2: Ready to Fire. At speed, and target acquired.
-      3: Revving Down. Motor Output to 0, status 0 when stopped.
-  */
-  private int state;
+  private ShooterState state = ShooterState.IDLE;
+  private enum ShooterState{
+    IDLE,
+    REVVING_UP,
+    READY_TO_FIRE,
+    RETURNING_TO_IDLE,
+  }
+
+  ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
+  private NetworkTableEntry shooterPIDSystem = 
+    settings.addPersistent("Shooter PID System", shooterPID)
+    .withWidget(BuiltInWidgets.kPIDController)
+    .getEntry();
 
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts several useful bits
                                                                               // of data to Network Tables.
@@ -47,6 +59,25 @@ public class Shooter extends SubsystemBase {
   public Shooter(){
     shooterLeft = new CANSparkMax(1, MotorType.kBrushless);
     shooterRight = new CANSparkMax(2, MotorType.kBrushless);
+    shooterRight.follow(shooterLeft, true);
+    shooterPID = shooterLeft.getPIDController();
+
+    kP = 6e-5; 
+    kI = 0;
+    kD = 0; 
+    kIz = 0; 
+    kFF = 0.000015; 
+    kMaxOutput = 1; 
+    kMinOutput = -1;
+    maxRPM = 5700;
+
+    shooterPID.setP(kP);
+    shooterPID.setI(kI);
+    shooterPID.setD(kD);
+    shooterPID.setIZone(kIz);
+    shooterPID.setFF(kFF);
+    shooterPID.setOutputRange(kMinOutput, kMaxOutput);
+ 
     turret = new TalonSRX(1);
     turretEnc = new Encoder(4, 5);
 
@@ -55,15 +86,14 @@ public class Shooter extends SubsystemBase {
 
   public void runShooter(double speed){
     shooterLeft.set(speed);
-    shooterRight.set(-speed);
+  }
+
+  public void runShooterPID(double RPM){
+    shooterPID.setReference(RPM, ControlType.kVelocity);
   }
 
   public void runTurret(double speed){
     turret.set(ControlMode.PercentOutput, speed);
-  }
-
-  public int getState(){
-    return state;
   }
 
   public boolean isTargetAcquired(){
@@ -72,10 +102,6 @@ public class Shooter extends SubsystemBase {
 
   public void setTargetAcquired(boolean isAcquired){
     targetAcquired = isAcquired;
-  }
-
-  public void setState(int stateToSet){
-    state = stateToSet;
   }
 
   private void updateThreadStart() {

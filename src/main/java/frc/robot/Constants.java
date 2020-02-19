@@ -23,10 +23,6 @@ public final class Constants {
         public static int RIGHT_MOTOR_TWO = 1;
         public static int LEFT_MOTOR_ONE = 2;
         public static int LEFT_MOTOR_TWO = 3;
-                                                 // also in general i dont like defining constants
-                                                 // like this as i found it to be unneccesary
-                                                 // and even more obscure, especially for something
-                                                 // like the drivetrain which is very independent
         public static int ENCODER_LEFT_A = 0;
         public static int ENCODER_LEFT_B = 1;
         public static int ENCODER_RIGHT_A = 2;
@@ -38,6 +34,17 @@ public final class Constants {
         public static int SHOOTER_RIGHT_MOTOR_NEO = 2;
         public static int SHOOTER_TURRET_MOTOR_SRX = 1;
         public static int SHOOTER_HOOD_MOTOR_SPX = 1;
+        // Limelight Pipeline Constants
+        public static int CONTROL_PANEL_REAR_PIPELINE = 0;
+        public static int INITITATION_LINE_PIPELINE = 1;
+        public static int CONTROL_PANEL_FRONT_PIPELINE = 2;
+        public static int END_OF_TRENCH_PIPELINE = 3;
+        public static int POINT_BLANK_RANGE_PIPELINE = 4;
+        // Limelight LED Settings Definitions
+        public static int LIMELIGHT_LED_DEFAULT = 0;
+        public static int LIMELIGHT_LED_FORCE_OFF = 1;
+        public static int LIMEIGHT_LED_BLINK = 2;
+        public static int LIMELIGHT_LED_FORCE_ON = 3;
     }
 
     public static final class IntakeConstants {
