@@ -42,13 +42,22 @@ public class Drivetrain extends SubsystemBase {
 	// here. Call these from Commands.
 
 	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
-	Encoder leftSide, rightSide;
 
 	private final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private final double DISTANCE_PER_PULSE = model.WHEEL_RADIUS * Math.PI * 2 / 2048.0;
+	private static final double ENCODER_TICKS_PER_REV = 8192.0;
 
 	public CubicSplineFollower waypointNav;
+
+	private static final int PIDIDX = 0;
+	private static final int CONFIG_TIMEOUT = 30;
+
+	private double kFF = 12.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
+	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
+	// sensor-velocity-sensor-units-per-100ms).
+	private double kP = 0.5;
+	private double kD = 0.1;
+	private double kI = 0.0;
 
 	double time;
 
@@ -80,29 +89,22 @@ public class Drivetrain extends SubsystemBase {
 		leftMotorMaster.setInverted(false);
 		rightMotorFollower.setInverted(InvertType.FollowMaster);
 		leftMotorFollower.setInverted(InvertType.FollowMaster);
-		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-		// dont think this will work
+		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);
+		// TODO this might be better
+		// TODO set phase for the encoders
 
-		// BANANA current limiting? (This conrols max force and prevents slipping ..)
+		// BANANA TODO current limiting? (This conrols max force and prevents slipping
+		// ..)
 
-		/*
-		 * Config the Velocity closed loop gains in slot0
-		 * 
-		 * _talon.config_kF(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kF,
-		 * Constants.kTimeoutMs); _talon.config_kP(Constants.kPIDLoopIdx,
-		 * Constants.kGains_Velocit.kP, Constants.kTimeoutMs);
-		 * _talon.config_kI(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kI,
-		 * Constants.kTimeoutMs); _talon.config_kD(Constants.kPIDLoopIdx,
-		 * Constants.kGains_Velocit.kD, Constants.kTimeoutMs);
-		 */
-
-		leftSide = new Encoder(DrivetrainConstants.ENCODER_LEFT_A, DrivetrainConstants.ENCODER_LEFT_B, true,
-				Encoder.EncodingType.k2X);
-		rightSide = new Encoder(DrivetrainConstants.ENCODER_RIGHT_A, DrivetrainConstants.ENCODER_RIGHT_B, true,
-				Encoder.EncodingType.k2X);
-		leftSide.setDistancePerPulse(DISTANCE_PER_PULSE);
-		rightSide.setDistancePerPulse(DISTANCE_PER_PULSE);
+		leftMotorMaster.config_kF(PIDIDX, kFF);
+		leftMotorMaster.config_kP(PIDIDX, kP);
+		leftMotorMaster.config_kD(PIDIDX, kD);
+		leftMotorMaster.config_kI(PIDIDX, kI);
+		rightMotorMaster.config_kF(PIDIDX, kFF);
+		rightMotorMaster.config_kP(PIDIDX, kP);
+		rightMotorMaster.config_kD(PIDIDX, kD);
+		rightMotorMaster.config_kI(PIDIDX, kI);
 
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
@@ -118,7 +120,7 @@ public class Drivetrain extends SubsystemBase {
 		double time = Timer.getFPGATimestamp();
 		double deltaTime = time - this.time;
 		this.time = time;
-		this.updatePosition(deltaTime);
+		this.updateOdometry(deltaTime);
 		this.monitor();
 		SmartDashboard.putNumber("DT", deltaTime);
 
@@ -150,15 +152,16 @@ public class Drivetrain extends SubsystemBase {
 		t.start();
 	}
 
-	private void updatePosition(double time) {
-		model.updateSpeed(leftSide.getRate(), rightSide.getRate(), time);
+	private void updateOdometry(double time) {
+		double leftSpeed = talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
+		double rightSpeed = talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
+		model.updateSpeed(leftSpeed, rightSpeed, time);
 		model.updateHeading(NavX.getAngle());
 		model.updatePosition(time);
 	}
 
 	public void zeroSensors() {
-		leftSide.reset();
-		rightSide.reset();
+		// TODO talon sensors reset
 		NavX.reset();
 	}
 
@@ -166,10 +169,13 @@ public class Drivetrain extends SubsystemBase {
 		if (controlState != DriveControlState.DISABLED) {
 			controlState = DriveControlState.DISABLED;
 		}
-		setMotorPercents(0.0, 0.0);
+		leftMotorMaster.stopMotor();
+		leftMotorFollower.stopMotor();
+		rightMotorMaster.stopMotor();
+		rightMotorFollower.stopMotor();
 	}
 
-	public void test(TalonFX talon) {
+	public void test(WPI_TalonFX talon) {
 		Faults faults = new Faults();
 		/* update motor controller */
 		talon.set(ControlMode.PercentOutput, 1.0);
@@ -222,39 +228,98 @@ public class Drivetrain extends SubsystemBase {
 		 */
 	}
 
-	public void driverControl(double xSpeed, double rSpeed, Boolean quickTurn) {
-		// BANANA: a todo would be customize this. In my experience, curvature drive was
-		// not always the best. Can easily copy paste some control code (arcade, cheesy,
-		// or whatnot)
-		// and modify it as needed. This gets rid of the hidden magic that
-		// the wpilib drivetrain class has.
-		// this is the only time DT is used, and im not a big fan
-		// we only need velocity pid control (for auto), voltage control (open loop)
-		// (for tele). If this was changed into say:
-		// func terribleDrive(forward, turn) {
-		// do this to get left right voltages
-		// setOpenLoop(left, right)
-		// i think it would be cleaner and more direct, and not much work (just copy
-		// paste)
-		// this provides a good backbone for doing other stuff to like PTR
-		// and drive following heading
+	private double m_quickStopThreshold = 0.2;
+	private double m_quickStopAlpha = 0.1;
+	private double m_quickStopAccumulator;
+
+	public void terribleDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+		double m_deadband = 0.02;
+		xSpeed = Utils.limit(xSpeed);
+		xSpeed = Utils.applyDeadband(xSpeed, m_deadband);
+
+		zRotation = Utils.limit(zRotation);
+		zRotation = Utils.applyDeadband(zRotation, m_deadband);
+
+		double angularPower;
+		boolean overPower;
+
+		if (isQuickTurn) {
+			if (Math.abs(xSpeed) < m_quickStopThreshold) {
+				m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator
+						+ m_quickStopAlpha * zRotation * 2;
+			}
+			overPower = true;
+			angularPower = zRotation;
+		} else {
+			overPower = false;
+			angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator;
+
+			if (m_quickStopAccumulator > 1) {
+				m_quickStopAccumulator -= 1;
+			} else if (m_quickStopAccumulator < -1) {
+				m_quickStopAccumulator += 1;
+			} else {
+				m_quickStopAccumulator = 0.0;
+			}
+		}
+
+		double leftMotorOutput = xSpeed + angularPower;
+		double rightMotorOutput = xSpeed - angularPower;
+
+		// If rotation is overpowered, reduce both outputs to within acceptable range
+		if (overPower) {
+			if (leftMotorOutput > 1.0) {
+				rightMotorOutput -= leftMotorOutput - 1.0;
+				leftMotorOutput = 1.0;
+			} else if (rightMotorOutput > 1.0) {
+				leftMotorOutput -= rightMotorOutput - 1.0;
+				rightMotorOutput = 1.0;
+			} else if (leftMotorOutput < -1.0) {
+				rightMotorOutput -= leftMotorOutput + 1.0;
+				leftMotorOutput = -1.0;
+			} else if (rightMotorOutput < -1.0) {
+				leftMotorOutput -= rightMotorOutput + 1.0;
+				rightMotorOutput = -1.0;
+			}
+		}
+
+		// Normalize the wheel speeds
+		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+		if (maxMagnitude > 1.0) {
+			leftMotorOutput /= maxMagnitude;
+			rightMotorOutput /= maxMagnitude;
+		}
+
+		setOpenLoop(leftMotorOutput, rightMotorOutput);
+	}
+
+	private void setSpeed(double left, double right) {
+		double leftTalonSpeed = linearSpeedToTalonSpeed(left);
+		double rightTalonSpeed = linearSpeedToTalonSpeed(left);
+		leftMotorMaster.set(ControlMode.Velocity, leftTalonSpeed);
+		rightMotorMaster.set(ControlMode.Velocity, rightTalonSpeed);
+	}
+
+	private static double linearSpeedToTalonSpeed(double linearSpeed) {
+		double wheelRotationalSpeed = linearSpeed / DrivetrainModel.WHEEL_CIRCUMFERENCE;
+		double motorRotationalSpeed = wheelRotationalSpeed * DrivetrainModel.GEAR_RATIO;
+		double encoderRotationSpeed = motorRotationalSpeed * ENCODER_TICKS_PER_REV;
+		double talonSpeed = encoderRotationSpeed / 10.0;
+		return talonSpeed;
+	}
+
+	private static double talonSpeedToLinearSpeed(double talonSpeed) {
+		double ticksPerSecond = talonSpeed * 10.0;
+		double wheelRotationalSpeed = ticksPerSecond / ENCODER_TICKS_PER_REV;
+		double wheelSpeed = wheelRotationalSpeed / DrivetrainModel.WHEEL_CIRCUMFERENCE;
+		return wheelSpeed;
+	}
+
+	private void setOpenLoop(double left, double right) {
 		if (controlState != DriveControlState.OPEN_LOOP) {
 			System.out.println("Switching to open loop control, time: " + time);
 			controlState = DriveControlState.OPEN_LOOP;
 		}
-		DT.curvatureDrive(xSpeed, rSpeed, quickTurn);
-		// setOpenLoop(left, right);
-	}
-
-	public void setOpenLoop(double left, double right) {
-		if (controlState != DriveControlState.OPEN_LOOP) {
-			System.out.println("Switching to open loop control, time: " + time);
-			controlState = DriveControlState.OPEN_LOOP;
-		}
-		setMotorPercents(left, right);
-	}
-
-	public void setMotorPercents(double left, double right) {
 		leftMotorMaster.set(ControlMode.PercentOutput, left);
 		rightMotorMaster.set(ControlMode.PercentOutput, right);
 	}

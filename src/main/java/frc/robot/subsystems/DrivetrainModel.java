@@ -26,9 +26,10 @@ public class DrivetrainModel {
 	public Pose center;
 
 	private DrivetrainSide left, right;
-	static final double WHEEL_RADIUS = 0.0774; // meters
+	public static final double WHEEL_RADIUS = 0.0774; // meters
+	public static final double WHEEL_CIRCUMFERENCE = DrivetrainModel.WHEEL_RADIUS * 2.0 * Math.PI;
 	private static final double CIMS_PER_SIDE = 2.0; // Minicim is 0.58
-	private static final double GEAR_RATIO = 10.75 / 1.0; // Reduction
+	public static final double GEAR_RATIO = 10.75 / 1.0; // Reduction
 	private static final double DRIVETRAIN_FRICTION = 115;
 	private static final double MAX_FORCE = 200.0; // 250 is still under max, but 200 is conservative
 	private static final double MAX_TORQUE = MAX_FORCE * WHEEL_RADIUS;
@@ -148,6 +149,7 @@ public class DrivetrainModel {
 	 *
 	 * @param unchecked output voltage
 	 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
+	 * @deprecated Be Careful!
 	 */
 	public Tuple limitAcceleration(Tuple out) {
 		double leftVoltage = out.left;
