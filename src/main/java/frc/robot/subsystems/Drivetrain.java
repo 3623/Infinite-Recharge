@@ -52,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
 
-	private double kFF = 12.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
+	private double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
 	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
 	// sensor-velocity-sensor-units-per-100ms).
 	private double kP = 0.5;
@@ -83,6 +83,10 @@ public class Drivetrain extends SubsystemBase {
 		rightMotorFollower = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
 		leftMotorMaster = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
 		leftMotorFollower = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+		rightMotorMaster.configFactoryDefault();
+		rightMotorFollower.configFactoryDefault();
+		leftMotorMaster.configFactoryDefault();
+		leftMotorFollower.configFactoryDefault();
 		rightMotorFollower.set(ControlMode.Follower, DrivetrainConstants.RIGHT_MOTOR_ONE);
 		leftMotorFollower.set(ControlMode.Follower, DrivetrainConstants.LEFT_MOTOR_ONE);
 		rightMotorMaster.setInverted(true);
@@ -96,6 +100,12 @@ public class Drivetrain extends SubsystemBase {
 
 		// BANANA TODO current limiting? (This conrols max force and prevents slipping
 		// ..)
+		// talon.configPeakCurrentLimit(30); // don't activate current limit until
+		// current exceeds 30 A ...
+		// talon.configPeakCurrentDuration(100); // ... for at least 100 ms
+		// talon.configContinuousCurrentLimit(20); // once current-limiting is actived,
+		// hold at 20A
+		// talon.enableCurrentLimit(true);
 
 		leftMotorMaster.config_kF(PIDIDX, kFF);
 		leftMotorMaster.config_kP(PIDIDX, kP);
