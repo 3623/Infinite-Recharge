@@ -47,38 +47,37 @@ public class DriverControl extends CommandBase {
     // Called repeatedly when this Command is scheduled to run
     @Override
     public void execute() {
+        double joystickY = -m_forward.getAsDouble();
+        double joystickR = m_rotation.getAsDouble();
         Boolean quickTurn;
-        if (Math.abs(m_forward.getAsDouble()) < 0.5)
+        if (Math.abs(joystickY) < 0.5)
             quickTurn = true;
         else
             quickTurn = false;
-        // quickTurn = true;
-        if (m_seekTarget.getAsBoolean()){
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
-        } 
-        else{
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+
+        if (m_seekTarget.getAsBoolean()) {
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+                    .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
+        } else {
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+                    .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
         }
-        if (m_seekTarget.getAsBoolean()&&tv.getDouble(0.0)>0){
+
+        if (m_seekTarget.getAsBoolean() && tv.getDouble(0.0) > 0) {
             double x = tx.getDouble(0.0);
             double headingError = -tx.getDouble(0.0);
             double steeringAdjust = 0.0;
-            double rightOutput = m_forward.getAsDouble() - m_rotation.getAsDouble();
-            double leftOutput = m_forward.getAsDouble() + m_rotation.getAsDouble();
-
             if (x > 1.0) {
                 steeringAdjust = kP * headingError - minCommand;
             } else if (x < -1.0) {
                 steeringAdjust = kP * headingError + minCommand;
             }
-            leftOutput += steeringAdjust;
-            rightOutput -= steeringAdjust;
-            Drive.setOpenLoop(leftOutput, rightOutput);
+
+            Drive.terribleDrive(joystickY, joystickR + steeringAdjust, true);
         } else if (quickTurn) {
-            Drive.driverControl(-m_forward.getAsDouble() * 0.5, m_rotation.getAsDouble(), quickTurn);
+            Drive.terribleDrive(joystickY * 0.5, joystickR, quickTurn);
         } else {
-            Drive.driverControl(-m_forward.getAsDouble() * Math.abs(m_forward.getAsDouble()),
-                    m_rotation.getAsDouble() * 0.5, quickTurn);
+            Drive.terribleDrive(joystickY * Math.abs(joystickY), joystickR * 0.5, quickTurn);
         }
     }
 
