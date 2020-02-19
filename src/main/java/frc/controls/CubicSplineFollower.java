@@ -30,6 +30,8 @@ public class CubicSplineFollower {
 
     private static final double kMaxAccelDefault = 0.05; // m/s^2 * 200
     private double kMaxAccel;
+    private static final double kSlowdownRadiusCritical = 1.3;
+    private static final double kMinApproachSpeedCritical = 0.2;
     private static final double kRadiusCriticalDefault = 0.05; // m
     private double kRadiusCritical; // m
     private static final double kScaleRadiusPathDefault = 0.1; // constant
@@ -81,12 +83,12 @@ public class CubicSplineFollower {
         ffSpeed = curWaypoint.kSpeed;
         if (curWaypoint.isCritical) { // important to be at exactly
 
-            if (distanceFromWaypoint < Math.abs(ffSpeed) * 1.2) {
+            if (distanceFromWaypoint < Math.abs(ffSpeed) * kSlowdownRadiusCritical) {
                 // speed reduces as distance gets smaller
                 // TODO This is probably unnecesarry since FPID should be used now
-                ffSpeed = Math.copySign(distanceFromWaypoint / 1.2, ffSpeed);
-                if (Math.abs(ffSpeed) < 0.25) {
-                    ffSpeed = Math.copySign(0.25, ffSpeed);
+                ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadiusCritical, ffSpeed);
+                if (Math.abs(ffSpeed) < kMinApproachSpeedCritical) {
+                    ffSpeed = Math.copySign(kMinApproachSpeedCritical, ffSpeed);
                 }
             }
             if (distanceFromWaypoint < kRadiusCritical || isFinished) {
