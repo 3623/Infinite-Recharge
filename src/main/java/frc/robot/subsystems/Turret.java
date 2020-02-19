@@ -27,6 +27,7 @@ public class Turret extends SubsystemBase {
 
     public Turret() {
         turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
+        turretMotor.configFactoryDefault();
         turretMotor.setInverted(false);
         turretMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -66,5 +67,9 @@ public class Turret extends SubsystemBase {
 
     public void zero() {
         turretMotor.setSelectedSensorPosition(0);
+    }
+
+    public void stop() {
+        turretMotor.disable();
     }
 }
