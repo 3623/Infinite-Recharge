@@ -43,12 +43,6 @@ public class Shooter extends SubsystemBase {
   public boolean atSpeed = false;
   public boolean readyToFire = false;
 
-  private ShooterState state = ShooterState.IDLE;
-
-  private enum ShooterState {
-    IDLE, REVVING_UP, READY_TO_FIRE, RETURNING_TO_IDLE,
-  }
-
   ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
   private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter PID System", shooterPID)
       .withWidget(BuiltInWidgets.kPIDController).getEntry();
