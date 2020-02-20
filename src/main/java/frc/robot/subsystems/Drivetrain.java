@@ -15,6 +15,7 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -48,6 +49,10 @@ public class Drivetrain extends SubsystemBase {
 	private static final double ENCODER_TICKS_PER_REV = 8192.0;
 
 	public CubicSplineFollower waypointNav;
+
+	private static final double MAX_CURRENT = 30.0; // TODO tune this until no slipping
+	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
+			MAX_CURRENT, 0.05);
 
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
@@ -93,19 +98,14 @@ public class Drivetrain extends SubsystemBase {
 		leftMotorMaster.setInverted(false);
 		rightMotorFollower.setInverted(InvertType.FollowMaster);
 		leftMotorFollower.setInverted(InvertType.FollowMaster);
+		setBrakeMode(true);
 		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
 		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);
-		// TODO this might be better
+		// TODO bring up sensors
 		// TODO set phase for the encoders
 
-		// BANANA TODO current limiting? (This conrols max force and prevents slipping
-		// ..)
-		// talon.configPeakCurrentLimit(30); // don't activate current limit until
-		// current exceeds 30 A ...
-		// talon.configPeakCurrentDuration(100); // ... for at least 100 ms
-		// talon.configContinuousCurrentLimit(20); // once current-limiting is actived,
-		// hold at 20A
-		// talon.enableCurrentLimit(true);
+		leftMotorMaster.configStatorCurrentLimit(currentLimiter);
+		rightMotorMaster.configStatorCurrentLimit(currentLimiter);
 
 		leftMotorMaster.config_kF(PIDIDX, kFF);
 		leftMotorMaster.config_kP(PIDIDX, kP);
@@ -341,7 +341,6 @@ public class Drivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Drivetrain Model Y", model.center.y);
 		SmartDashboard.putNumber("Heading", model.center.heading);
 		SmartDashboard.putNumber("Radians", model.center.r);
-		// SmartDashboard.putNumber("Drivetrain Heading", navx.getAngle());
 	}
 
 	public static void main(String[] args) throws IOException {
