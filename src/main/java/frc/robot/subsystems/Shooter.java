@@ -13,7 +13,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.subsystems.Turret;
-
+import frc.util.Utils;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -26,12 +26,22 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   private final int UPDATE_RATE = 70;
+
   private CANSparkMax shooterMaster, shooterFollower;
   private CANPIDController shooterPID;
-  private Turret turret;
+  private CANEncoder shootEncoder;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
-  public boolean targetAcquired;
+  private Turret turret;
+
+  private double speedSetpoint = 0.0;
+  private static final double AIM_THRESHOLD = 2.0;
+  private static final double SPEED_THRESHOLD = 100.0;
+
+  public boolean targetAcquired = false;
+  public boolean aimed = false;
+  public boolean atSpeed = false;
+  public boolean readyToFire = false;
 
   private ShooterState state = ShooterState.IDLE;
 
@@ -44,19 +54,18 @@ public class Shooter extends SubsystemBase {
       .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight");
-  // The Limelight Vision system posts several useful bits of data to Network
-  // Tables.
   NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
-  double x, y, area, valid;
+  double x, y, area;
 
   public Shooter() {
     shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
     shooterFollower = new CANSparkMax(2, MotorType.kBrushless);
     shooterFollower.follow(shooterMaster, true);
     shooterPID = shooterMaster.getPIDController();
+    shootEncoder = shooterMaster.getEncoder();
 
     kP = 6e-5; // BANANA why is this not outside of constructor?
     kI = 0;
@@ -80,7 +89,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void runShooterPID(double RPM) {
-    shooterPID.setReference(RPM, ControlType.kVelocity);
+    speedSetpoint = RPM;
+    shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
 
   private void updateThreadStart() {
@@ -102,8 +112,19 @@ public class Shooter extends SubsystemBase {
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
-    valid = tv.getDouble(0.0);
+    targetAcquired = tv.getBoolean(false);
     this.monitor();
+    aimed = isAimed(x) && targetAcquired;
+    atSpeed = isAtSpeed();
+    readyToFire = aimed && atSpeed;
+  }
+
+  private Boolean isAimed(double offset) {
+    return Utils.withinThreshold(x, 0.0, AIM_THRESHOLD);
+  }
+
+  private Boolean isAtSpeed() {
+    return Utils.withinThreshold(shootEncoder.getVelocity(), speedSetpoint, SPEED_THRESHOLD);
   }
 
   private void monitor() {
