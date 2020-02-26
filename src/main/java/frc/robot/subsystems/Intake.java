@@ -8,8 +8,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 /**
- * An example subsystem.  You can replace me with your own Subsystem.
+ * An example subsystem. You can replace me with your own Subsystem.
  */
 public class Intake extends SubsystemBase {
   // Put methods for controlling this subsystem
@@ -33,24 +33,17 @@ public class Intake extends SubsystemBase {
     collectorDrop = new Solenoid(IntakeConstants.INTAKE_DROP_SOLENOID);
   }
 
-  public void dropCollector(){
-    collectorDrop.set(true);
+  public void setIntaking(Boolean intaking) {
+    if (intaking) {
+      collectorDrop.set(true);
+      setSpeed(INTAKE_SPEED);
+    } else {
+      collectorDrop.set(false);
+      collector.disable();
+    }
   }
 
-  public void raiseCollector(){
-    collectorDrop.set(false);
-  }
-
-  public void runCollector(double collectorSpeed){
+  private void setSpeed(double collectorSpeed) {
     collector.set(ControlMode.PercentOutput, collectorSpeed);
   }
-
-  public void stopCollector(){
-    collector.set(ControlMode.PercentOutput, 0.0);
-  }
-
-  public boolean collectorStatus(){
-    return collectorDrop.get();
-  }
-
 }
