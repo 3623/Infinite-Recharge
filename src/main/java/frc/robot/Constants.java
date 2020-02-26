@@ -19,10 +19,10 @@ package frc.robot;
  */
 public final class Constants {
     public static final class DrivetrainConstants{
-        public static int RIGHT_MOTOR_ONE = 0;
-        public static int RIGHT_MOTOR_TWO = 1;
-        public static int LEFT_MOTOR_ONE = 2;
-        public static int LEFT_MOTOR_TWO = 3;
+        public static int RIGHT_MOTOR_ONE = 1;
+        public static int RIGHT_MOTOR_TWO = 2;
+        public static int LEFT_MOTOR_ONE = 3;
+        public static int LEFT_MOTOR_TWO = 4;
         public static int ENCODER_LEFT_A = 0;
         public static int ENCODER_LEFT_B = 1;
         public static int ENCODER_RIGHT_A = 2;
@@ -32,7 +32,7 @@ public final class Constants {
     public static final class ShooterConstants {
         public static int SHOOTER_LEFT_MOTOR_NEO = 1;
         public static int SHOOTER_RIGHT_MOTOR_NEO = 2;
-        public static int SHOOTER_TURRET_MOTOR_SRX = 1;
+        public static int SHOOTER_TURRET_MOTOR_SRX = 5;
         public static int SHOOTER_HOOD_MOTOR_SPX = 1;
         // Limelight Pipeline Constants
         public static int CONTROL_PANEL_REAR_PIPELINE = 0;
@@ -49,9 +49,8 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static int INTAKE_COLLECTOR_MOTOR_SPX = 2;
-        public static int INTAKE_DROP_MOTOR_SPX = 3;
         public static int INTAKE_DROP_SOLENOID = 4;
-        public static int INTAKE_INDEXER_MOTOR_SRX = 2;
+        public static int INTAKE_ELEVATOR_MOTOR_SRX = 6;
     }
 
     public static final class SpinnerConstants {
@@ -63,8 +62,10 @@ public final class Constants {
     }
 
     public static final class ClimberConstants {
-        public static int CLIMBER_LOCK_SOLENOID = 2;
-        public static int CLIMBER_PTO_SOLENOID = 3;
+        public static int CLIMBER_LOCK_SOLENOID_LEFT = 2;
+        public static int CLIMBER_PTO_SOLENOID_LEFT = 4;
+        public static int CLIMBER_LOCK_SOLENOID_RIGHT = 3;
+        public static int CLIMBER_PTO_SOLENOID_RIGHT = 5;
     }
 
     public static final class IOConstants {

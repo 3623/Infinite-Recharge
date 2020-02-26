@@ -19,38 +19,24 @@ import frc.robot.Constants.IntakeConstants;
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
  */
-public class Intake extends SubsystemBase {
+public class Elevator extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private VictorSPX collector;
+  private TalonSRX elevatorSRX;
 
-  private Solenoid collectorDrop;
+  private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4, ballSensor5;
 
-  public Intake(){
-    collector = new VictorSPX(IntakeConstants.INTAKE_COLLECTOR_MOTOR_SPX);
-
-    collectorDrop = new Solenoid(IntakeConstants.INTAKE_DROP_SOLENOID);
+  public Elevator(){
+    elevatorSRX = new TalonSRX(IntakeConstants.INTAKE_ELEVATOR_MOTOR_SRX);
   }
 
-  public void dropCollector(){
-    collectorDrop.set(true);
+  public void runElevator(double elevatorSpeed){
+    elevatorSRX.set(ControlMode.PercentOutput, elevatorSpeed);
   }
 
-  public void raiseCollector(){
-    collectorDrop.set(false);
-  }
-
-  public void runCollector(double collectorSpeed){
-    collector.set(ControlMode.PercentOutput, collectorSpeed);
-  }
-
-  public void stopCollector(){
-    collector.set(ControlMode.PercentOutput, 0.0);
-  }
-
-  public boolean collectorStatus(){
-    return collectorDrop.get();
+  public void stopElevator(){
+    elevatorSRX.set(ControlMode.PercentOutput, 0.0);
   }
 
 }

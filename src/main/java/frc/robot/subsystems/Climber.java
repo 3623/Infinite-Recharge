@@ -18,37 +18,57 @@ import frc.robot.Constants.ClimberConstants;
 public class Climber extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private Solenoid PTO;
-  private Solenoid climberLock;
+  private Solenoid PTOLeft, PTORight;
+  private Solenoid climberLockLeft, climberLockRight;
   
 
   public Climber(){
-    PTO = new Solenoid(ClimberConstants.CLIMBER_PTO_SOLENOID);
-    climberLock = new Solenoid(ClimberConstants.CLIMBER_LOCK_SOLENOID);
+    PTOLeft = new Solenoid(ClimberConstants.CLIMBER_PTO_SOLENOID_LEFT);
+    PTORight = new Solenoid(ClimberConstants.CLIMBER_PTO_SOLENOID_RIGHT);
+    climberLockLeft = new Solenoid(ClimberConstants.CLIMBER_LOCK_SOLENOID_LEFT);
+    climberLockRight = new Solenoid(ClimberConstants.CLIMBER_LOCK_SOLENOID_RIGHT);
   }
 
   public void lock(){
-    climberLock.set(true);
+    climberLockLeft.set(true);
+    climberLockRight.set(true);
   }
 
-  public void release(){
-    climberLock.set(false);
+  public void releaseLeft(){
+    climberLockLeft.set(false);
+  }
+
+  public void releaseRight(){
+    climberLockRight.set(false);
   }
 
   public void engagePTO(){
-    PTO.set(true);
+    PTOLeft.set(true);
+    PTORight.set(true);
   }
 
-  public void disengagePTO(){
-    PTO.set(false);
+  public void disengagePTOLeft(){
+    PTOLeft.set(false);
   }
 
-  public boolean climberLockStatus(){
-    return climberLock.get();
+  public void disengagePTORight(){
+    PTORight.set(false);
   }
 
-  public boolean PTOStatus(){
-    return PTO.get();
+  public boolean climberLockLeftStatus(){
+    return climberLockLeft.get();
+  }
+
+  public boolean climberLockRightStatus(){
+    return climberLockRight.get();
+  }
+
+  public boolean PTOLeftStatus(){
+    return PTOLeft.get();
+  }
+
+  public boolean PTORightStatus(){
+    return PTORight.get();
   }
 
 }

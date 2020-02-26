@@ -38,6 +38,7 @@ public class RobotContainer {
   private final Shifter shifter = new Shifter();
   private final Shooter shooter = new Shooter();
   private final Spinner spinner = new Spinner();
+  private final Elevator elevator = new Elevator();
 
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
   public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
@@ -51,7 +52,9 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    driverB = new JoystickButton(driver, XboxController.Button.kB.value);
+
+    intake.setDefaultCommand(new RunCommand(() -> intake.runCollector(driver.getTriggerAxis(Hand.kRight))));
+    elevator.setDefaultCommand(new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft)/2)));
 
     drivetrain.setDefaultCommand(
       new DriverControl(
@@ -61,6 +64,8 @@ public class RobotContainer {
         () -> driverB.get())); 
       // Configure the button bindings, tying button presses to commands.
       configureButtonBindings();
+
+      
   }
 
   /**
@@ -79,6 +84,16 @@ public class RobotContainer {
     // Zero Sensors. Inline Command Declaration.
     driverX = new JoystickButton(driver, Button.kX.value);
     driverX.whenPressed(new InstantCommand(drivetrain::zeroSensors,drivetrain));
+
+    // Drop Intake. On Driver's Control
+    driverA = new JoystickButton(driver, Button.kA.value);
+    driverA.whenPressed(new ConditionalCommand(
+                          new InstantCommand(intake::raiseCollector, intake),
+                          new InstantCommand(intake::dropCollector, intake),
+                          intake::collectorStatus));
+
+    operatorX = new JoystickButton(operator, Button.kX.value);
+    operatorX.whileHeld(new spitBallsOut(intake, elevator));
   }
 
 
