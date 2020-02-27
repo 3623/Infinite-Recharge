@@ -46,8 +46,8 @@ public class Shooter extends SubsystemBase {
   public boolean readyToFire = false;
 
   ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
-  private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter PID System", shooterPID)
-      .withWidget(BuiltInWidgets.kPIDController).getEntry();
+  //private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter PID System", shooterPID)
+     // .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)

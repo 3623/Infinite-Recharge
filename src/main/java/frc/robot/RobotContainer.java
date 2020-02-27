@@ -53,15 +53,15 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    intake.setDefaultCommand(new RunCommand(() -> intake.runCollector(driver.getTriggerAxis(Hand.kRight))));
-    elevator.setDefaultCommand(new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft)/2)));
+    //intake.setDefaultCommand(new RunCommand(() -> intake.runCollector(driver.getTriggerAxis(Hand.kRight))));
+    //elevator.setDefaultCommand(new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft)/2)));
 
     drivetrain.setDefaultCommand(
       new DriverControl(
         drivetrain, 
         () -> driver.getY(Hand.kLeft), 
-        () -> driver.getX(Hand.kRight),
-        () -> driverB.get())); 
+        () -> driver.getX(Hand.kRight)));
+        //() -> driverB.get())); 
       // Configure the button bindings, tying button presses to commands.
       configureButtonBindings();
 
@@ -87,13 +87,13 @@ public class RobotContainer {
 
     // Drop Intake. On Driver's Control
     driverA = new JoystickButton(driver, Button.kA.value);
-    driverA.whenPressed(new ConditionalCommand(
-                          new InstantCommand(intake::raiseCollector, intake),
-                          new InstantCommand(intake::dropCollector, intake),
-                          intake::collectorStatus));
+    //driverA.whenPressed(new ConditionalCommand(
+    //                      new InstantCommand(intake::raiseCollector, intake),
+      //                    new InstantCommand(intake::dropCollector, intake),
+        //                  intake::collectorStatus));
 
-    operatorX = new JoystickButton(operator, Button.kX.value);
-    operatorX.whileHeld(new spitBallsOut(intake, elevator));
+    //operatorX = new JoystickButton(operator, Button.kX.value);
+    //operatorX.whileHeld(new spitBallsOut(intake, elevator));
   }
 
 
