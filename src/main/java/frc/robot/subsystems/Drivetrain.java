@@ -63,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
 
 	double time;
 
-	AHRS NavX;
+	public AHRS NavX;
 
 	private DriveControlState controlState = DriveControlState.DISABLED;
 

@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
   private Turret turret;
-  private WPI_TalonSRX feeder;
+  //private WPI_TalonSRX feeder;
 
   private double speedSetpoint = 0.0;
   private static final double AIM_THRESHOLD = 2.0;
@@ -80,7 +80,7 @@ public class Shooter extends SubsystemBase {
     shooterPID.setOutputRange(kMinOutput, kMaxOutput);
 
     turret = new Turret();
-    feeder = new WPI_TalonSRX(deviceNumber)
+    //feeder = new WPI_TalonSRX(deviceNumber)
 
     this.updateThreadStart();
   }

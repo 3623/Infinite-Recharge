@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.*;
 
 public class Turret extends SubsystemBase {
     WPI_TalonSRX turretMotor;
@@ -24,6 +25,8 @@ public class Turret extends SubsystemBase {
     private static final double kI = kP / 1000.0;
     private static final double kD = 0.01;
     private static final double DEADBAND = 3.0;
+
+    private Drivetrain dt;
 
     public Turret() {
         turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
@@ -43,6 +46,7 @@ public class Turret extends SubsystemBase {
         turretMotor.config_kD(0, kD);
         turretMotor.config_kI(0, kI);
 
+        dt = new Drivetrain();
     }
 
     public void monitor() {
