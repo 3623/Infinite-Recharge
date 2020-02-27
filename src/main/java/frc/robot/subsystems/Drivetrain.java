@@ -24,11 +24,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -137,13 +134,13 @@ public class Drivetrain extends SubsystemBase {
 		mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
 
 		switch (controlState) {
-		case OPEN_LOOP:
-			break;
-		case PATH_FOLLOWING:
-			driveWaypointNavigator();
-			break;
-		case DISABLED:
-			break;
+			case OPEN_LOOP:
+				break;
+			case PATH_FOLLOWING:
+				driveWaypointNavigator();
+				break;
+			case DISABLED:
+				break;
 		}
 	}
 
