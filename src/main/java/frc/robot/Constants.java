@@ -49,7 +49,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static int INTAKE_COLLECTOR_MOTOR_SPX = 2;
-        public static int INTAKE_DROP_SOLENOID = 4;
+        public static int INTAKE_DROP_SOLENOID = 6;
         public static int INTAKE_ELEVATOR_MOTOR_SRX = 6;
     }
 

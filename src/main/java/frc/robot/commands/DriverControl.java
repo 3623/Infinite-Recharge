@@ -21,7 +21,6 @@ public class DriverControl extends CommandBase {
     private final Drivetrain Drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
-    private final BooleanSupplier m_seekTarget;
     NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight"); // The Limelight Vision system posts
                                                                                  // several useful bits
                                                                                  // of data to Network Tables.
@@ -31,11 +30,10 @@ public class DriverControl extends CommandBase {
     private final double kP = -0.1; // proportional control for target seeking
     private final double minCommand = 0.05; // apply minimum to make bot move as output approaches 0;
 
-    public DriverControl(Drivetrain DT, DoubleSupplier forward, DoubleSupplier rotation, BooleanSupplier seekTarget) {
+    public DriverControl(Drivetrain DT, DoubleSupplier forward, DoubleSupplier rotation) {
         Drive = DT;
         m_forward = forward;
         m_rotation = rotation;
-        m_seekTarget = seekTarget;
         addRequirements(Drive);
     }
 
@@ -55,15 +53,15 @@ public class DriverControl extends CommandBase {
         else
             quickTurn = false;
 
-        if (m_seekTarget.getAsBoolean()) {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
-                    .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
-        } else {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
-                    .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
-        }
+        //if (m_seekTarget.getAsBoolean()) {
+        //    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+        //            .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
+        //} else {
+        //    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+        //            .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+        //}
 
-        if (m_seekTarget.getAsBoolean() && tv.getDouble(0.0) > 0) {
+        /*if (m_seekTarget.getAsBoolean() && tv.getDouble(0.0) > 0) {
             double x = tx.getDouble(0.0);
             double headingError = -tx.getDouble(0.0);
             double steeringAdjust = 0.0;
@@ -74,7 +72,7 @@ public class DriverControl extends CommandBase {
             }
 
             Drive.terribleDrive(joystickY, joystickR + steeringAdjust, true);
-        } else if (quickTurn) {
+        } else*/ if (quickTurn) {
             Drive.terribleDrive(joystickY * 0.5, joystickR, quickTurn);
         } else {
             Drive.terribleDrive(joystickY * Math.abs(joystickY), joystickR * 0.5, quickTurn);

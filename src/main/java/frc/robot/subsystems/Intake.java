@@ -36,10 +36,10 @@ public class Intake extends SubsystemBase {
   public void setIntaking(Boolean intaking) {
     if (intaking) {
       collectorDrop.set(true);
-      setSpeed(INTAKE_SPEED);
+      //setSpeed(INTAKE_SPEED);
     } else {
       collectorDrop.set(false);
-      collector.disable();
+      //collector.disable();
     }
   }
 
