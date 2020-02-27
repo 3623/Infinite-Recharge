@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -23,12 +22,15 @@ public class Intake extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private VictorSPX collector;
+  private static final double INTAKE_SPEED = 1.0;
+  private WPI_VictorSPX collector;
 
   private Solenoid collectorDrop;
 
-  public Intake(){
-    collector = new VictorSPX(IntakeConstants.INTAKE_COLLECTOR_MOTOR_SPX);
+  private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4, ballSensor5;
+
+  public Intake() {
+    collector = new WPI_VictorSPX(IntakeConstants.INTAKE_COLLECTOR_MOTOR_SPX);
 
     collectorDrop = new Solenoid(IntakeConstants.INTAKE_DROP_SOLENOID);
   }
