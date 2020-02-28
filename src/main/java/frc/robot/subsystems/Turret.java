@@ -15,8 +15,8 @@ import frc.robot.subsystems.*;
 
 public class Turret extends SubsystemBase {
     WPI_TalonSRX turretMotor;
-    private static final double TICKS_PER_ENCODER_REV = 8148.0;
-    private static final double ENCODER_REVS_PER_TURRET_REV = 15.0;
+    private static final double TICKS_PER_ENCODER_REV = 2048.0;
+    private static final double ENCODER_REVS_PER_TURRET_REV = 18.0 / 196.0;
 
     private double MAX_GOAL = 180.0;
     private double MIN_GOAL = -180.0;
@@ -24,8 +24,10 @@ public class Turret extends SubsystemBase {
     private static final double kP = 1023.0 * 0.65 / (double) degreesToTalonUnits(360.0);
     private static final double kI = kP / 1000.0;
     private static final double kD = 0.01;
-    private static final double DEADBAND = 3.0;
+    private static final double DEADBAND = 1.5;
 
+
+    private double setAngle = 0.0;
 
     public Turret() {
         turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
@@ -53,13 +55,20 @@ public class Turret extends SubsystemBase {
     }
 
     private static int degreesToTalonUnits(double degrees) {
-        // TODO
-        return 0;
+        double turretRevs = degrees / 360.0;
+        double encoderRevs = turretRevs * ENCODER_REVS_PER_TURRET_REV;
+        double encoderTicks = encoderRevs * TICKS_PER_ENCODER_REV;
+        return (int) encoderTicks; // BANANA check this
     }
 
     public Boolean setAngle(double angle) {
-        turretMotor.set(ControlMode.Position, degreesToTalonUnits(angle));
+        setAngle = degreesToTalonUnits(angle);
+        turretMotor.set(ControlMode.Position, setAngle);
         return atTarget();
+    }
+
+    public Double getAngle() {
+        return setAngle; // BANANA TODO
     }
 
     private Boolean atTarget() {

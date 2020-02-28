@@ -33,8 +33,9 @@ public class Shooter extends SubsystemBase {
   private CANEncoder shootEncoder;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
-  private Turret turret;
-  //private WPI_TalonSRX feeder;
+  public Turret turret;
+  public Elevator elevator;
+  // public Hood hood;
 
   private double speedSetpoint = 0.0;
   private static final double AIM_THRESHOLD = 2.0;
@@ -46,15 +47,16 @@ public class Shooter extends SubsystemBase {
   public boolean readyToFire = false;
 
   ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
-  //private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter PID System", shooterPID)
-     // .withWidget(BuiltInWidgets.kPIDController).getEntry();
+  // private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter
+  // PID System", shooterPID)
+  // .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
   NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
-  double x, y, area;
+  public double x, y, area;
 
   public Shooter() {
     shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
@@ -80,7 +82,7 @@ public class Shooter extends SubsystemBase {
     shooterPID.setOutputRange(kMinOutput, kMaxOutput);
 
     turret = new Turret();
-    //feeder = new WPI_TalonSRX(deviceNumber)
+    // feeder = new WPI_TalonSRX(deviceNumber)
 
     this.updateThreadStart();
   }
@@ -126,5 +128,15 @@ public class Shooter extends SubsystemBase {
 
   private void monitor() {
 
+  }
+
+  public void setLimelightLED(Boolean on) {
+    if (on) {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+          .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_ON);
+    } else {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
+          .setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+    }
   }
 }
