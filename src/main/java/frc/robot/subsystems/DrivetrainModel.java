@@ -19,7 +19,7 @@ import frc.util.Utils;
 public class DrivetrainModel {
 
 	private static final double DRIVETRAIN_MASS = 63.5; // kg
-	public static final double MAX_SPEED = 3.3;
+	public static final double MAX_SPEED = 2.4;
 	public static final double WHEEL_BASE = 0.68; // meters
 	private static final double CENTER_MASS = 0.335; // from left wheel
 	private Boolean COAST_MODE = false;
