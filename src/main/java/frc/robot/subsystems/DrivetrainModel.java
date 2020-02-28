@@ -177,6 +177,7 @@ public class DrivetrainModel {
 	 *
 	 * @param unchecked output voltage
 	 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
+	 * @deprecated
 	 */
 	public Tuple limitAcceleration(double leftOut, double rightOut) {
 		return limitAcceleration(new Tuple(leftOut, rightOut));
@@ -237,6 +238,7 @@ public class DrivetrainModel {
 		 *
 		 * @param unchecked output voltage
 		 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
+		 * @deprecated
 		 */
 		protected double limitAcceleration(double outputVoltage) {
 			double motorSpeed = this.wheelSpeedToMotorSpeed(this.velocity);
