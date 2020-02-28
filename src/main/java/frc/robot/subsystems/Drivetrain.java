@@ -47,7 +47,7 @@ public class Drivetrain extends SubsystemBase {
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 30.0; // TODO tune this until no slipping
+	private static final double MAX_CURRENT = 55.0; // BANANA i think this is closer
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
 			MAX_CURRENT, 0.05);
 
