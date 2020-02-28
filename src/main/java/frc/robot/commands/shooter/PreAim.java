@@ -11,13 +11,11 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 
 public class PreAim extends CommandBase {
-    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private static Shooter shooterSystem;
     private static DoubleSupplier robotHeading;
 
