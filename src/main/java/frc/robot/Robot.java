@@ -34,8 +34,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big, Limelight Output small
     Shuffleboard.selectTab("Pre-Match");
   }
 
@@ -73,6 +71,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Shuffleboard.selectTab("Auto Telemetry");
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big, Limelight Output small
     Shuffleboard.startRecording();
     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -99,6 +99,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     Shuffleboard.selectTab("In-Match");
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big, Limelight Output small
   }
 
   /**
@@ -106,6 +108,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    
   }
 
   @Override
