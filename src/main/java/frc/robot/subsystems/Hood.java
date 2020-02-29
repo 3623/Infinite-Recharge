@@ -55,16 +55,8 @@ public class Hood extends PIDSubsystem {
         setPosition(this.getMeasurement() + offSet);
     }
 
-    public Boolean atTarget() {
-        return getController().atSetpoint();
-    }
-
     public void zero() {
         encoder.reset();
-    }
-
-    public void stop() {
-        motor.disable();
     }
 
     @Override

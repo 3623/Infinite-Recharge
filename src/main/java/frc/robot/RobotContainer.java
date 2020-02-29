@@ -14,12 +14,15 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.*;
+import frc.robot.commands.shooter.PreAim;
+import frc.robot.commands.shooter.VisionAim;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.IOConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -53,9 +56,12 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
+    intake.setDefaultCommand(new RunCommand(() -> intake.setIntaking(false)));
     elevator.setDefaultCommand(
         new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), elevator));
+
+    shooter.hood.setDefaultCommand(new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight))));
+    shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.setOffset(4.0 * operator.getX(Hand.kLeft))));
 
     drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
@@ -83,7 +89,12 @@ public class RobotContainer {
 
     // Drop Intake. On Driver's Control
     driverA = new JoystickButton(driver, Button.kA.value);
-    driverA.whileHeld(new RunCommand((->)));
+    driverA.whileHeld(new RunCommand(() -> intake.setIntaking(true)));
+
+    // Shooter Command
+    operatorY = new JoystickButton(operator, Button.kY.value);
+    operatorY.whenHeld(new SequentialCommandGroup(new PreAim(shooter, () -> drivetrain.model.center.heading),
+        new VisionAim(shooter, () -> drivetrain.model.center.heading, true)));
 
     operatorX = new JoystickButton(operator, Button.kX.value);
     operatorX.whileHeld(new spitBallsOut(intake, elevator));
