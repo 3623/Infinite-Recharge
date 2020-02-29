@@ -60,6 +60,9 @@ public class RobotContainer {
     elevator.setDefaultCommand(
         new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), elevator));
 
+    shooter.hood.enable();
+    shooter.turret.enable();
+
     shooter.hood.setDefaultCommand(new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight))));
     shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.setOffset(4.0 * operator.getX(Hand.kLeft))));
 
