@@ -36,14 +36,11 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.util.*;
 
 public class Drivetrain extends SubsystemBase {
-	// Put methods for controlling this subsystem
-	// here. Call these from Commands.
-
 	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
 
 	private final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private static final double ENCODER_TICKS_PER_REV = 8192.0; // TODO this could be 2048 CHECK
+	private static final double ENCODER_TICKS_PER_REV = 2048.0; // TODO this could be 2048 CHECK
 
 	public CubicSplineFollower waypointNav;
 
@@ -302,7 +299,7 @@ public class Drivetrain extends SubsystemBase {
 
 	private void setSpeed(double left, double right) {
 		double leftTalonSpeed = linearSpeedToTalonSpeed(left);
-		double rightTalonSpeed = linearSpeedToTalonSpeed(left);
+		double rightTalonSpeed = linearSpeedToTalonSpeed(right);
 		leftMotorMaster.set(ControlMode.Velocity, leftTalonSpeed);
 		rightMotorMaster.set(ControlMode.Velocity, rightTalonSpeed);
 	}

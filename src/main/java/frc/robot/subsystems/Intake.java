@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase {
     collectorDrop = new Solenoid(IntakeConstants.INTAKE_DROP_SOLENOID);
   }
 
-  public void setIntaking() {
-    if (!collectorStatus()) {
+  public void setIntaking(Boolean intake) {
+    if (intake) {
       collectorDrop.set(true);
       setSpeed(INTAKE_SPEED);
     } else {
@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
     collector.set(ControlMode.PercentOutput, collectorSpeed);
   }
 
-  public boolean collectorStatus(){
+  public boolean collectorStatus() {
     return collectorDrop.get();
   }
 }

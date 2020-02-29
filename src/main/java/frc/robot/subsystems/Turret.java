@@ -106,11 +106,12 @@ public class Turret extends PIDSubsystem {
         getController().setTolerance(DEADBAND);
 
         turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
+        turretMotor.setNeutralMode(NeutralMode.Brake);
         turretEncoder.setDistancePerPulse(1.0 / degreesToTalonUnits(1.0));
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Turret Angle", this.getAngle());
+        SmartDashboard.putNumber("Turret Angle", this.getMeasurement());
         SmartDashboard.putNumber("Turret Output", (int) turretMotor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Turret Error", getController().getPositionError());
     }
@@ -123,24 +124,25 @@ public class Turret extends PIDSubsystem {
     }
 
     public void setAngle(double angle) {
+        if (angle > MAX_GOAL) {
+            angle = MAX_GOAL;
+        } else if (angle < MIN_GOAL) {
+            angle = MIN_GOAL;
+        }
         setAngle = angle;
         setSetpoint(angle);
+    }
+
+    public void setOffset(double offset) {
+        setAngle(this.getMeasurement() + offset);
     }
 
     public Double getAngle() {
         return this.getMeasurement(); // BANANA TODO
     }
 
-    public Boolean atTarget() {
-        return getController().atSetpoint();
-    }
-
     public void zero() {
         turretEncoder.reset();
-    }
-
-    public void stop() {
-        turretMotor.disable();
     }
 
     @Override

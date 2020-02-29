@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
 
   public Turret turret;
   public Elevator elevator;
-  // public Hood hood;
+  public Hood hood;
 
   private double speedSetpoint = 0.0;
   private static final double AIM_THRESHOLD = 2.0;
@@ -58,11 +58,8 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
-  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match")
-    .add("Shooter RPM", 0)
-    .withWidget(BuiltInWidgets.kDial)
-    .withProperties(Map.of("min",0,"max",11050))
-    .getEntry();
+  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match").add("Shooter RPM", 0).withWidget(BuiltInWidgets.kDial)
+      .withProperties(Map.of("min", 0, "max", 11050)).getEntry();
   public double x, y, area;
 
   public Shooter() {
@@ -89,13 +86,14 @@ public class Shooter extends SubsystemBase {
     shooterPID.setOutputRange(kMinOutput, kMaxOutput);
 
     turret = new Turret();
+    hood = new Hood();
     // feeder = new WPI_TalonSRX(deviceNumber)
 
     this.updateThreadStart();
   }
 
   public void runShooterPID(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
-    speedSetpoint = RPM*(35/18);
+    speedSetpoint = RPM * (35 / 18);
     shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
 
@@ -121,6 +119,7 @@ public class Shooter extends SubsystemBase {
     targetAcquired = tv.getBoolean(false);
     this.monitor();
     turret.monitor();
+    hood.monitor();
     aimed = isAimed(x) && targetAcquired;
     atSpeed = isAtSpeed();
     readyToFire = aimed && atSpeed;
