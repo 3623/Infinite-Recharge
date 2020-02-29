@@ -87,7 +87,7 @@ public class Shooter extends SubsystemBase {
     this.updateThreadStart();
   }
 
-  public void runShooterPID(double RPM) {
+  public void runShooterPID(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
     speedSetpoint = RPM*(35/18);
     shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
