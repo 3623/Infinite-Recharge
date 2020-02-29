@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -56,6 +58,11 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
+  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match")
+    .add("Shooter RPM", 0)
+    .withWidget(BuiltInWidgets.kDial)
+    .withProperties(Map.of("min",0,"max",11050))
+    .getEntry();
   public double x, y, area;
 
   public Shooter() {
@@ -87,8 +94,8 @@ public class Shooter extends SubsystemBase {
     this.updateThreadStart();
   }
 
-  public void runShooterPID(double RPM) {
-    speedSetpoint = RPM;
+  public void runShooterPID(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
+    speedSetpoint = RPM*(35/18);
     shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
 
@@ -113,6 +120,7 @@ public class Shooter extends SubsystemBase {
     area = ta.getDouble(0.0);
     targetAcquired = tv.getBoolean(false);
     this.monitor();
+    turret.monitor();
     aimed = isAimed(x) && targetAcquired;
     atSpeed = isAtSpeed();
     readyToFire = aimed && atSpeed;
@@ -127,7 +135,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void monitor() {
-
+    currentRPM.setNumber(speedSetpoint);
   }
 
   public void setLimelightLED(Boolean on) {
