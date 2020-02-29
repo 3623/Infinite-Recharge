@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.*;
 
 // public class Turret extends SubsystemBase {
 //     WPI_TalonSRX turretMotor;
@@ -95,9 +94,9 @@ public class Turret extends PIDSubsystem {
     private double MAX_GOAL = 180.0;
     private double MIN_GOAL = -180.0;
 
-    private static final double kP = 1023.0 * 0.65 / (double) degreesToTalonUnits(360.0);
+    private static final double kP = 0.65 / 180.0;
     private static final double kI = kP / 1000.0;
-    private static final double kD = 0.01;
+    private static final double kD = kP * 0.1;
     private static final double DEADBAND = 1.5;
 
     private double setAngle = 0.0;
@@ -123,17 +122,16 @@ public class Turret extends PIDSubsystem {
         return (int) encoderTicks; // BANANA check this
     }
 
-    public Boolean setAngle(double angle) {
+    public void setAngle(double angle) {
         setAngle = angle;
         setSetpoint(angle);
-        return atTarget();
     }
 
     public Double getAngle() {
         return this.getMeasurement(); // BANANA TODO
     }
 
-    private Boolean atTarget() {
+    public Boolean atTarget() {
         return getController().atSetpoint();
     }
 
