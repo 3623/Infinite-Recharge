@@ -1,8 +1,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -28,6 +33,12 @@ public class Hood extends PIDSubsystem {
 
     private static final double DISTANCE_PER_PULSE = 1 * 2048.0 * 24.0 / 324.0 * 45.0;
 
+    NetworkTableEntry HoodAngle = Shuffleboard.getTab("In-Match")
+        .add("Hood Angle", 0)
+        .withWidget(BuiltInWidgets.kDial)
+        .withProperties(Map.of("min",45,"max",80))
+        .getEntry();
+
     public Hood() {
         super(new PIDController(kP, kI, kD));
         getController().setTolerance(DEADBAND);
@@ -37,7 +48,7 @@ public class Hood extends PIDSubsystem {
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Hood Angle", this.getMeasurement());
+        HoodAngle.setNumber(this.getMeasurement()+45);
         SmartDashboard.putNumber("Hood Output", (int) motor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Hood Error", getController().getPositionError());
     }
