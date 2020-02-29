@@ -88,7 +88,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void runShooterPID(double RPM) {
-    speedSetpoint = RPM;
+    speedSetpoint = RPM*(35/18);
     shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
 
