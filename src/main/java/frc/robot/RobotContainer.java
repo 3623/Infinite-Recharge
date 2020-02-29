@@ -53,7 +53,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    //intake.setDefaultCommand(new RunCommand(() -> intake.runCollector(driver.getTriggerAxis(Hand.kRight))));
     elevator.setDefaultCommand(new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft)/2), elevator));
 
     drivetrain.setDefaultCommand(
@@ -91,8 +90,8 @@ public class RobotContainer {
                           new InstantCommand(intake::setIntaking, intake),
                           intake::collectorStatus));
 
-    //operatorX = new JoystickButton(operator, Button.kX.value);
-    //operatorX.whileHeld(new spitBallsOut(intake, elevator));
+    operatorX = new JoystickButton(operator, Button.kX.value);
+    operatorX.whileHeld(new spitBallsOut(intake, elevator));
   }
 
 
