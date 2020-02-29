@@ -43,13 +43,13 @@ public class Drivetrain extends SubsystemBase {
 
 	private final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private static final double ENCODER_TICKS_PER_REV = 8192.0;
+	private static final double ENCODER_TICKS_PER_REV = 8192.0; // TODO this could be 2048 CHECK
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 30.0; // TODO tune this until no slipping
+	private static final double MAX_CURRENT = 50.0; // BANANA i think this is closer
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
-			MAX_CURRENT, 0.05);
+			MAX_CURRENT, 0.01);
 
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
@@ -309,8 +309,7 @@ public class Drivetrain extends SubsystemBase {
 
 	private static double linearSpeedToTalonSpeed(double linearSpeed) {
 		double wheelRotationalSpeed = linearSpeed / DrivetrainModel.WHEEL_CIRCUMFERENCE;
-		double motorRotationalSpeed = wheelRotationalSpeed * DrivetrainModel.GEAR_RATIO;
-		double encoderRotationSpeed = motorRotationalSpeed * ENCODER_TICKS_PER_REV;
+		double encoderRotationSpeed = wheelRotationalSpeed * ENCODER_TICKS_PER_REV;
 		double talonSpeed = encoderRotationSpeed / 10.0;
 		return talonSpeed;
 	}
