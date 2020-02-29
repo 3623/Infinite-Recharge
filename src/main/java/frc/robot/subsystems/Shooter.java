@@ -120,6 +120,7 @@ public class Shooter extends SubsystemBase {
     area = ta.getDouble(0.0);
     targetAcquired = tv.getBoolean(false);
     this.monitor();
+    turret.monitor();
     aimed = isAimed(x) && targetAcquired;
     atSpeed = isAtSpeed();
     readyToFire = aimed && atSpeed;
