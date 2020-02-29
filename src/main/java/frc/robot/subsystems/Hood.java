@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,23 +17,22 @@ public class Hood extends PIDSubsystem {
 
     private Encoder encoder;
     private static final double TICKS_PER_ENCODER_REV = 2048.0;
-    private static final double ENCODER_REVS_PER_TURRET_REV = 18.0 / 196.0;
+    private static final double DISTANCE_PER_PULSE = 1.0 / TICKS_PER_ENCODER_REV * 24.0 / 40.5 * 45.0;
 
     private double MAX_GOAL = 35.0;
     private double MIN_GOAL = 0.0;
 
     private static final double kP = 0.65 / 35.0;
     private static final double kI = kP / 1000.0;
-    private static final double kD = 0.01;
+    private static final double kD = kP * 0.1;
     private static final double DEADBAND = 1.5;
-
-    private static final double DISTANCE_PER_PULSE = 1 * 2048.0 * 24.0 / 324.0 * 45.0;
 
     public Hood() {
         super(new PIDController(kP, kI, kD));
         getController().setTolerance(DEADBAND);
 
         motor = new WPI_VictorSPX(Constants.ShooterConstants.SHOOTER_HOOD_MOTOR_SPX);
+        motor.setNeutralMode(NeutralMode.Brake);
         encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 
