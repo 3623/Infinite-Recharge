@@ -74,7 +74,8 @@ public class Robot extends TimedRobot {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ShooterConstants.LIMELIGHT_LED_FORCE_OFF);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big, Limelight Output small
     Shuffleboard.startRecording();
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
