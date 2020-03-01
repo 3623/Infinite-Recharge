@@ -113,7 +113,8 @@ public class RobotContainer {
     operatorX.whileHeld(new spitBallsOut(intake, elevator));
 
     operatorA = new JoystickButton(operator, Button.kA.value);
-    operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterPID(11000)),true);  
+    //operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterPID(11000)),true);  
+    operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterAccumRamp(0.8), shooter));
   }
 
   /**
@@ -126,7 +127,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(
       new ParallelRaceGroup(
         new WaitCommand(4),
-        new RunCommand(() -> shooter.runShooterPID(11000), shooter)
+        new RunCommand(() -> shooter.runShooterPID(20000), shooter)
         ),
       new ParallelRaceGroup(
         new WaitCommand(8),

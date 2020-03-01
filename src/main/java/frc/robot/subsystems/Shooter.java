@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -47,6 +48,8 @@ public class Shooter extends SubsystemBase {
   public boolean aimed = false;
   public boolean atSpeed = false;
   public boolean readyToFire = false;
+
+  private double curveAccummulater;
 
   ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
   // private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter
@@ -98,6 +101,16 @@ public class Shooter extends SubsystemBase {
     shooterPID.setReference(speedSetpoint, ControlType.kVelocity);
   }
 
+  public void runShooterAccumRamp(double output){
+    if (output != 0.0){
+      curveAccummulater += 0.05*output;
+    }
+    else {
+      curveAccummulater = 0;
+    }
+    shooterMaster.set(curveAccummulater);
+  }
+
   private void updateThreadStart() {
     Thread t = new Thread(() -> {
       while (!Thread.interrupted()) {
@@ -143,10 +156,16 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  public double getVelocity() {
+    return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
+}
+
   private void monitor() {
     currentRPM.setNumber(speedSetpoint);
     SmartDashboard.putNumber("Shooter velocity", getVelocity());
   }
+
+
 
   public void setLimelightLED(Boolean on) {
     if (on) {
