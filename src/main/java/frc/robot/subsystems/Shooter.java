@@ -145,6 +145,7 @@ public class Shooter extends SubsystemBase {
 
   private void monitor() {
     currentRPM.setNumber(speedSetpoint);
+    SmartDashboard.putNumber("Shooter velocity", getVelocity());
   }
 
   public void setLimelightLED(Boolean on) {
