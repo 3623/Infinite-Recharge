@@ -56,15 +56,22 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    intake.setDefaultCommand(new RunCommand(() -> intake.setIntaking(false)));
+    intake.setDefaultCommand(new RunCommand(() -> intake.setIntaking(false), intake));
     elevator.setDefaultCommand(
         new RunCommand(() -> elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), elevator));
 
     shooter.hood.enable();
     shooter.turret.enable();
 
-    shooter.hood.setDefaultCommand(new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight))));
-    shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.setOffset(4.0 * operator.getX(Hand.kLeft))));
+    /*shooter.hood.setDefaultCommand(new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight)), shooter.hood));
+    shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.setOffset(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
+    */
+
+    shooter.hood.setDefaultCommand(new RunCommand(() -> shooter.hood.runWithOutput(0.2 * operator.getY(Hand.kRight)), shooter.hood));
+    shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.runwithOutput(.4 * operator.getX(Hand.kLeft)), shooter.turret));
+
+
+    shooter.setDefaultCommand(new RunCommand(() -> shooter.runShooterPID(0), shooter));
 
     drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
@@ -101,6 +108,12 @@ public class RobotContainer {
 
     operatorX = new JoystickButton(operator, Button.kX.value);
     operatorX.whileHeld(new spitBallsOut(intake, elevator));
+
+    /*operatorA = new JoystickButton(operator, Button.kA.value);
+    operatorA.whenPressed(new ConditionalCommand(
+      new RunCommand(() -> shooter.runShooterPID(10000)), 
+      new RunCommand(() -> shooter.runShooterPID(0)), 
+      shooter::getRunning),shooter);*/
   }
 
   /**
@@ -109,6 +122,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new InstantCommand(() -> shooter.runShooterPID(9500));
+    return new InstantCommand(() -> shooter.runShooterPID(9500), shooter);
   }
 }

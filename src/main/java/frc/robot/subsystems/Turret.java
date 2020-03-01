@@ -106,6 +106,7 @@ public class Turret extends PIDSubsystem {
         getController().setTolerance(DEADBAND);
 
         turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
+        turretEncoder = new Encoder(0, 1);
         turretMotor.setNeutralMode(NeutralMode.Brake);
         turretEncoder.setDistancePerPulse(1.0 / degreesToTalonUnits(1.0));
     }
@@ -148,6 +149,10 @@ public class Turret extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         turretMotor.set(ControlMode.PercentOutput, output);
+    }
+
+    public void runwithOutput(double output){
+        turretMotor.set(output);
     }
 
     @Override

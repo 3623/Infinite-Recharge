@@ -43,6 +43,7 @@ public class Hood extends PIDSubsystem {
         getController().setTolerance(DEADBAND);
 
         motor = new WPI_VictorSPX(Constants.ShooterConstants.SHOOTER_HOOD_MOTOR_SPX);
+        encoder = new Encoder(2,3);
         motor.setNeutralMode(NeutralMode.Brake);
         encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
@@ -73,6 +74,10 @@ public class Hood extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         motor.set(ControlMode.PercentOutput, output);
+    }
+
+    public void runWithOutput(double output){
+        motor.set(output);
     }
 
     @Override

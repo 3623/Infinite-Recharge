@@ -36,7 +36,7 @@ public class spitBallsOut extends CommandBase {
 
   public void execute(){
     intakeSystem.setSpeed(1.0);
-    elevatorSystem.runElevator(1.0);
+    elevatorSystem.runElevator(-1.0);
   }
     
 

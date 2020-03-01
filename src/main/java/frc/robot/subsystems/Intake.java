@@ -22,7 +22,7 @@ public class Intake extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private static final double INTAKE_SPEED = -0.5;
+  private static final double INTAKE_SPEED = -0.7;
   private WPI_VictorSPX collector;
 
   private Solenoid collectorDrop;

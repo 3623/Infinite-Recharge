@@ -40,4 +40,7 @@ public class VisionAim extends CommandBase {
     public boolean isFinished() {
         return (shooterSystem.targetAcquired && !hold);
     }
+    /*if abs(limelightentries.tx) > 1.5 {
+        runWith
+    }*/
 }

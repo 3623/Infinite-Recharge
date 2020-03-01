@@ -64,6 +64,7 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
+    shooterMaster.setInverted(true);
     shooterFollower = new CANSparkMax(2, MotorType.kBrushless);
     shooterFollower.follow(shooterMaster, true);
     shooterPID = shooterMaster.getPIDController();
@@ -131,6 +132,15 @@ public class Shooter extends SubsystemBase {
 
   private Boolean isAtSpeed() {
     return Utils.withinThreshold(shootEncoder.getVelocity(), speedSetpoint, SPEED_THRESHOLD);
+  }
+
+  public boolean getRunning(){
+    if (speedSetpoint > 0){
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   private void monitor() {
