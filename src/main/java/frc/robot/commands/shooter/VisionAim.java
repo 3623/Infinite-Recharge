@@ -22,7 +22,7 @@ public class VisionAim extends CommandBase {
         shooterSystem = shooter;
         robotHeading = heading;
         this.hold = hold;
-        addRequirements(shooter);
+        addRequirements(shooter.turret);
     }
 
     // Initialize is called immediately when the command is scheduled.
@@ -40,7 +40,4 @@ public class VisionAim extends CommandBase {
     public boolean isFinished() {
         return (shooterSystem.targetAcquired && !hold);
     }
-    /*if abs(limelightentries.tx) > 1.5 {
-        runWith
-    }*/
 }

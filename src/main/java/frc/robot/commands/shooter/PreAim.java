@@ -25,7 +25,7 @@ public class PreAim extends CommandBase {
     public PreAim(Shooter shooter, DoubleSupplier heading) {
         shooterSystem = shooter;
         robotHeading = heading;
-        addRequirements(shooter);
+        addRequirements(shooter.turret);
     }
 
     // Initialize is called immediately when the command is scheduled.
