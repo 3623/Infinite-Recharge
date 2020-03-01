@@ -109,11 +109,8 @@ public class RobotContainer {
     operatorX = new JoystickButton(operator, Button.kX.value);
     operatorX.whileHeld(new spitBallsOut(intake, elevator));
 
-    /*operatorA = new JoystickButton(operator, Button.kA.value);
-    operatorA.whenPressed(new ConditionalCommand(
-      new RunCommand(() -> shooter.runShooterPID(10000)), 
-      new RunCommand(() -> shooter.runShooterPID(0)), 
-      shooter::getRunning),shooter);*/
+    operatorA = new JoystickButton(operator, Button.kA.value);
+    operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterPID(10000)),true);  
   }
 
   /**

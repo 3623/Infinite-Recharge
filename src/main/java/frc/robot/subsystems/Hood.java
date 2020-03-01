@@ -77,7 +77,12 @@ public class Hood extends PIDSubsystem {
     }
 
     public void runWithOutput(double output){
-        motor.set(output);
+        if ((this.getMeasurement() > 32 && output < 0.0) || (this.getMeasurement() < 3 && output > 0.0)) {
+            motor.set(0.0);
+        }
+        else{
+            motor.set(output);
+        }
     }
 
     @Override
