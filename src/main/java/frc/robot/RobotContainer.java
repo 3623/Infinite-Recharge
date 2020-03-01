@@ -21,8 +21,11 @@ import frc.robot.Constants.IOConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -110,7 +113,7 @@ public class RobotContainer {
     operatorX.whileHeld(new spitBallsOut(intake, elevator));
 
     operatorA = new JoystickButton(operator, Button.kA.value);
-    operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterPID(10000)),true);  
+    operatorA.toggleWhenPressed(new RunCommand(() -> shooter.runShooterPID(11000)),true);  
   }
 
   /**
@@ -119,6 +122,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new InstantCommand(() -> shooter.runShooterPID(9500), shooter);
+    //return new Autononmous(drivetrain, 0.5, 3);
+    return new SequentialCommandGroup(
+      new ParallelRaceGroup(
+        new WaitCommand(4),
+        new RunCommand(() -> shooter.runShooterPID(11000), shooter)
+        ),
+      new ParallelRaceGroup(
+        new WaitCommand(8),
+        new RunCommand(()-> elevator.runElevator(.75), elevator)
+        ),
+      new Autononmous(drivetrain, .45, 3)
+      );
+
   }
 }
