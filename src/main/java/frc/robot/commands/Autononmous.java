@@ -10,7 +10,7 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.subsystems.Drivetrain;
 
-/*public class Autononmous extends ParallelRaceGroup {
-    
-    public Autononmous(Drivetrain drive, double speed, double time){
-            addCommands(new WaitCommand(time),
-                    new StartEndCommand(() -> drive.terribleDrive(speed,0.0,false), () -> drive.terribleDrive(0.0,0.0,false),drive));
+public class Autononmous extends ParallelRaceGroup {
+
+    public Autononmous(Drivetrain drive, double speed, double time) {
+        addCommands(new WaitCommand(time), new StartEndCommand(() -> drive.terribleDrive(speed, 0.0, false),
+                () -> drive.terribleDrive(0.0, 0.0, false), drive));
     }
-    
-}*/
+
+}
