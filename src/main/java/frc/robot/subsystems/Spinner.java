@@ -23,7 +23,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.*;
 
-import frc.robot.Constants.SpinnerConstants;
+import frc.robot.Constants;
 
 public class Spinner extends SubsystemBase {
 
@@ -36,61 +36,50 @@ public class Spinner extends SubsystemBase {
   final Color kYellowTarget = ColorMatch.makeColor(.33, .53, .14);
   VictorSPX spinnerMotor;
 
-  
-  public Spinner(){
+  public Spinner() {
     Sensor = new ColorSensorV3(i2cPort);
     colorMatcher.addColorMatch(kBlueTarget);
     colorMatcher.addColorMatch(kGreenTarget);
     colorMatcher.addColorMatch(kRedTarget);
     colorMatcher.addColorMatch(kYellowTarget);
-    spinnerMotor = new VictorSPX(SpinnerConstants.SPINNER_MOTOR_SPX);
+    spinnerMotor = new VictorSPX(Constants.Spinner.SPINNER_MOTOR_SPX);
   }
 
-  public String getColorMatch(){
+  public String getColorMatch() {
     Color detectedColor = Sensor.getColor();
-    
+
     String colorString;
     ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
-    if (match.color == kBlueTarget){
+    if (match.color == kBlueTarget) {
       colorString = "Blue";
-    }
-    else if (match.color == kGreenTarget){
+    } else if (match.color == kGreenTarget) {
       colorString = "Green";
-    }
-    else if (match.color == kRedTarget){
+    } else if (match.color == kRedTarget) {
       colorString = "Red";
-    }
-    else if (match.color == kYellowTarget){
+    } else if (match.color == kYellowTarget) {
       colorString = "Yellow";
-    }
-    else {
+    } else {
       colorString = "Unknown Color";
     }
     // Shuffleboard Output Shows Black or the Color that's Matched.
-    Shuffleboard.getTab("SmartDashboard")
-      .addBoolean("isRed", () -> match.color == kRedTarget)
-      .withProperties(Map.of("colorWhenTrue", "red"));
-    Shuffleboard.getTab("SmartDashboard")
-      .addBoolean("isYellow", () -> match.color == kYellowTarget)
-      .withProperties(Map.of("colorWhenTrue", "yellow"));
-    Shuffleboard.getTab("SmartDashboard")
-      .addBoolean("isBlue", () -> match.color == kBlueTarget)
-      .withProperties(Map.of("colorWhenTrue", "blue"));
-    Shuffleboard.getTab("SmartDashboard")
-      .addBoolean("isGreen", () -> match.color == kGreenTarget)
-      .withProperties(Map.of("colorWhenTrue", "green"));
+    Shuffleboard.getTab("SmartDashboard").addBoolean("isRed", () -> match.color == kRedTarget)
+        .withProperties(Map.of("colorWhenTrue", "red"));
+    Shuffleboard.getTab("SmartDashboard").addBoolean("isYellow", () -> match.color == kYellowTarget)
+        .withProperties(Map.of("colorWhenTrue", "yellow"));
+    Shuffleboard.getTab("SmartDashboard").addBoolean("isBlue", () -> match.color == kBlueTarget)
+        .withProperties(Map.of("colorWhenTrue", "blue"));
+    Shuffleboard.getTab("SmartDashboard").addBoolean("isGreen", () -> match.color == kGreenTarget)
+        .withProperties(Map.of("colorWhenTrue", "green"));
     return colorString;
   }
 
-  public void Spin(double speed){
+  public void Spin(double speed) {
     spinnerMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  public void Stop(){
+  public void Stop() {
     spinnerMotor.set(ControlMode.PercentOutput, 0.0);
   }
-
-  
 
 }

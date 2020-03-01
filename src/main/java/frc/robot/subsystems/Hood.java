@@ -32,24 +32,21 @@ public class Hood extends PIDSubsystem {
     private static final double kD = kP * 0.1;
     private static final double DEADBAND = 1.5;
 
-    NetworkTableEntry HoodAngle = Shuffleboard.getTab("In-Match")
-        .add("Hood Angle", 0)
-        .withWidget(BuiltInWidgets.kDial)
-        .withProperties(Map.of("min",45,"max",80))
-        .getEntry();
+    NetworkTableEntry HoodAngle = Shuffleboard.getTab("In-Match").add("Hood Angle", 0).withWidget(BuiltInWidgets.kDial)
+            .withProperties(Map.of("min", 45, "max", 80)).getEntry();
 
     public Hood() {
         super(new PIDController(kP, kI, kD));
         getController().setTolerance(DEADBAND);
 
-        motor = new WPI_VictorSPX(Constants.ShooterConstants.SHOOTER_HOOD_MOTOR_SPX);
-        encoder = new Encoder(2,3);
+        motor = new WPI_VictorSPX(Constants.Shooter.SHOOTER_HOOD_MOTOR_SPX);
+        encoder = new Encoder(2, 3);
         motor.setNeutralMode(NeutralMode.Brake);
         encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 
     public void monitor() {
-        HoodAngle.setNumber(this.getMeasurement()+45);
+        HoodAngle.setNumber(this.getMeasurement() + 45);
         SmartDashboard.putNumber("Hood Output", (int) motor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Hood Error", getController().getPositionError());
     }
@@ -76,7 +73,7 @@ public class Hood extends PIDSubsystem {
         motor.set(ControlMode.PercentOutput, output);
     }
 
-    public void runWithOutput(double output){
+    public void runWithOutput(double output) {
         motor.set(output);
     }
 

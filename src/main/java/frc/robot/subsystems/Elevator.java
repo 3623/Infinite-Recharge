@@ -10,9 +10,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
@@ -23,10 +22,11 @@ public class Elevator extends SubsystemBase {
 
   private WPI_TalonSRX elevatorSRX;
 
-  private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4, ballSensor5;
+  // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
+  // ballSensor5;
 
   public Elevator() {
-    elevatorSRX = new WPI_TalonSRX(IntakeConstants.INTAKE_ELEVATOR_MOTOR_SRX);
+    elevatorSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
   }
 
   public void runElevator(double elevatorSpeed) {

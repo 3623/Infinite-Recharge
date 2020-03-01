@@ -7,69 +7,53 @@
 
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import java.io.IOException;
-import java.util.Map;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.controls.CubicSplineFollower;
-import frc.robot.Constants.DrivetrainConstants;
-import frc.util.*;
+import frc.robot.Constants;
+import frc.util.Tuple;
+import frc.util.Utils;
 
 public class Drivetrain extends SubsystemBase {
 	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
 
-	private final int UPDATE_RATE = 200;
+	private static final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private static final double ENCODER_TICKS_PER_REV = 2048.0; // TODO this could be 2048 CHECK
+	private static final double ENCODER_TICKS_PER_REV = 2048.0; // TODO this could be 2048
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 50.0; // BANANA i think this is closer
+	private static final double MAX_CURRENT = 40.0; // BANANA i think this is closer
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
-			MAX_CURRENT, 0.01);
+			MAX_CURRENT, 0.1);
 
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
 
-	private double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
+	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
 	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
 	// sensor-velocity-sensor-units-per-100ms).
-	private double kP = 0.5;
-	private double kD = 0.1;
-	private double kI = 0.0;
+	private static final double kP = 0.5;
+	private static final double kD = 0.1;
+	private static final double kI = 0.0;
 
-	double time;
+	private double time;
 
-	public AHRS NavX;
+	private AHRS NavX;
 
 	private DriveControlState controlState = DriveControlState.DISABLED;
-
-	private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
-
-	AnalogInput transducer = new AnalogInput(0);
-
-	NetworkTableEntry mainPressure = shuffle.add("Main System Pressure", 0).withWidget(BuiltInWidgets.kDial)
-			.withProperties(Map.of("min", 0, "max", 130)).getEntry();
 
 	private enum DriveControlState {
 		OPEN_LOOP, // open loop voltage control
@@ -78,23 +62,24 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Drivetrain() {
-		rightMotorMaster = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_ONE);
-		rightMotorFollower = new WPI_TalonFX(DrivetrainConstants.RIGHT_MOTOR_TWO);
-		leftMotorMaster = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_ONE);
-		leftMotorFollower = new WPI_TalonFX(DrivetrainConstants.LEFT_MOTOR_TWO);
+		rightMotorMaster = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_ONE);
+		rightMotorFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_TWO);
+		leftMotorMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_ONE);
+		leftMotorFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_TWO);
 		rightMotorMaster.configFactoryDefault();
 		rightMotorFollower.configFactoryDefault();
 		leftMotorMaster.configFactoryDefault();
 		leftMotorFollower.configFactoryDefault();
-		rightMotorFollower.set(ControlMode.Follower, DrivetrainConstants.RIGHT_MOTOR_ONE);
-		leftMotorFollower.set(ControlMode.Follower, DrivetrainConstants.LEFT_MOTOR_ONE);
+		rightMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_ONE);
+		leftMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_ONE);
 		rightMotorMaster.setInverted(true);
 		leftMotorMaster.setInverted(false);
 		rightMotorFollower.setInverted(InvertType.FollowMaster);
 		leftMotorFollower.setInverted(InvertType.FollowMaster);
-		setBrakeMode(false);
-		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
-		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);
+		setBrakeMode(true);
+		// *
+		// rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+		// * leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);
 		// TODO bring up sensors
 		// TODO set phase for the encoders
 
@@ -128,8 +113,6 @@ public class Drivetrain extends SubsystemBase {
 		this.monitor();
 		SmartDashboard.putNumber("DT", deltaTime);
 
-		mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
-
 		switch (controlState) {
 			case OPEN_LOOP:
 				break;
@@ -157,9 +140,12 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	private void updateOdometry(double time) {
-		double leftSpeed = talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
-		double rightSpeed = talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
-		model.updateSpeed(leftSpeed, rightSpeed, time);
+		// * double leftSpeed =
+		// talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
+		// * double rightSpeed =
+		// talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
+		// * model.updateSpeed(leftSpeed, rightSpeed, time);
+		model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(NavX.getAngle());
 		model.updatePosition(time);
 	}
@@ -220,16 +206,6 @@ public class Drivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Left Out 1", leftSpeed);
 		SmartDashboard.putNumber("Right Out 1", rightSpeed);
 		setSpeed(leftSpeed, rightSpeed);
-		// BANANA: No, i updated so that path following now returns speed in m/s for
-		// each side
-		// of the drivetrain. This speed should be used in FPID (or motion magic)
-		// everything else looks good
-
-		/*
-		 * double targetVelocity_UnitsPer100ms = leftYstick * 500.0 * 4096 / 600; 500
-		 * RPM in either direction _talon.set(ControlMode.Velocity,
-		 * targetVelocity_UnitsPer100ms);
-		 */
 	}
 
 	private double m_quickStopThreshold = 0.2;

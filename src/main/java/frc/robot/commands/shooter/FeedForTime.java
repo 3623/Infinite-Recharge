@@ -9,12 +9,9 @@ package frc.robot.commands.shooter;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Elevator;
 
 public class FeedForTime extends ParallelRaceGroup {

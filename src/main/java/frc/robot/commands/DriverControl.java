@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -17,9 +16,6 @@ public class DriverControl extends CommandBase {
     private final Drivetrain Drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
-
-    private final double kP = -0.1; // proportional control for target seeking
-    private final double minCommand = 0.05; // apply minimum to make bot move as output approaches 0;
 
     public DriverControl(Drivetrain DT, DoubleSupplier forward, DoubleSupplier rotation) {
         Drive = DT;

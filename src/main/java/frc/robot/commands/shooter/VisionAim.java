@@ -7,8 +7,8 @@
 
 package frc.robot.commands.shooter;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
@@ -16,9 +16,9 @@ public class VisionAim extends CommandBase {
     private static final double FOCUS_POINT_SCALING_FACTOR = 0.05;
     private static Shooter shooterSystem;
     private static DoubleSupplier robotHeading;
-    private Boolean hold = false;
+    private BooleanSupplier hold;
 
-    public VisionAim(Shooter shooter, DoubleSupplier heading, Boolean hold) {
+    public VisionAim(Shooter shooter, DoubleSupplier heading, BooleanSupplier hold) {
         shooterSystem = shooter;
         robotHeading = heading;
         this.hold = hold;
@@ -35,9 +35,10 @@ public class VisionAim extends CommandBase {
         double degreesFromGlobalForward = robotHeading.getAsDouble() + shooterSystem.turret.getAngle();
         double trigFactor = -degreesFromGlobalForward * FOCUS_POINT_SCALING_FACTOR;
         shooterSystem.turret.setAngle(-shooterSystem.x + trigFactor + shooterSystem.turret.getAngle());
+        System.out.println("Attempting to vision align");
     }
 
     public boolean isFinished() {
-        return (shooterSystem.targetAcquired && !hold);
+        return (shooterSystem.targetAcquired && !hold.getAsBoolean());
     }
 }

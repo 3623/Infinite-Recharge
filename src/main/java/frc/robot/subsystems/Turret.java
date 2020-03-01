@@ -1,17 +1,13 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.controller.PIDController;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.Constants;
 
 // public class Turret extends SubsystemBase {
@@ -89,7 +85,8 @@ public class Turret extends PIDSubsystem {
 
     private Encoder turretEncoder;
     private static final double TICKS_PER_ENCODER_REV = 2048.0;
-    private static final double ENCODER_REVS_PER_TURRET_REV = 18.0 / 196.0;
+    private static final double ENCODER_REVS_PER_TURRET_REV = 196.0 / 18.0;
+    private static final double DISTANCE_PER_PULSE = 360.0 / ENCODER_REVS_PER_TURRET_REV / TICKS_PER_ENCODER_REV;
 
     private double MAX_GOAL = 180.0;
     private double MIN_GOAL = -180.0;
@@ -105,10 +102,10 @@ public class Turret extends PIDSubsystem {
         super(new PIDController(kP, kI, kD));
         getController().setTolerance(DEADBAND);
 
-        turretMotor = new WPI_TalonSRX(Constants.ShooterConstants.SHOOTER_TURRET_MOTOR_SRX);
+        turretMotor = new WPI_TalonSRX(Constants.Shooter.SHOOTER_TURRET_MOTOR_SRX);
         turretEncoder = new Encoder(0, 1);
         turretMotor.setNeutralMode(NeutralMode.Brake);
-        turretEncoder.setDistancePerPulse(1.0 / degreesToTalonUnits(1.0));
+        turretEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 
     public void monitor() {
@@ -134,8 +131,10 @@ public class Turret extends PIDSubsystem {
         setSetpoint(angle);
     }
 
-    public void setOffset(double offset) {
+    public void setRelative(double offset) {
         setAngle(this.getMeasurement() + offset);
+        if (Math.abs(offset) > 0.01)
+            System.out.println(offset + " relative movement turret");
     }
 
     public Double getAngle() {
@@ -151,7 +150,7 @@ public class Turret extends PIDSubsystem {
         turretMotor.set(ControlMode.PercentOutput, output);
     }
 
-    public void runwithOutput(double output){
+    public void runwithOutput(double output) {
         turretMotor.set(output);
     }
 

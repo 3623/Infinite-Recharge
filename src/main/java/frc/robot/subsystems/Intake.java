@@ -13,7 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
@@ -27,12 +27,13 @@ public class Intake extends SubsystemBase {
 
   private Solenoid collectorDrop;
 
-  private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4, ballSensor5;
+  // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
+  // ballSensor5;
 
   public Intake() {
-    collector = new WPI_VictorSPX(IntakeConstants.INTAKE_COLLECTOR_MOTOR_SPX);
+    collector = new WPI_VictorSPX(Constants.Intake.INTAKE_COLLECTOR_MOTOR_SPX);
 
-    collectorDrop = new Solenoid(IntakeConstants.INTAKE_DROP_SOLENOID);
+    collectorDrop = new Solenoid(Constants.Intake.INTAKE_DROP_SOLENOID);
   }
 
   public void setIntaking(Boolean intake) {

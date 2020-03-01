@@ -7,11 +7,9 @@
 
 package frc.robot.subsystems;
 
-import com.fasterxml.jackson.databind.node.BooleanNode;
-
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
@@ -20,11 +18,11 @@ public class Climber extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private Solenoid PTOLeft, PTORight;
-  private Solenoid climberLockLeft, climberLockRight;
+  // private Solenoid climberLockLeft, climberLockRight;
 
   public Climber() {
-    PTOLeft = new Solenoid(ClimberConstants.CLIMBER_PTO_SOLENOID_LEFT);
-    PTORight = new Solenoid(ClimberConstants.CLIMBER_PTO_SOLENOID_RIGHT);
+    PTOLeft = new Solenoid(Constants.Climber.CLIMBER_PTO_SOLENOID_LEFT);
+    PTORight = new Solenoid(Constants.Climber.CLIMBER_PTO_SOLENOID_RIGHT);
     // climberLockLeft = new Solenoid(ClimberConstants.CLIMBER_LOCK_SOLENOID_LEFT);
     // climberLockRight = new
     // Solenoid(ClimberConstants.CLIMBER_LOCK_SOLENOID_RIGHT);
