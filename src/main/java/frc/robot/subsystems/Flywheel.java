@@ -63,6 +63,8 @@ public class Flywheel extends SubsystemBase {
         kMinOutput = -1.0;
         maxRPM = 5700;
 
+        
+
         shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);
         shooterMaster.getPIDController().setD(kD);
@@ -92,12 +94,21 @@ public class Flywheel extends SubsystemBase {
         return shooterMaster.getEncoder().getVelocity() * 35.0/18.0;
     }
 
+    public void runWithOutputValue(double output){
+        shooterMaster.set(output);
+        shooterFollower.set(-output);
+    }
+
     public void monitor() {
         currentVelocity.setNumber(getVelocity());
         currentRPMSet.setNumber(speedSetpoint* (35/18));
         VelocityGreaterThanZero.setBoolean(getRunning());
+        SmartDashboard.putNumber("Current Temp Master", shooterMaster.getMotorTemperature());
+        SmartDashboard.putNumber("Current Temp Follower", shooterFollower.getMotorTemperature());
         SmartDashboard.putNumber("Shooter setpoint", speedSetpoint);
         SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
+        SmartDashboard.putNumber("ShooterMaster Current", shooterMaster.getOutputCurrent());
+        SmartDashboard.putNumber("ShooterFollower Current", shooterFollower.getOutputCurrent());
     }
 
     public void disable() {
