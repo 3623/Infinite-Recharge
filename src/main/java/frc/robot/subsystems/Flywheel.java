@@ -40,8 +40,12 @@ public class Flywheel extends SubsystemBase {
     // PID System", shooterPID)
     // .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
-    NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match").add("Shooter RPM", 0)
+    NetworkTableEntry currentRPMSet = Shuffleboard.getTab("In-Match").add("Shooter RPM Setpoint", 0)
             .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 11050)).getEntry();
+    NetworkTableEntry currentVelocity = Shuffleboard.getTab("In-Match").add("Shooter RPM Actual", 0)
+            .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max",11050)).getEntry();
+    NetworkTableEntry VelocityGreaterThanZero = Shuffleboard.getTab("In-Match").add("Actually Moving?", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
     public double x, y, area;
 
     public Flywheel() {
@@ -67,8 +71,8 @@ public class Flywheel extends SubsystemBase {
         shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
     }
 
-    public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
-        speedSetpoint = RPM * 35.0 / 18.0;
+    public void setSpeed(double RPM) { // Input is final target RPM
+        speedSetpoint = RPM * (18.0 / 35.0);
         shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
 
@@ -77,7 +81,7 @@ public class Flywheel extends SubsystemBase {
     }
 
     public boolean getRunning() {
-        if (speedSetpoint > 0) {
+        if (shooterMaster.getEncoder().getVelocity() > 0) {
             return true;
         } else {
             return false;
@@ -85,11 +89,13 @@ public class Flywheel extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
+        return shooterMaster.getEncoder().getVelocity() * 35.0/18.0;
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Shooter velocity", getVelocity());
+        currentVelocity.setNumber(getVelocity());
+        currentRPMSet.setNumber(speedSetpoint* (35/18));
+        VelocityGreaterThanZero.setBoolean(getRunning());
         SmartDashboard.putNumber("Shooter setpoint", speedSetpoint);
         SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
     }

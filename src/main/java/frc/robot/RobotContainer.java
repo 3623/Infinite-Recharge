@@ -74,7 +74,7 @@ public class RobotContainer {
     shooter.turret.setDefaultCommand(new RunCommand(() -> shooter.turret.runwithOutput(.4 * operator.getX(Hand.kLeft)), shooter.turret));
 
 
-    shooter.setDefaultCommand(new RunCommand(() -> shooter.flywheel.setSpeed(0), shooter.flywheel));
+    shooter.flywheel.setDefaultCommand(new RunCommand(() -> shooter.flywheel.setSpeed(0), shooter.flywheel));
 
     drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
