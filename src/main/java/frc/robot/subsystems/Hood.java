@@ -27,10 +27,10 @@ public class Hood extends PIDSubsystem {
     private double MAX_GOAL = 35.0;
     private double MIN_GOAL = 0.0;
 
-    private static final double kP = 0.65 / 35.0;
+    private static final double kP = 1.3 / 20.0;
     private static final double kI = kP / 1000.0;
     private static final double kD = kP * 0.1;
-    private static final double DEADBAND = 1.5;
+    private static final double DEADBAND = .25;
 
     NetworkTableEntry HoodAngle = Shuffleboard.getTab("In-Match").add("Hood Angle", 0).withWidget(BuiltInWidgets.kDial)
             .withProperties(Map.of("min", 45, "max", 80)).getEntry();
@@ -42,6 +42,7 @@ public class Hood extends PIDSubsystem {
         motor = new WPI_VictorSPX(Constants.Shooter.SHOOTER_HOOD_MOTOR_SPX);
         encoder = new Encoder(2, 3);
         motor.setNeutralMode(NeutralMode.Brake);
+        motor.setInverted(true);
         encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 
@@ -62,6 +63,9 @@ public class Hood extends PIDSubsystem {
 
     public void setRelative(double offSet) {
         setPosition(this.getMeasurement() + offSet);
+        if (offSet > 0.01){
+            System.out.println("I have an offset of: " + offSet);
+        }
     }
 
     public void zero() {
@@ -71,6 +75,7 @@ public class Hood extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         motor.set(ControlMode.PercentOutput, output);
+        System.out.println("Hood Output: " + output );
     }
 
     public void runWithOutput(double output) {

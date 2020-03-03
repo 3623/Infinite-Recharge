@@ -164,6 +164,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    shooter.turret.enable();
+    shooter.hood.enable();
     Shuffleboard.selectTab("In-Match");
     shooter.setLimelightLED(false);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
@@ -180,6 +182,8 @@ public class Robot extends TimedRobot {
           new VisionAim(shooter, () -> drivetrain.model.center.heading, () -> operator.getYButtonPressed())).schedule();
     }
 
+    System.out.println("Hood Motion Input: " + operator.getY(Hand.kRight) );
+
     if (driver.getBumperPressed(Hand.kRight)) {
       shifter.lowGear();
     } else if (driver.getBumperPressed(Hand.kLeft)) {
@@ -190,13 +194,16 @@ public class Robot extends TimedRobot {
       drivetrain.zeroSensors();
     }
 
+    
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    shooter.flywheel.setSpeed(10000.0);
+    //shooter.flywheel.setSpeed(10000.0);
+    shooter.turret.enable();
+    shooter.hood.enable();
   }
 
   /**
@@ -204,7 +211,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-
+    
   }
 
   // TODO pressure stuff
