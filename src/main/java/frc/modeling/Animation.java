@@ -36,19 +36,20 @@ public class Animation extends JPanel implements Runnable {
 	}
 
 	protected Thread sim; // animation thread
-	protected int width; // width of viewing area in pixels
-	protected int height; // height of viewing area in pixels
-	protected Dimension size; // size of viewing area
+
+	private static final String FIELD_FILE = "sim/2020-Field.png";
+	private static final double FIELD_REAL_WIDTH = 8.23;
+	private static final double FIELD_REAL_HEIGHT = 13.0;
+	private int fieldImageWidth, fieldImageHeight; // image dim of viewing area in pixels
+	protected Dimension screenSize; // size of viewing area
 	protected Image image; // off-screen image
 	protected Graphics offScreen; // off-screen graphics
 	protected Image field;
 	protected BufferedImage robot;
-	protected final double scale = 172.4; // pixels per meter
-	protected final int x;
-	protected final int y;
-	protected int robotWidth, robotHeight;
-	protected ArrayList<Tuple> trajectory;// array for storing points passed through by robot
+	protected final double scale; // pixels per meter
+	protected int robotImageWidth, robotImageHeight;
 
+	protected ArrayList<Tuple> trajectory;// array for storing points passed through by robot
 	protected final int SPEED = 1; // replay speed
 	protected final int FRAME_RATE = 60; // interval between frames in millisec
 
@@ -63,17 +64,15 @@ public class Animation extends JPanel implements Runnable {
 	protected double time = 0.0;
 
 	public Animation() throws IOException {
-		field = ImageIO.read(new File("sim/2019-field-blue.png"));
+		field = ImageIO.read(new File("sim/2020-field.png"));
 		robot = ImageIO.read(new File("sim/robot-blue2.png"));
 
 		// Set the width and heigth and size
-		width = field.getWidth(this);
-		height = field.getHeight(this);
-		robotWidth = robot.getWidth(this);
-		robotHeight = robot.getHeight(this);
-
-		x = 0 + width / 2; // the x offset for drawing objects
-		y = height - 15; // y offset for drawing objects
+		fieldImageWidth = field.getWidth(this);
+		fieldImageHeight = field.getHeight(this);
+		robotImageWidth = robot.getWidth(this);
+		robotImageHeight = robot.getHeight(this);
+		scale = fieldImageHeight / FIELD_REAL_WIDTH;
 
 		model = new DrivetrainModel();
 		nav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
@@ -112,17 +111,17 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(new Waypoint(1.0, 5.6, 60.0, -1.0, true));
 		// nav.addWaypoint(new Waypoint(2.2, 7.3, 0.0, 1.0, true));
 
-		// Poofs 2018 Oppos Side
-		model.setPosition(2.8, 0.5, 0.0);
-		nav.addWaypoint(new Waypoint(2.2, 5.6, -50.0, 1.0));
-		nav.addWaypoint(new Waypoint(-2.1, 6.0, -70.0, 0.8));
-		nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 0.6, true));
-		nav.addWaypoint(new Waypoint(-2.2, 5.8, -25.0, -1.0, true));
-		nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
-		nav.addWaypoint(new Waypoint(-1.5, 5.7, -40.0, -1.0, true));
-		nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
-		nav.addWaypoint(new Waypoint(-1.0, 5.6, -65.0, -1.0, true));
-		nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
+		// // Poofs 2018 Oppos Side
+		// model.setPosition(2.8, 0.5, 0.0);
+		// nav.addWaypoint(new Waypoint(2.2, 5.6, -50.0, 1.0));
+		// nav.addWaypoint(new Waypoint(-2.1, 6.0, -70.0, 0.8));
+		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 0.6, true));
+		// nav.addWaypoint(new Waypoint(-2.2, 5.8, -25.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
+		// nav.addWaypoint(new Waypoint(-1.5, 5.7, -40.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
+		// nav.addWaypoint(new Waypoint(-1.0, 5.6, -65.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
 
 		// // Right Side of cargo ship x2
 		// model.setPosition(1.2, 0.7, 0.0);
@@ -164,15 +163,17 @@ public class Animation extends JPanel implements Runnable {
 		// // Tine S Curve
 		// model.setPosition(0.0, 1.0, 0.0);
 		// nav.addWaypoint(new Waypoint(0.3, 2.0, 0.0, 0.5, true));
+		model.setPosition(0.0, 5.0, 0.0);
+
 	}
 
 	// Update function
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		size = this.getSize(); // Get the size of the viewing area
+		screenSize = this.getSize(); // Get the size of the viewing area
 		if (image == null) { // Create the off-screen image buffer if it is the first time
-			image = createImage(size.width, size.height);
+			image = createImage(fieldImageWidth, fieldImageHeight);
 			offScreen = image.getGraphics();
 		}
 
@@ -180,19 +181,19 @@ public class Animation extends JPanel implements Runnable {
 
 		/// Draw robot
 		BufferedImage robotRotated = rotateRobot();
-		int xCoord = x + (int) Math.round(model.center.x * scale);
-		int xCoordOffset = xCoord - (robotRotated.getWidth() / 2);
-		int yCoord = y - (int) Math.round(model.center.y * scale);
-		int yCoordOffset = yCoord - (robotRotated.getHeight() / 2);
+		Tuple robotLoc = fieldCoordsToImageCoords(model.center.x, model.center.y);
+		int robotImageOffsetX = (int) robotLoc.left - (robotRotated.getWidth() / 2);
+		int robotImageOffsetY = (int) robotLoc.right - (robotRotated.getHeight() / 2);
 		if (!nav.isFinished)
-			trajectory.add(new Tuple(xCoord, yCoord));
-		offScreen.drawImage(robotRotated, xCoordOffset, yCoordOffset, this);
+			trajectory.add(new Tuple(robotLoc.left, robotLoc.right));
+		offScreen.drawImage(robotRotated, robotImageOffsetX, robotImageOffsetY, this);
 
 		// Draw waypoints
-		int waypointX = x + (int) Math.round(nav.getCurrentWaypoint().x * scale);
-		int waypointY = y - (int) Math.round(nav.getCurrentWaypoint().y * scale);
-		offScreen.setColor(Color.yellow);
-		offScreen.drawOval(waypointX - 3, waypointY - 3, 6, 6);
+		// Tuple waypointLoc = fieldCoordsToImageCoords(nav.getCurrentWaypoint().x,
+		// nav.getCurrentWaypoint().y);
+		// offScreen.setColor(Color.yellow);
+		// offScreen.drawOval((int) waypointLoc.left - 3, (int) waypointLoc.right - 3,
+		// 6, 6);
 
 		// Draw trajectory
 		for (Tuple point : trajectory) {
@@ -202,26 +203,33 @@ public class Animation extends JPanel implements Runnable {
 
 		// Copy the off-screen image to the screen and scale to fit jframe
 		Graphics2D g2 = (Graphics2D) g;
-		g2.scale(size.width / (double) this.width, size.height / (double) this.height);
+		g2.scale(screenSize.width / (double) this.fieldImageWidth, screenSize.height / (double) this.fieldImageHeight);
 		g2.drawImage(image, 0, 0, this);
+	}
+
+	private Tuple fieldCoordsToImageCoords(double x, double y) {
+		int newX = (int) ((fieldImageWidth / 2) + x * scale);
+		int newY = (int) ((fieldImageHeight - 200) - y * scale);
+		return new Tuple(newX, newY);
 	}
 
 	public BufferedImage rotateRobot() {
 		double sin = Math.abs(Math.sin(model.center.r));
 		double cos = Math.abs(Math.cos(model.center.r));
 
-		int newWidth = (int) Math.floor(robotWidth * cos + robotHeight * sin);
-		int newHeight = (int) Math.floor(robotHeight * cos + robotWidth * sin);
+		int newWidth = (int) Math.floor(robotImageWidth * cos + robotImageHeight * sin);
+		int newHeight = (int) Math.floor(robotImageHeight * cos + robotImageWidth * sin);
 
 		BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = rotated.createGraphics();
 		AffineTransform at = new AffineTransform();
-		at.translate((newWidth - robotWidth) / 2, (newHeight - robotHeight) / 2);
+		at.translate((newWidth - robotImageWidth) / 2, (newHeight - robotImageHeight) / 2);
 
-		int x = robotWidth / 2;
-		int y = robotHeight / 2;
+		int x = robotImageWidth / 2;
+		int y = robotImageHeight / 2;
 
 		at.rotate(model.center.r, x, y);
+		g2d.scale(scale / robotImageHeight, scale / robotImageHeight);
 		g2d.setTransform(at);
 		g2d.drawImage(robot, 0, 0, this);
 		g2d.dispose();
@@ -231,17 +239,17 @@ public class Animation extends JPanel implements Runnable {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(width, height);
+		return new Dimension(fieldImageWidth, fieldImageHeight);
 	}
 
 	@Override
 	public Dimension getMinimumSize() {
-		return new Dimension(width / 2, height / 2);
+		return new Dimension(fieldImageWidth / 3, fieldImageHeight / 3);
 	}
 
 	@Override
 	public Dimension getMaximumSize() {
-		return new Dimension(width * 3, height * 3);
+		return new Dimension(fieldImageWidth, fieldImageHeight);
 	}
 
 	@Override
