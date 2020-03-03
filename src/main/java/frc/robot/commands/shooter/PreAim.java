@@ -37,4 +37,14 @@ public class PreAim extends CommandBase {
     public boolean isFinished() {
         return shooterSystem.targetAcquired;
     }
+
+    public void end(boolean interrupted){
+        if (!interrupted){
+            System.out.println("Successfully Pre-Aimed");
+        }
+        else{
+            System.out.println("Pre-Aim Interruped");
+        }
+        
+    }
 }

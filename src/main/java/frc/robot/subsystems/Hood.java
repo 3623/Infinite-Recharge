@@ -24,7 +24,7 @@ public class Hood extends PIDSubsystem {
     private static final double TICKS_PER_ENCODER_REV = 2048.0;
     private static final double DISTANCE_PER_PULSE = 1.0 / TICKS_PER_ENCODER_REV * 24.0 / 40.5 * 45.0;
 
-    private double MAX_GOAL = 35.0;
+    private double MAX_GOAL = 30.0;
     private double MIN_GOAL = 0.0;
 
     private static final double kP = 1.3 / 20.0;
