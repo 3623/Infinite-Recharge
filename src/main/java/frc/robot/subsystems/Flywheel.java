@@ -59,7 +59,7 @@ public class Flywheel extends SubsystemBase {
         kIz = 0;
         kFF = 1/maxRPM;
         kMaxOutput = 1.0;
-        kMinOutput = -1.0;
+        kMinOutput = 0;
         
 
         /*shooterMaster.getPIDController().setP(kP);
