@@ -95,6 +95,14 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  public void setCameraMode(Boolean vision) {
+    if (vision) {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
+    } else {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2);
+    }
+  }
+
   public void disable() {
     turret.disable();
     hood.disable();
