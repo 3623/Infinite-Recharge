@@ -91,10 +91,10 @@ public class Turret extends PIDSubsystem {
     private double MAX_GOAL = 180.0;
     private double MIN_GOAL = -180.0;
 
-    private static final double kP = 0.65 / 180.0;
-    private static final double kI = kP / 1000.0;
+    private static final double kP = 1.2 / 18.0;
+    private static final double kI = kP / 500.0;
     private static final double kD = kP * 0.1;
-    private static final double DEADBAND = 1.5;
+    private static final double DEADBAND = 0.5;
 
     private double setAngle = 0.0;
 
@@ -133,8 +133,6 @@ public class Turret extends PIDSubsystem {
 
     public void setRelative(double offset) {
         setAngle(this.getMeasurement() + offset);
-        if (Math.abs(offset) > 0.01)
-            System.out.println(offset + " relative movement turret");
     }
 
     public Double getAngle() {

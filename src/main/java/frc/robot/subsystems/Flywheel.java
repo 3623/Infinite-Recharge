@@ -30,7 +30,7 @@ import frc.robot.Constants;
 
 public class Flywheel extends SubsystemBase {
     private static final double SPEED_THRESHOLD = 100.0;
-    private CANSparkMax shooterMaster, shooterFollower;
+    private CANSparkMax /*shooterMaster,*/ shooterFollower;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
     private double speedSetpoint = 0.0;
@@ -45,31 +45,41 @@ public class Flywheel extends SubsystemBase {
     public double x, y, area;
 
     public Flywheel() {
-        shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
-        shooterMaster.setInverted(true);
+        //shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
+        //shooterMaster.setInverted(true);
         shooterFollower = new CANSparkMax(2, MotorType.kBrushless);
-        shooterFollower.follow(shooterMaster, true);
+        //shooterFollower.follow(shooterMaster, true);
+        //shooterMaster.restoreFactoryDefaults();
+        shooterFollower.restoreFactoryDefaults();
 
+        maxRPM = 5700;
         kP = 6e-5; // BANANA why is this not outside of constructor?
         kI = 0;
         kD = 0;
         kIz = 0;
-        kFF = 0.000015;
+        kFF = 1/maxRPM;
         kMaxOutput = 1.0;
         kMinOutput = -1.0;
-        maxRPM = 5700;
+        
 
-        shooterMaster.getPIDController().setP(kP);
+        /*shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);
         shooterMaster.getPIDController().setD(kD);
         shooterMaster.getPIDController().setIZone(kIz);
         shooterMaster.getPIDController().setFF(kFF);
-        shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
+        shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);*/
+        shooterFollower.getPIDController().setP(kP);
+        shooterFollower.getPIDController().setI(kI);
+        shooterFollower.getPIDController().setD(kD);
+        shooterFollower.getPIDController().setIZone(kIz);
+        shooterFollower.getPIDController().setFF(kFF);
+        shooterFollower.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
     }
 
     public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
         speedSetpoint = RPM * 35.0 / 18.0;
-        shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
+        //shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
+        shooterFollower.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
 
     Boolean isAtSpeed() {
@@ -85,17 +95,19 @@ public class Flywheel extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
+        //return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
+        return shooterFollower.getEncoder().getVelocity() * 18.0 / 35.0;
     }
 
     public void monitor() {
         SmartDashboard.putNumber("Shooter velocity", getVelocity());
         SmartDashboard.putNumber("Shooter setpoint", speedSetpoint);
-        SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
+        //SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
+        SmartDashboard.putNumber("Shooter output", shooterFollower.getAppliedOutput());
     }
 
     public void disable() {
-        shooterMaster.disable();
+        //shooterMaster.disable();
         shooterFollower.disable();
     }
 }

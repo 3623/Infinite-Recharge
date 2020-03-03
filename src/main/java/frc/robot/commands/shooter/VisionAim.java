@@ -34,11 +34,20 @@ public class VisionAim extends CommandBase {
     public void execute() {
         double degreesFromGlobalForward = robotHeading.getAsDouble() + shooterSystem.turret.getAngle();
         double trigFactor = -degreesFromGlobalForward * FOCUS_POINT_SCALING_FACTOR;
-        shooterSystem.turret.setAngle(-shooterSystem.x + trigFactor + shooterSystem.turret.getAngle());
+        shooterSystem.turret.setAngle(shooterSystem.x + trigFactor + shooterSystem.turret.getAngle());
         System.out.println("Attempting to vision align");
     }
 
     public boolean isFinished() {
-        return (shooterSystem.targetAcquired && !hold.getAsBoolean());
+        return (shooterSystem.aimed && !hold.getAsBoolean());
+    }
+
+    public void end(boolean interrupted){
+        if (!interrupted){
+            System.out.println("Vision Align Ended Successfully");
+        }
+        else{
+            System.out.println("Vision Align Interrupted");
+        }
     }
 }

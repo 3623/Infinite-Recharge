@@ -76,7 +76,7 @@ public class Drivetrain extends SubsystemBase {
 		leftMotorMaster.setInverted(false);
 		rightMotorFollower.setInverted(InvertType.FollowMaster);
 		leftMotorFollower.setInverted(InvertType.FollowMaster);
-		setBrakeMode(true);
+		setBrakeMode(false);
 		// *
 		// rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
 		// * leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);

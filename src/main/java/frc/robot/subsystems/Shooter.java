@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.util.Utils;
@@ -37,10 +38,9 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry tx = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
-  NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1, False/True)
-  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match").add("Shooter RPM", 0).withWidget(BuiltInWidgets.kDial)
-      .withProperties(Map.of("min", 0, "max", 11050)).getEntry();
-  public double x, y, area;
+  NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1)
+
+  public double x, y, area, valid;
 
   public Shooter() {
     turret = new Turret();
@@ -70,8 +70,15 @@ public class Shooter extends SubsystemBase {
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
+    valid = tv.getDouble(0.0);
 
-    targetAcquired = tv.getBoolean(false);
+    if (valid > 0.0){
+      targetAcquired = true;
+    }
+    else{
+      targetAcquired = false;
+    }
+    SmartDashboard.putBoolean("Target Acquired Bool", targetAcquired);
     aimed = isAimed(x) && targetAcquired;
     atSpeed = flywheel.isAtSpeed();
     readyToFire = aimed && atSpeed;
