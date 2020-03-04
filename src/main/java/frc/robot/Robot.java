@@ -7,10 +7,15 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +50,9 @@ public class Robot extends TimedRobot {
   //private Shifter shifter;
   private Shooter shooter;
   // private Spinner spinner;
+
+  AnalogInput transducer = new AnalogInput(0);
+  
   private double flywheelRPMAccum = 0;
   private double flywheelIncreaseValue = 200;
   private boolean POVDebounce;
@@ -52,6 +60,9 @@ public class Robot extends TimedRobot {
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
   public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
   public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
+  NetworkTableEntry mainPressure = Shuffleboard.getTab("Pre-Match").add("Main System Pressure",0)
+   .withWidget(BuiltInWidgets.kDial)
+   .withProperties(Map.of("min", 0, "max", 130)).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -70,6 +81,10 @@ public class Robot extends TimedRobot {
     shooter = new Shooter();
     // spinner = new Spinner();
     // climber = new Climber();
+
+    
+
+   
 
     setControls();
 
@@ -106,6 +121,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
   }
 
   /**
@@ -245,12 +261,8 @@ public class Robot extends TimedRobot {
 
   // private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
 
-  // AnalogInput transducer = new AnalogInput(0);
+ 
 
-  // NetworkTableEntry mainPressure = shuffle.add("Main System Pressure",
-  // 0).withWidget(BuiltInWidgets.kDial)
-  // .withProperties(Map.of("min", 0, "max", 130)).getEntry();
-
-  // mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
+  // 
 
 }
