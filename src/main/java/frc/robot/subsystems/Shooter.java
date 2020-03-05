@@ -40,6 +40,19 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1)
 
+  // Operator Display Network Table Entries
+  NetworkTableEntry flywheelRunning = Shuffleboard.getTab("In-Match")
+    .add("Is Flywheel Spinning?", false)
+    .getEntry();
+  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match")
+    .add("Shooter RPM", 0)
+    .withWidget(BuiltInWidgets.kDial)
+    .withProperties(Map.of("min", 0, "max", 11050))
+    .getEntry();
+  NetworkTableEntry IsAimed = Shuffleboard.getTab("In-Match")
+    .add("Is Aimed?", false)
+    .getEntry();
+
   public double x, y, area, valid;
 
   public Shooter() {
@@ -78,10 +91,13 @@ public class Shooter extends SubsystemBase {
     else{
       targetAcquired = false;
     }
-    SmartDashboard.putBoolean("Target Acquired Bool", targetAcquired);
     aimed = isAimed(x) && targetAcquired;
     atSpeed = flywheel.isAtSpeed();
     readyToFire = aimed && atSpeed;
+
+    currentRPM.setNumber(flywheel.getVelocity());
+    IsAimed.setBoolean(aimed);
+    flywheelRunning.setBoolean(flywheel.getRunning());
 
     flywheel.monitor();
     turret.monitor();

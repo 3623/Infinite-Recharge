@@ -7,10 +7,15 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,8 +28,8 @@ import frc.robot.commands.DriverControl;
 import frc.robot.commands.shooter.PreAim;
 import frc.robot.commands.shooter.VisionAim;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shifter;
+//import frc.robot.subsystems.Intake;
+//import frc.robot.subsystems.Shifter;
 import frc.robot.subsystems.Shooter;
 
 /**
@@ -40,11 +45,14 @@ public class Robot extends TimedRobot {
   private XboxController driver;
   private XboxController operator;
   // private Climber climber;
-  private Drivetrain drivetrain;
-  private Intake intake;
-  private Shifter shifter;
+  //private Drivetrain drivetrain;
+  //private Intake intake;
+  //private Shifter shifter;
   private Shooter shooter;
   // private Spinner spinner;
+
+  AnalogInput transducer = new AnalogInput(0);
+  
   private double flywheelRPMAccum = 0;
   private double flywheelIncreaseValue = 200;
   private boolean POVDebounce;
@@ -52,6 +60,9 @@ public class Robot extends TimedRobot {
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
   public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
   public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
+  NetworkTableEntry mainPressure = Shuffleboard.getTab("Pre-Match").add("Main System Pressure",0)
+   .withWidget(BuiltInWidgets.kDial)
+   .withProperties(Map.of("min", 0, "max", 130)).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -64,12 +75,16 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     driver = new XboxController(Constants.IO.DRIVER_CONTROLLER);
     operator = new XboxController(Constants.IO.OPERATOR_CONTROLLER);
-    drivetrain = new Drivetrain();
-    intake = new Intake();
-    shifter = new Shifter();
+    //drivetrain = new Drivetrain();
+   // intake = new Intake();
+    //shifter = new Shifter();
     shooter = new Shooter();
     // spinner = new Spinner();
     // climber = new Climber();
+
+    
+
+   
 
     setControls();
 
@@ -77,17 +92,17 @@ public class Robot extends TimedRobot {
   }
 
   private void setControls() {
-    drivetrain.setDefaultCommand(
-        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
+    //drivetrain.setDefaultCommand(
+    //    new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
-    intake.setDefaultCommand(
-        new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
+    //intake.setDefaultCommand(
+    //    new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
     shooter.elevator.setDefaultCommand(
         new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
 
     shooter.hood.setDefaultCommand(
-        new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight)), shooter.hood));
+        new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
 
     shooter.turret.setDefaultCommand(
         new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
@@ -106,6 +121,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
   }
 
   /**
@@ -113,7 +129,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    drivetrain.disable();
+    //drivetrain.disable();
     shooter.disable();
 
     Shuffleboard.stopRecording();
@@ -131,12 +147,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     shooter.turret.zero();
     shooter.hood.zero();
-    drivetrain.zeroSensors();
+    //drivetrain.zeroSensors();
 
     shooter.hood.enable();
     shooter.turret.enable();
 
-    shifter.lowGear();
+    //shifter.lowGear();
 
     Shuffleboard.selectTab("Auto Telemetry");
     shooter.setLimelightLED(false);
@@ -144,7 +160,7 @@ public class Robot extends TimedRobot {
                                                                                              // Limelight Output small
     Shuffleboard.startRecording();
 
-    m_autonomousCommand = new Autononmous(drivetrain, 0.5, 2.0);
+    //m_autonomousCommand = new Autononmous(drivetrain, 0.5, 2.0);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -183,19 +199,19 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (operator.getYButtonPressed()) {
-      new SequentialCommandGroup(new PreAim(shooter, () -> drivetrain.model.center.heading),
-          new VisionAim(shooter, () -> drivetrain.model.center.heading, () -> operator.getYButtonPressed())).schedule();
+      new SequentialCommandGroup(new PreAim(shooter, () -> /*drivetrain.model.center.heading*/ 0),
+          new VisionAim(shooter, () -> /*drivetrain.model.center.heading*/ 0, () -> operator.getYButton())).schedule();
     }
 
-    if (driver.getBumperPressed(Hand.kRight)) {
-      shifter.lowGear();
-    } else if (driver.getBumperPressed(Hand.kLeft)) {
-      shifter.highGear();
-    }
+    //if (driver.getBumperPressed(Hand.kRight)) {
+   //   shifter.lowGear();
+   // } else if (driver.getBumperPressed(Hand.kLeft)) {
+    //  shifter.highGear();
+    //}
 
-    if (driver.getStartButtonPressed()) {
-      drivetrain.zeroSensors();
-    }
+    //if (driver.getStartButtonPressed()) {
+    //  drivetrain.zeroSensors();
+    //}
 
     if(operator.getPOV() == 0 && POVDebounce == false){
       flywheelRPMAccum += flywheelIncreaseValue;
@@ -221,6 +237,14 @@ public class Robot extends TimedRobot {
       }
     }
 
+    if(operator.getBButton()){
+      shooter.hood.setPosition(15);
+    }
+    if (operator.getXButtonPressed()){
+      shooter.setLimelightLED(true);
+    }
+
+    shooter.flywheel.runByPercent(operator.getTriggerAxis(Hand.kRight));
     
   }
 
@@ -228,7 +252,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    //shooter.flywheel.setSpeed(10000.0);
+    shooter.flywheel.setSpeed(10000.0);
     shooter.turret.enable();
     shooter.hood.enable();
   }
@@ -245,12 +269,8 @@ public class Robot extends TimedRobot {
 
   // private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
 
-  // AnalogInput transducer = new AnalogInput(0);
+ 
 
-  // NetworkTableEntry mainPressure = shuffle.add("Main System Pressure",
-  // 0).withWidget(BuiltInWidgets.kDial)
-  // .withProperties(Map.of("min", 0, "max", 130)).getEntry();
-
-  // mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
+  // 
 
 }

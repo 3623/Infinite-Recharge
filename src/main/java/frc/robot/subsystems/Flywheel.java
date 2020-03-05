@@ -40,8 +40,7 @@ public class Flywheel extends SubsystemBase {
     // PID System", shooterPID)
     // .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
-    NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match").add("Shooter RPM", 0)
-            .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 11050)).getEntry();
+    
     public double x, y, area;
 
     public Flywheel() {
@@ -59,7 +58,7 @@ public class Flywheel extends SubsystemBase {
         kIz = 0;
         kFF = 1/maxRPM;
         kMaxOutput = 1.0;
-        kMinOutput = -1.0;
+        kMinOutput = 0;
         
 
         /*shooterMaster.getPIDController().setP(kP);
@@ -77,7 +76,7 @@ public class Flywheel extends SubsystemBase {
     }
 
     public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
-        speedSetpoint = RPM * 35.0 / 18.0;
+        speedSetpoint = RPM * (18/35);
         //shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
         shooterFollower.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
@@ -94,9 +93,13 @@ public class Flywheel extends SubsystemBase {
         }
     }
 
+    public void runByPercent(double percent){
+        shooterFollower.set(percent);
+    }
+
     public double getVelocity() {
         //return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
-        return shooterFollower.getEncoder().getVelocity() * 18.0 / 35.0;
+        return shooterFollower.getEncoder().getVelocity() * (35/18);
     }
 
     public void monitor() {
