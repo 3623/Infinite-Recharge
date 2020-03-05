@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.Autononmous;
 import frc.robot.commands.DriverControl;
 import frc.robot.commands.shooter.PreAim;
@@ -82,9 +83,10 @@ public class Robot extends TimedRobot {
     // spinner = new Spinner();
     // climber = new Climber();
 
-    
-
-   
+    // Set up Port Forwarding so we can access Limelight over USB tether to robot.
+    PortForwarder.add(5800, "limelight.local", 5800);
+    PortForwarder.add(5801, "limelight.local", 5801);
+    PortForwarder.add(5805, "limelight.local", 5805);   
 
     setControls();
 
@@ -105,7 +107,7 @@ public class Robot extends TimedRobot {
         new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
 
     shooter.turret.setDefaultCommand(
-        new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
+        new RunCommand(() -> shooter.turret.setRelative(8.0 * operator.getX(Hand.kLeft)), shooter.turret));
 
   }
 
