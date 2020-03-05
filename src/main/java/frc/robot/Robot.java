@@ -41,13 +41,13 @@ public class Robot extends TimedRobot {
   private XboxController operator;
   // private Climber climber;
   private Drivetrain drivetrain;
-  private Intake intake;
+  //private Intake intake;
   private Shifter shifter;
-  private Shooter shooter;
+  //private Shooter shooter;
   // private Spinner spinner;
-  private double flywheelRPMAccum = 0;
-  private double flywheelIncreaseValue = 200;
-  private boolean POVDebounce;
+  //private double flywheelRPMAccum = 0;
+  //private double flywheelIncreaseValue = 200;
+  //private boolean POVDebounce;
 
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
   public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
@@ -65,9 +65,9 @@ public class Robot extends TimedRobot {
     driver = new XboxController(Constants.IO.DRIVER_CONTROLLER);
     operator = new XboxController(Constants.IO.OPERATOR_CONTROLLER);
     drivetrain = new Drivetrain();
-    intake = new Intake();
+    //intake = new Intake();
     shifter = new Shifter();
-    shooter = new Shooter();
+    //shooter = new Shooter();
     // spinner = new Spinner();
     // climber = new Climber();
 
@@ -80,17 +80,17 @@ public class Robot extends TimedRobot {
     drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
-    intake.setDefaultCommand(
-        new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
+    //intake.setDefaultCommand(
+    //    new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
-    shooter.elevator.setDefaultCommand(
-        new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
+    //shooter.elevator.setDefaultCommand(
+    //    new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
 
-    shooter.hood.setDefaultCommand(
-        new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight)), shooter.hood));
+    //shooter.hood.setDefaultCommand(
+    //    new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight)), shooter.hood));
 
-    shooter.turret.setDefaultCommand(
-        new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
+    //shooter.turret.setDefaultCommand(
+    //    new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
 
   }
 
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drivetrain.disable();
-    shooter.disable();
+    //shooter.disable();
 
     Shuffleboard.stopRecording();
   }
@@ -129,17 +129,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    shooter.turret.zero();
-    shooter.hood.zero();
+    //shooter.turret.zero();
+    //shooter.hood.zero();
     drivetrain.zeroSensors();
 
-    shooter.hood.enable();
-    shooter.turret.enable();
+    //shooter.hood.enable();
+    //shooter.turret.enable();
 
     shifter.lowGear();
 
     Shuffleboard.selectTab("Auto Telemetry");
-    shooter.setLimelightLED(false);
+    //shooter.setLimelightLED(false);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
                                                                                              // Limelight Output small
     Shuffleboard.startRecording();
@@ -168,11 +168,11 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    flywheelRPMAccum = 0;
-    shooter.turret.enable();
-    shooter.hood.enable();
-    Shuffleboard.selectTab("In-Match");
-    shooter.setLimelightLED(false);
+    //flywheelRPMAccum = 0;
+    //shooter.turret.enable();
+    //shooter.hood.enable();
+    //Shuffleboard.selectTab("In-Match");
+    //shooter.setLimelightLED(false);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
                                                                                              // Limelight Output small
   }
@@ -182,10 +182,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if (operator.getYButtonPressed()) {
+    /*if (operator.getYButtonPressed()) {
       new SequentialCommandGroup(new PreAim(shooter, () -> drivetrain.model.center.heading),
           new VisionAim(shooter, () -> drivetrain.model.center.heading, () -> operator.getYButtonPressed())).schedule();
-    }
+    }*/
 
     if (driver.getBumperPressed(Hand.kRight)) {
       shifter.lowGear();
@@ -197,7 +197,7 @@ public class Robot extends TimedRobot {
       drivetrain.zeroSensors();
     }
 
-    if(operator.getPOV() == 0 && POVDebounce == false){
+    /*if(operator.getPOV() == 0 && POVDebounce == false){
       flywheelRPMAccum += flywheelIncreaseValue;
       POVDebounce = true;
     }
@@ -220,7 +220,7 @@ public class Robot extends TimedRobot {
         shooter.flywheel.setSpeed(flywheelRPMAccum);
       }
     }
-
+    */
     
   }
 
@@ -229,8 +229,8 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
     //shooter.flywheel.setSpeed(10000.0);
-    shooter.turret.enable();
-    shooter.hood.enable();
+    //shooter.turret.enable();
+    //shooter.hood.enable();
   }
 
   /**
