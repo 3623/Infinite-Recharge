@@ -39,7 +39,7 @@ public class VisionAim extends CommandBase {
     }
 
     public boolean isFinished() {
-        return ((shooterSystem.aimed && !hold.getAsBoolean()) || shooterSystem.targetAcquired);
+        return ((shooterSystem.aimed && !hold.getAsBoolean()) || !shooterSystem.targetAcquired);
     }
 
     public void end(boolean interrupted){
