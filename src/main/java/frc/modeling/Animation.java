@@ -72,7 +72,7 @@ public class Animation extends JPanel implements Runnable {
 		fieldImageHeight = field.getHeight(this);
 		robotImageWidth = robot.getWidth(this);
 		robotImageHeight = robot.getHeight(this);
-		scale = fieldImageHeight / FIELD_REAL_WIDTH;
+		scale = fieldImageWidth / FIELD_REAL_WIDTH;
 
 		model = new DrivetrainModel();
 		nav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
@@ -89,53 +89,12 @@ public class Animation extends JPanel implements Runnable {
 
 	private void setWaypoints() {
 
-		// // Spider Y 2 Banana
-		// model.setPosition(0.5, 0.5, 0.0);
-		// nav.addWaypoint(new Waypoint(1.1, 3.0, 25.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(0.0, 1.0, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(0.0, 2.0, 0.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-0.3, 1.3, 45.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(1.1, 3.0, 30.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(0.0, 1.0, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(0.0, 2.5, 0.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-0.3, 1.5, 45.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(1.1, 3.0, 30.0, 1.0, true));
-
-		// // Poofs 2018 Near Side
-		// model.setPosition(2.8, 0.5, 0.0);
-		// nav.addWaypoint(new Waypoint(2.2, 7.3, -10.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(1.9, 5.5, 30.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(2.2, 7.3, -10.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(1.5, 5.7, 40.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(2.2, 7.3, 0.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(1.0, 5.6, 60.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(2.2, 7.3, 0.0, 1.0, true));
-
-		// // Poofs 2018 Oppos Side
-		// model.setPosition(2.8, 0.5, 0.0);
-		// nav.addWaypoint(new Waypoint(2.2, 5.6, -50.0, 1.0));
-		// nav.addWaypoint(new Waypoint(-2.1, 6.0, -70.0, 0.8));
-		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 0.6, true));
-		// nav.addWaypoint(new Waypoint(-2.2, 5.8, -25.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-1.5, 5.7, -40.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-1.0, 5.6, -65.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-2.2, 7.3, 15.0, 1.0, true));
-
 		// // Right Side of cargo ship x2
 		// model.setPosition(1.2, 0.7, 0.0);
 		// nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5, false));
 		// nav.addWaypoint(new Waypoint(1.1, 6.6, -10.0, 1.0, true));
 		// nav.addWaypoint(new Waypoint(3.3, 0.5, -10.0, -1.0, true));
 		// nav.addWaypoint(new Waypoint(1.1, 7.2, -10.0, 1.0, true));
-
-		// // Left Side of cargo ship x2
-		// model.setPosition(-1.2, 0.7, -0.0);
-		// nav.addWaypoint(new Waypoint(-1.2, 3.0, -0.0, 0.5, false));
-		// nav.addWaypoint(new Waypoint(-1.1, 6.6, 10.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-3.3, 0.5, 10.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-1.1, 7.2, 10.0, 1.0, true));
 
 		// // Right rocket
 		// model.setPosition(1.2, 0.7, 0.0);
@@ -147,24 +106,11 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(new Waypoint(3.1, 4.7, -60.0, 0.6, true));
 		// nav.addWaypoint(new Waypoint(2.0, 7.2, 0.0, 0.6, true));
 
-		// // Left rocket
-		// model.setPosition(-1.2, 0.7, -0.0);
-		// nav.addWaypoint(new Waypoint(-1.2, 3.0, -0.0, 0.5));
-		// nav.addWaypoint(new Waypoint(-3.5, 6.6, -60.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(-2.8, 6.1, -50.0, -0.6));
-		// nav.addWaypoint(new Waypoint(-3.4, 0.5, -0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-3.4, 4.3, -0.0, 1.0));
-		// nav.addWaypoint(new Waypoint(-3.2, 4.7, 60.0, 0.6, true));
-
-		// // Beautiful 90
-		// model.setPosition(0.0, 1.0, 0.0);
-		// nav.addWaypoint(new Waypoint(1.0, 3.0, 90.0, 1.0, true));
-
-		// // Tine S Curve
-		// model.setPosition(0.0, 1.0, 0.0);
-		// nav.addWaypoint(new Waypoint(0.3, 2.0, 0.0, 0.5, true));
-		model.setPosition(0.0, 5.0, 0.0);
-
+		model.setPosition(-3.3, -3.5, 0.0);
+		nav.addWaypoint(new Waypoint(-3.3, -5.8, 0.0, -0.8, true));
+		nav.addWaypoint(new Waypoint(0.5, -3.0, 50.0, 0.8, true));
+		nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true));
+		nav.addWaypoint(new Waypoint(1.0, -3.0, 0.0, 0.8, true));
 	}
 
 	// Update function
@@ -189,11 +135,9 @@ public class Animation extends JPanel implements Runnable {
 		offScreen.drawImage(robotRotated, robotImageOffsetX, robotImageOffsetY, this);
 
 		// Draw waypoints
-		// Tuple waypointLoc = fieldCoordsToImageCoords(nav.getCurrentWaypoint().x,
-		// nav.getCurrentWaypoint().y);
-		// offScreen.setColor(Color.yellow);
-		// offScreen.drawOval((int) waypointLoc.left - 3, (int) waypointLoc.right - 3,
-		// 6, 6);
+		Tuple waypointLoc = fieldCoordsToImageCoords(nav.getCurrentWaypoint().x, nav.getCurrentWaypoint().y);
+		offScreen.setColor(Color.yellow);
+		offScreen.drawOval((int) waypointLoc.left - 3, (int) waypointLoc.right - 3, 6, 6);
 
 		// Draw trajectory
 		for (Tuple point : trajectory) {
@@ -209,7 +153,7 @@ public class Animation extends JPanel implements Runnable {
 
 	private Tuple fieldCoordsToImageCoords(double x, double y) {
 		int newX = (int) ((fieldImageWidth / 2) + x * scale);
-		int newY = (int) ((fieldImageHeight - 200) - y * scale);
+		int newY = (int) (fieldImageHeight * 0.0 - (y - 0.73) * scale);
 		return new Tuple(newX, newY);
 	}
 
@@ -223,13 +167,14 @@ public class Animation extends JPanel implements Runnable {
 		BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = rotated.createGraphics();
 		AffineTransform at = new AffineTransform();
-		at.translate((newWidth - robotImageWidth) / 2, (newHeight - robotImageHeight) / 2);
+		double robotScale = scale / robotImageHeight * 1.0;
+		at.translate((newWidth - robotImageWidth * robotScale) / 2, (newHeight - robotImageHeight * robotScale) / 2);
+		at.scale(robotScale, robotScale);
 
 		int x = robotImageWidth / 2;
 		int y = robotImageHeight / 2;
 
 		at.rotate(model.center.r, x, y);
-		g2d.scale(scale / robotImageHeight, scale / robotImageHeight);
 		g2d.setTransform(at);
 		g2d.drawImage(robot, 0, 0, this);
 		g2d.dispose();
