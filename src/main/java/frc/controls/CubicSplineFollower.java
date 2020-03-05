@@ -28,7 +28,7 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private static final double kMaxAccelDefault = 0.05; // m/s^2 * 200
+    private static final double kMaxAccelDefault = 0.1; // m/s^2 * 200
     private double kMaxAccel;
     private static final double kSlowdownRadiusCritical = 1.3;
     private static final double kMinApproachSpeedCritical = 0.2;
