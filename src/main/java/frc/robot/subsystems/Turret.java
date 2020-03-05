@@ -91,7 +91,7 @@ public class Turret extends PIDSubsystem {
     private double MAX_GOAL = 180.0;
     private double MIN_GOAL = -180.0;
 
-    private static final double kP = 1.2 / 18.0;
+    private static final double kP = 0.65 / 18.0;
     private static final double kI = kP / 500.0;
     private static final double kD = kP * 0.1;
     private static final double DEADBAND = 0.5;

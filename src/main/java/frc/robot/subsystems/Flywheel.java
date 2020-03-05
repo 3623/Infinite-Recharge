@@ -93,6 +93,10 @@ public class Flywheel extends SubsystemBase {
         }
     }
 
+    public void runByPercent(double percent){
+        shooterFollower.set(percent);
+    }
+
     public double getVelocity() {
         //return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
         return shooterFollower.getEncoder().getVelocity() * (35/18);

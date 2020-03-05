@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
         new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
 
     shooter.hood.setDefaultCommand(
-        new RunCommand(() -> shooter.hood.setRelative(1.5 * operator.getY(Hand.kRight)), shooter.hood));
+        new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
 
     shooter.turret.setDefaultCommand(
         new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
@@ -237,6 +237,14 @@ public class Robot extends TimedRobot {
       }
     }
 
+    if(operator.getBButton()){
+      shooter.hood.setPosition(15);
+    }
+    if (operator.getXButtonPressed()){
+      shooter.setLimelightLED(true);
+    }
+
+    shooter.flywheel.runByPercent(operator.getTriggerAxis(Hand.kRight));
     
   }
 
@@ -244,7 +252,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    //shooter.flywheel.setSpeed(10000.0);
+    shooter.flywheel.setSpeed(10000.0);
     shooter.turret.enable();
     shooter.hood.enable();
   }

@@ -28,7 +28,7 @@ public class Hood extends PIDSubsystem {
     private double MIN_GOAL = 0.0;
 
     private static final double kP = 1.3 / 20.0;
-    private static final double kI = kP / 1000.0;
+    private static final double kI = kP / 500.0;
     private static final double kD = kP * 0.1;
     private static final double DEADBAND = .25;
 
@@ -50,6 +50,7 @@ public class Hood extends PIDSubsystem {
         HoodAngle.setNumber(this.getMeasurement() + 45);
         SmartDashboard.putNumber("Hood Output", (int) motor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Hood Error", getController().getPositionError());
+        SmartDashboard.putNumber("Hood Setpoint", getController().getSetpoint());
     }
 
     public void setPosition(double position) {
