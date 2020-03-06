@@ -54,8 +54,8 @@ public class Robot extends TimedRobot {
 
   AnalogInput transducer = new AnalogInput(0);
   
-  private double flywheelRPMAccum = 0;
-  private double flywheelIncreaseValue = 200;
+  private double flywheelRPMAccum = 0.0;
+  private double flywheelIncreaseValue = 200.0;
   private boolean POVDebounce;
 
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
@@ -231,11 +231,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Is Shooter Running", shooter.flywheel.getRunning());
 
     if (operator.getAButtonPressed()){
+      System.out.println("Attempting to Do the Thing");
       if (shooter.flywheel.getRunning()){
         shooter.flywheel.setSpeed(0);
+        System.out.println("Shooter was running. Spinning Down");
       }
       else {
         shooter.flywheel.setSpeed(flywheelRPMAccum);
+        System.out.println("Shooter was not spinning. Revving Up to " + flywheelRPMAccum);
       }
     }
 
@@ -243,10 +246,14 @@ public class Robot extends TimedRobot {
       shooter.hood.setPosition(15);
     }
     if (operator.getXButtonPressed()){
-      shooter.setLimelightLED(true);
+      if (!shooter.getLimelightLEDMode()){
+        shooter.setLimelightLED(true);
+      }
+      else 
+      {
+        shooter.setLimelightLED(false);
+      }
     }
-
-    shooter.flywheel.runByPercent(operator.getTriggerAxis(Hand.kRight));
     
   }
 

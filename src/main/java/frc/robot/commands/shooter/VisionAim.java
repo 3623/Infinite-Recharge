@@ -33,8 +33,8 @@ public class VisionAim extends CommandBase {
 
     public void execute() {
         double degreesFromGlobalForward = robotHeading.getAsDouble() + shooterSystem.turret.getAngle();
-        double trigFactor = -degreesFromGlobalForward * FOCUS_POINT_SCALING_FACTOR;
-        shooterSystem.turret.setAngle(shooterSystem.x + trigFactor + shooterSystem.turret.getAngle());
+        //double trigFactor = -degreesFromGlobalForward * FOCUS_POINT_SCALING_FACTOR;
+        shooterSystem.turret.setAngle(shooterSystem.x /*+ trigFactor*/ + shooterSystem.turret.getAngle());
         System.out.println("Attempting to vision align");
     }
 
