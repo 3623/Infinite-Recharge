@@ -89,28 +89,25 @@ public class Animation extends JPanel implements Runnable {
 
 	private void setWaypoints() {
 
-		// // Right Side of cargo ship x2
-		// model.setPosition(1.2, 0.7, 0.0);
-		// nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5, false));
-		// nav.addWaypoint(new Waypoint(1.1, 6.6, -10.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(3.3, 0.5, -10.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(1.1, 7.2, -10.0, 1.0, true));
+		// // Left
+		// model.setPosition(-3.3, -3.5, 0.0);
+		// nav.addWaypoint(new Waypoint(-3.3, -5.8, 0.0, -0.8, true));
+		// nav.addWaypoint(new Waypoint(0.5, -3.0, 50.0, 0.8, true));
+		// nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true)); // Triple in
+		// middle
+		// nav.addWaypoint(new Waypoint(1.0, -3.0, 0.0, 0.8, true));
 
-		// // Right rocket
-		// model.setPosition(1.2, 0.7, 0.0);
-		// nav.addWaypoint(new Waypoint(1.2, 3.0, 0.0, 0.5));
-		// nav.addWaypoint(new Waypoint(3.5, 6.7, 60.0, 1.0, true));
-		// // nav.addWaypoint(new Waypoint(2.8, 6.0, 30.0, -0.6));
-		// nav.addWaypoint(new Waypoint(3.4, 0.5, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(3.4, 4.2, 15.0, 0.6));
-		// nav.addWaypoint(new Waypoint(3.1, 4.7, -60.0, 0.6, true));
-		// nav.addWaypoint(new Waypoint(2.0, 7.2, 0.0, 0.6, true));
+		// // Middle
+		// model.setPosition(2.5, -3.5, 0.0);
+		// nav.addWaypoint(new Waypoint(1.7, -5.9, 65.0, -0.8, true));
+		// nav.addWaypoint(new Waypoint(0.3, -5.9, 105.0, -0.8, true));
+		// nav.addWaypoint(new Waypoint(-0.5, -5.3, 135.0, -0.8, true));
 
-		model.setPosition(-3.3, -3.5, 0.0);
-		nav.addWaypoint(new Waypoint(-3.3, -5.8, 0.0, -0.8, true));
-		nav.addWaypoint(new Waypoint(0.5, -3.0, 50.0, 0.8, true));
-		nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true));
-		nav.addWaypoint(new Waypoint(1.0, -3.0, 0.0, 0.8, true));
+		// Right
+		model.setPosition(3.4, -3.5, 0.0);
+		nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -0.8, true));
+		nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 0.8, true));
+		nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -0.8, true));
 	}
 
 	// Update function
