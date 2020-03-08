@@ -7,6 +7,9 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -16,18 +19,22 @@ import frc.robot.Constants;
  */
 public class Climber extends SubsystemBase {
   private Solenoid PTOLeft, PTORight;
-
+  private VictorSPX climberLauncher;
 
   public Climber() {
     PTOLeft = new Solenoid(Constants.Climber.CLIMBER_PTO_SOLENOID_LEFT);
     PTORight = new Solenoid(Constants.Climber.CLIMBER_PTO_SOLENOID_RIGHT);
-
+    climberLauncher = new VictorSPX(Constants.Climber.CLIMBER_LAUNCH_MOTOR_SPX);
   }
 
 
   public void engagePTO() {
     PTOLeft.set(true);
     PTORight.set(true);
+  }
+
+  public void runLauncher(double output){
+    climberLauncher.set(ControlMode.PercentOutput, output);
   }
 
   public void disengagePTOLeft() {

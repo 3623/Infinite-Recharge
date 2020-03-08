@@ -24,10 +24,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpiutil.net.PortForwarder;
-import frc.robot.commands.Autononmous;
+import frc.robot.commands.autonomous.*;
 import frc.robot.commands.DriverControl;
-import frc.robot.commands.shooter.PreAim;
-import frc.robot.commands.shooter.VisionAim;
+import frc.robot.commands.shooter.*;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -99,8 +98,8 @@ public class Robot extends TimedRobot {
     intake.setDefaultCommand(
         new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
-    shooter.elevator.setDefaultCommand(
-        new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
+    shooter.feeder.setDefaultCommand(
+        new RunCommand(() -> shooter.feeder.runFeeder(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.feeder));
 
     shooter.hood.setDefaultCommand(
         new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
@@ -161,7 +160,6 @@ public class Robot extends TimedRobot {
                                                                                              // Limelight Output small
     Shuffleboard.startRecording();
 
-    //m_autonomousCommand = new Autononmous(drivetrain, 0.5, 2.0);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

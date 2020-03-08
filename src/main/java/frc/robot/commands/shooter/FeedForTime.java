@@ -12,12 +12,12 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Feeder;
 
 public class FeedForTime extends ParallelRaceGroup {
 
-    public FeedForTime(Elevator elevator, double speed, double time) {
+    public FeedForTime(Feeder feeder, double speed, double time) {
         addCommands(new WaitCommand(time),
-                new StartEndCommand(() -> elevator.runElevator(speed), () -> elevator.stopElevator(), elevator));
+                new StartEndCommand(() -> feeder.runFeeder(speed), () -> feeder.stopFeeder(), feeder));
     }
 }

@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
   private final int UPDATE_RATE = 70;
 
   public Turret turret;
-  public Elevator elevator;
+  public Feeder feeder;
   public Hood hood;
   public Flywheel flywheel;
 
@@ -60,7 +60,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     turret = new Turret();
     hood = new Hood();
-    elevator = new Elevator();
+    feeder = new Feeder();
     flywheel = new Flywheel();
 
     this.updateThreadStart();

@@ -5,16 +5,16 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.subsystems.Drivetrain;
 
-public class Autononmous extends ParallelRaceGroup {
+public class MoveAutonomous extends ParallelRaceGroup {
 
-    public Autononmous(Drivetrain drive, double speed, double time) {
+    public MoveAutonomous(Drivetrain drive, double speed, double time) {
         addCommands(new WaitCommand(time), new StartEndCommand(() -> drive.terribleDrive(speed, 0.0, false),
                 () -> drive.terribleDrive(0.0, 0.0, false), drive));
     }
