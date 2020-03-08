@@ -28,9 +28,10 @@ import frc.robot.commands.Autononmous;
 import frc.robot.commands.DriverControl;
 import frc.robot.commands.shooter.PreAim;
 import frc.robot.commands.shooter.VisionAim;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-//import frc.robot.subsystems.Intake;
-//import frc.robot.subsystems.Shifter;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shifter;
 import frc.robot.subsystems.Shooter;
 
 /**
@@ -45,10 +46,9 @@ public class Robot extends TimedRobot {
 
   private XboxController driver;
   private XboxController operator;
-  // private Climber climber;
-  //private Drivetrain drivetrain;
-  //private Intake intake;
-  //private Shifter shifter;
+  private Climber climber;
+  private Drivetrain drivetrain;
+  private Intake intake;
   private Shooter shooter;
   // private Spinner spinner;
 
@@ -76,12 +76,11 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     driver = new XboxController(Constants.IO.DRIVER_CONTROLLER);
     operator = new XboxController(Constants.IO.OPERATOR_CONTROLLER);
-    //drivetrain = new Drivetrain();
-   // intake = new Intake();
-    //shifter = new Shifter();
+    drivetrain = new Drivetrain();
+    intake = new Intake();
     shooter = new Shooter();
     // spinner = new Spinner();
-    // climber = new Climber();
+    climber = new Climber();
 
     // Set up Port Forwarding so we can access Limelight over USB tether to robot.
     PortForwarder.add(5800, "limelight.local", 5800);
@@ -94,11 +93,11 @@ public class Robot extends TimedRobot {
   }
 
   private void setControls() {
-    //drivetrain.setDefaultCommand(
-    //    new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
+    drivetrain.setDefaultCommand(
+        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
-    //intake.setDefaultCommand(
-    //    new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
+    intake.setDefaultCommand(
+        new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
     shooter.elevator.setDefaultCommand(
         new RunCommand(() -> shooter.elevator.runElevator(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.elevator));
@@ -149,12 +148,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     shooter.turret.zero();
     shooter.hood.zero();
-    //drivetrain.zeroSensors();
+    drivetrain.zeroSensors();
 
     shooter.hood.enable();
     shooter.turret.enable();
 
-    //shifter.lowGear();
+    drivetrain.shifter.lowGear();
 
     Shuffleboard.selectTab("Auto Telemetry");
     shooter.setLimelightLED(false);
@@ -186,7 +185,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    flywheelRPMAccum = 0;
+    //flywheelRPMAccum = 0;
     shooter.turret.enable();
     shooter.hood.enable();
     Shuffleboard.selectTab("In-Match");
@@ -205,17 +204,19 @@ public class Robot extends TimedRobot {
           new VisionAim(shooter, () -> /*drivetrain.model.center.heading*/ 0, () -> operator.getYButton())).schedule();
     }
 
-    //if (driver.getBumperPressed(Hand.kRight)) {
-   //   shifter.lowGear();
-   // } else if (driver.getBumperPressed(Hand.kLeft)) {
-    //  shifter.highGear();
-    //}
+    if (driver.getBumperPressed(Hand.kRight)) {
+      drivetrain.shifter.lowGear();
+    } 
+    else if (driver.getBumperPressed(Hand.kLeft)) {
+      drivetrain.shifter.highGear();
+    }
 
-    //if (driver.getStartButtonPressed()) {
-    //  drivetrain.zeroSensors();
-    //}
+    if (driver.getStartButtonPressed()) {
+      drivetrain.zeroSensors();
+    }
 
-    if(operator.getPOV() == 0 && POVDebounce == false){
+    // Shooter PID Setup Confirmation
+    /*if(operator.getPOV() == 0 && POVDebounce == false){
       flywheelRPMAccum += flywheelIncreaseValue;
       POVDebounce = true;
     }
@@ -227,9 +228,6 @@ public class Robot extends TimedRobot {
       POVDebounce = false;
     }
 
-    SmartDashboard.putNumber("RPM Set", flywheelRPMAccum);
-    SmartDashboard.putBoolean("Is Shooter Running", shooter.flywheel.getRunning());
-
     if (operator.getAButtonPressed()){
       System.out.println("Attempting to Do the Thing");
       if (shooter.flywheel.getRunning()){
@@ -240,11 +238,8 @@ public class Robot extends TimedRobot {
         shooter.flywheel.setSpeed(flywheelRPMAccum);
         System.out.println("Shooter was not spinning. Revving Up to " + flywheelRPMAccum);
       }
-    }
+    }*/
 
-    if(operator.getBButton()){
-      shooter.hood.setPosition(15);
-    }
     if (operator.getXButtonPressed()){
       if (!shooter.getLimelightLEDMode()){
         shooter.setLimelightLED(true);
@@ -273,10 +268,6 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
     
   }
-
-  // TODO pressure stuff
-
-  // private ShuffleboardTab shuffle = Shuffleboard.getTab("SmartDashboard");
 
  
 

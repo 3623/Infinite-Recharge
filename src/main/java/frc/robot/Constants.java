@@ -19,14 +19,10 @@ package frc.robot;
  */
 public final class Constants {
     public static final class Drivetrain {
-        public static final int RIGHT_MOTOR_ONE = 1;
-        public static final int RIGHT_MOTOR_TWO = 2;
-        public static final int LEFT_MOTOR_ONE = 3;
-        public static final int LEFT_MOTOR_TWO = 4;
-        public static final int ENCODER_LEFT_A = 0;
-        public static final int ENCODER_LEFT_B = 1;
-        public static final int ENCODER_RIGHT_A = 2;
-        public static final int ENCODER_RIGHT_B = 3;
+        public static final int RIGHT_MOTOR_MASTER = 1;
+        public static final int RIGHT_MOTOR_FOLLOWER = 2;
+        public static final int LEFT_MOTOR_MASTER = 3;
+        public static final int LEFT_MOTOR_FOLLOWER = 4;
     }
 
     public static final class Shooter {
@@ -52,6 +48,8 @@ public final class Constants {
     public static final class Intake {
         public static final int INTAKE_COLLECTOR_MOTOR_SPX = 4;
         public static final int INTAKE_DROP_SOLENOID = 6;
+        public static final int INTAKE_TRAY_MOTOR_LEFT_SPX = 2;
+        public static final int INTAKE_TRAY_MOTOR_RIGHT_SPX = 3;
     }
 
     public static final class Spinner {
@@ -63,10 +61,9 @@ public final class Constants {
     }
 
     public static final class Climber {
-        public static final int CLIMBER_LOCK_SOLENOID_LEFT = 2;
         public static final int CLIMBER_PTO_SOLENOID_LEFT = 4;
-        public static final int CLIMBER_LOCK_SOLENOID_RIGHT = 3;
         public static final int CLIMBER_PTO_SOLENOID_RIGHT = 5;
+        public static final int CLIMBER_LAUNCH_MOTOR_SPX = 4;
     }
 
     public static final class IO {

@@ -9,10 +9,13 @@ package frc.robot.subsystems;
 
 import java.io.IOException;
 
+import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.Faults;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -28,16 +31,18 @@ import frc.util.Utils;
 
 public class Drivetrain extends SubsystemBase {
 	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
+	CANifier canifierRight, canifierLeft;
 
 	private static final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private static final double ENCODER_TICKS_PER_REV = 2048.0; // TODO this could be 2048
+	private static final double ENCODER_TICKS_PER_REV = 8192.0; 
+	public Shifter shifter;
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 40.0; // BANANA i think this is closer
+	private static final double MAX_CURRENT = 55.0; // BANANA i think this is closer
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
-			MAX_CURRENT, 0.1);
+			MAX_CURRENT, 0.05);
 
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
@@ -45,8 +50,8 @@ public class Drivetrain extends SubsystemBase {
 	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
 	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
 	// sensor-velocity-sensor-units-per-100ms).
-	private static final double kP = 0.5;
-	private static final double kD = 0.1;
+	private static final double kP = 0.02;
+	private static final double kD = 0.0;
 	private static final double kI = 0.0;
 
 	private double time;
@@ -62,26 +67,36 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Drivetrain() {
-		rightMotorMaster = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_ONE);
-		rightMotorFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_TWO);
-		leftMotorMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_ONE);
-		leftMotorFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_TWO);
+		shifter = new Shifter();
+
+		rightMotorMaster = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_MASTER);
+		rightMotorFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_FOLLOWER);
+		leftMotorMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_MASTER);
+		leftMotorFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_FOLLOWER);
 		rightMotorMaster.configFactoryDefault();
 		rightMotorFollower.configFactoryDefault();
 		leftMotorMaster.configFactoryDefault();
 		leftMotorFollower.configFactoryDefault();
-		rightMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_ONE);
-		leftMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_ONE);
+		rightMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_MASTER);
+		leftMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_MASTER);
 		rightMotorMaster.setInverted(true);
 		leftMotorMaster.setInverted(false);
 		rightMotorFollower.setInverted(InvertType.FollowMaster);
 		leftMotorFollower.setInverted(InvertType.FollowMaster);
 		setBrakeMode(false);
-		// *
-		// rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
-		// * leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1);
+		
+		 
 		// TODO bring up sensors
 		// TODO set phase for the encoders
+
+		canifierLeft = new CANifier(2);
+		canifierRight = new CANifier(1);
+		rightMotorMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
+		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
+		rightMotorMaster.setSensorPhase(true);
+		leftMotorMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
+		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+		leftMotorMaster.setSensorPhase(true);
 
 		leftMotorMaster.configStatorCurrentLimit(currentLimiter);
 		rightMotorMaster.configStatorCurrentLimit(currentLimiter);
@@ -140,18 +155,17 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	private void updateOdometry(double time) {
-		// * double leftSpeed =
-		// talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
-		// * double rightSpeed =
-		// talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
-		// * model.updateSpeed(leftSpeed, rightSpeed, time);
+		double leftSpeed = talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
+		double rightSpeed =	talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
+		model.updateSpeed(leftSpeed, rightSpeed, time);
 		model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(NavX.getAngle());
 		model.updatePosition(time);
 	}
 
 	public void zeroSensors() {
-		// TODO talon sensors reset
+		leftMotorMaster.setSelectedSensorPosition(0);
+		rightMotorMaster.setSelectedSensorPosition(0);
 		NavX.reset();
 	}
 
@@ -290,7 +304,7 @@ public class Drivetrain extends SubsystemBase {
 	private static double talonSpeedToLinearSpeed(double talonSpeed) {
 		double ticksPerSecond = talonSpeed * 10.0;
 		double wheelRotationalSpeed = ticksPerSecond / ENCODER_TICKS_PER_REV;
-		double wheelSpeed = wheelRotationalSpeed / DrivetrainModel.WHEEL_CIRCUMFERENCE;
+		double wheelSpeed = wheelRotationalSpeed * DrivetrainModel.WHEEL_CIRCUMFERENCE;
 		return wheelSpeed;
 	}
 
@@ -304,8 +318,8 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	private void monitor() {
-		// SmartDashboard.putNumber("Left Encoder", encLeft.getDistance());
-		// SmartDashboard.putNumber("Rights Encoder", encRight.getDistance());
+		SmartDashboard.putNumber("Left Encoder", leftMotorMaster.getSelectedSensorVelocity());
+		SmartDashboard.putNumber("Rights Encoder", rightMotorMaster.getSelectedSensorVelocity());
 		SmartDashboard.putNumber("Drivetrain Model X", model.center.x);
 		SmartDashboard.putNumber("Drivetrain Model Y", model.center.y);
 		SmartDashboard.putNumber("Heading", model.center.heading);
@@ -313,6 +327,6 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public static void main(String[] args) throws IOException {
-	}
 
+	}
 }
