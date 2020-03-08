@@ -38,7 +38,6 @@ public class Flywheel extends SubsystemBase {
 
     ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
 
-    
     public double x, y, area;
 
     public Flywheel() {
@@ -52,7 +51,6 @@ public class Flywheel extends SubsystemBase {
         shooterFollower.follow(shooterMaster, true);
         shooterFollower.setIdleMode(IdleMode.kCoast);
         shooterFollower.setSmartCurrentLimit(40);
-        
 
         maxRPM = 5700;
         kP = 0.001; // BANANA why is this not outside of constructor?
@@ -62,7 +60,6 @@ public class Flywheel extends SubsystemBase {
         kFF = .00018;
         kMaxOutput = 1.0;
         kMinOutput = 0.0;
-        
 
         shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);
@@ -74,8 +71,8 @@ public class Flywheel extends SubsystemBase {
 
     public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
         System.out.println("RPM Input set at " + RPM);
-        System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
-        speedSetpoint = RPM * (18.0/35.0);
+        System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0 / 35.0)));
+        speedSetpoint = RPM * (18.0 / 35.0);
         System.out.println("Got Here. Setting Setpoint at " + speedSetpoint);
         shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
@@ -93,7 +90,7 @@ public class Flywheel extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return shooterMaster.getEncoder().getVelocity() * 35.0/18.0;
+        return shooterMaster.getEncoder().getVelocity() * 35.0 / 18.0;
     }
 
     public void monitor() {

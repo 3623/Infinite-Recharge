@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
+
+public class Autononmous extends ParallelRaceGroup {
 
 public class MoveAutonomous extends ParallelRaceGroup {
 

@@ -64,7 +64,7 @@ public class Hood extends PIDSubsystem {
 
     public void setRelative(double offSet) {
         setPosition(this.getMeasurement() + offSet);
-        if (offSet > 0.01){
+        if (offSet > 0.01) {
             System.out.println("I have an offset of: " + offSet);
         }
     }
@@ -76,7 +76,7 @@ public class Hood extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         motor.set(ControlMode.PercentOutput, output);
-        System.out.println("Hood Output: " + output );
+        System.out.println("Hood Output: " + output);
     }
 
     public void runWithOutput(double output) {

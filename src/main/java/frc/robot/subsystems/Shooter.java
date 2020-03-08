@@ -43,17 +43,10 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1)
 
   // Operator Display Network Table Entries
-  NetworkTableEntry flywheelRunning = Shuffleboard.getTab("In-Match")
-    .add("Is Flywheel Spinning?", false)
-    .getEntry();
-  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match")
-    .add("Shooter RPM", 0)
-    .withWidget(BuiltInWidgets.kDial)
-    .withProperties(Map.of("min", 0, "max", 11050))
-    .getEntry();
-  NetworkTableEntry IsAimed = Shuffleboard.getTab("In-Match")
-    .add("Is Aimed?", false)
-    .getEntry();
+  NetworkTableEntry flywheelRunning = Shuffleboard.getTab("In-Match").add("Is Flywheel Spinning?", false).getEntry();
+  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match").add("Shooter RPM", 0).withWidget(BuiltInWidgets.kDial)
+      .withProperties(Map.of("min", 0, "max", 11050)).getEntry();
+  NetworkTableEntry IsAimed = Shuffleboard.getTab("In-Match").add("Is Aimed?", false).getEntry();
 
   public double x, y, area, valid;
 
@@ -87,10 +80,9 @@ public class Shooter extends SubsystemBase {
     area = ta.getDouble(0.0);
     valid = tv.getDouble(0.0);
 
-    if (valid > 0.0){
+    if (valid > 0.0) {
       targetAcquired = true;
-    }
-    else{
+    } else {
       targetAcquired = false;
     }
     aimed = isAimed(x) && targetAcquired;
@@ -122,7 +114,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public boolean getLimelightLEDMode(){
+  public boolean getLimelightLEDMode() {
     return LEDStatus;
   }
 
