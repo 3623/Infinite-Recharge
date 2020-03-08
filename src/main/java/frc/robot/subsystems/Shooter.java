@@ -29,6 +29,8 @@ public class Shooter extends SubsystemBase {
 
   private static final double AIM_THRESHOLD = 2.0;
 
+  private boolean LEDStatus = false;
+
   public boolean targetAcquired = false;
   public boolean aimed = false;
   public boolean atSpeed = false;
@@ -112,10 +114,16 @@ public class Shooter extends SubsystemBase {
     if (on) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
           .setNumber(Constants.Shooter.LIMELIGHT_LED_FORCE_ON);
+      LEDStatus = true;
     } else {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
           .setNumber(Constants.Shooter.LIMELIGHT_LED_FORCE_OFF);
+      LEDStatus = false;
     }
+  }
+
+  public boolean getLimelightLEDMode(){
+    return LEDStatus;
   }
 
   public void setCameraMode(Boolean vision) {

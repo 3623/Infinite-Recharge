@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.Autononmous;
 import frc.robot.commands.DriverControl;
 import frc.robot.commands.shooter.PreAim;
@@ -53,8 +54,8 @@ public class Robot extends TimedRobot {
 
   AnalogInput transducer = new AnalogInput(0);
   
-  private double flywheelRPMAccum = 0;
-  private double flywheelIncreaseValue = 200;
+  private double flywheelRPMAccum = 0.0;
+  private double flywheelIncreaseValue = 200.0;
   private boolean POVDebounce;
 
   public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
@@ -82,9 +83,10 @@ public class Robot extends TimedRobot {
     // spinner = new Spinner();
     // climber = new Climber();
 
-    
-
-   
+    // Set up Port Forwarding so we can access Limelight over USB tether to robot.
+    PortForwarder.add(5800, "limelight.local", 5800);
+    PortForwarder.add(5801, "limelight.local", 5801);
+    PortForwarder.add(5805, "limelight.local", 5805);   
 
     setControls();
 
@@ -105,7 +107,7 @@ public class Robot extends TimedRobot {
         new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
 
     shooter.turret.setDefaultCommand(
-        new RunCommand(() -> shooter.turret.setRelative(4.0 * operator.getX(Hand.kLeft)), shooter.turret));
+        new RunCommand(() -> shooter.turret.setRelative(8.0 * operator.getX(Hand.kLeft)), shooter.turret));
 
   }
 
@@ -229,11 +231,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Is Shooter Running", shooter.flywheel.getRunning());
 
     if (operator.getAButtonPressed()){
+      System.out.println("Attempting to Do the Thing");
       if (shooter.flywheel.getRunning()){
         shooter.flywheel.setSpeed(0);
+        System.out.println("Shooter was running. Spinning Down");
       }
       else {
         shooter.flywheel.setSpeed(flywheelRPMAccum);
+        System.out.println("Shooter was not spinning. Revving Up to " + flywheelRPMAccum);
       }
     }
 
@@ -241,10 +246,14 @@ public class Robot extends TimedRobot {
       shooter.hood.setPosition(15);
     }
     if (operator.getXButtonPressed()){
-      shooter.setLimelightLED(true);
+      if (!shooter.getLimelightLEDMode()){
+        shooter.setLimelightLED(true);
+      }
+      else 
+      {
+        shooter.setLimelightLED(false);
+      }
     }
-
-    shooter.flywheel.runByPercent(operator.getTriggerAxis(Hand.kRight));
     
   }
 

@@ -14,6 +14,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.subsystems.Turret;
 import frc.util.Utils;
@@ -30,55 +31,53 @@ import frc.robot.Constants;
 
 public class Flywheel extends SubsystemBase {
     private static final double SPEED_THRESHOLD = 100.0;
-    private CANSparkMax /*shooterMaster,*/ shooterFollower;
+    private CANSparkMax shooterMaster, shooterFollower;
     private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
     private double speedSetpoint = 0.0;
 
     ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
-    // private NetworkTableEntry shooterPIDSystem = settings.addPersistent("Shooter
-    // PID System", shooterPID)
-    // .withWidget(BuiltInWidgets.kPIDController).getEntry();
 
     
     public double x, y, area;
 
     public Flywheel() {
-        //shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
-        //shooterMaster.setInverted(true);
+        shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
+        shooterMaster.restoreFactoryDefaults();
+        shooterMaster.setInverted(true);
+        shooterMaster.setIdleMode(IdleMode.kCoast);
+        shooterMaster.setSmartCurrentLimit(40);
         shooterFollower = new CANSparkMax(2, MotorType.kBrushless);
-        //shooterFollower.follow(shooterMaster, true);
-        //shooterMaster.restoreFactoryDefaults();
         shooterFollower.restoreFactoryDefaults();
+        shooterFollower.follow(shooterMaster, true);
+        shooterFollower.setIdleMode(IdleMode.kCoast);
+        shooterFollower.setSmartCurrentLimit(40);
+        
 
         maxRPM = 5700;
-        kP = 6e-5; // BANANA why is this not outside of constructor?
+        kP = 0.001; // BANANA why is this not outside of constructor?
         kI = 0;
         kD = 0;
         kIz = 0;
-        kFF = 1/maxRPM;
+        kFF = .00018;
         kMaxOutput = 1.0;
-        kMinOutput = 0;
+        kMinOutput = 0.0;
         
 
-        /*shooterMaster.getPIDController().setP(kP);
+        shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);
         shooterMaster.getPIDController().setD(kD);
         shooterMaster.getPIDController().setIZone(kIz);
         shooterMaster.getPIDController().setFF(kFF);
-        shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);*/
-        shooterFollower.getPIDController().setP(kP);
-        shooterFollower.getPIDController().setI(kI);
-        shooterFollower.getPIDController().setD(kD);
-        shooterFollower.getPIDController().setIZone(kIz);
-        shooterFollower.getPIDController().setFF(kFF);
-        shooterFollower.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
+        shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
     }
 
     public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
-        speedSetpoint = RPM * (18/35);
-        //shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
-        shooterFollower.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
+        System.out.println("RPM Input set at " + RPM);
+        System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
+        speedSetpoint = RPM * (18.0/35.0);
+        System.out.println("Got Here. Setting Setpoint at " + speedSetpoint);
+        shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
 
     Boolean isAtSpeed() {
@@ -93,24 +92,18 @@ public class Flywheel extends SubsystemBase {
         }
     }
 
-    public void runByPercent(double percent){
-        shooterFollower.set(percent);
-    }
-
     public double getVelocity() {
-        //return shooterMaster.getEncoder().getVelocity() * 18.0 / 35.0;
-        return shooterFollower.getEncoder().getVelocity() * (35/18);
+        return shooterMaster.getEncoder().getVelocity() * 35.0/18.0;
     }
 
     public void monitor() {
         SmartDashboard.putNumber("Shooter velocity", getVelocity());
         SmartDashboard.putNumber("Shooter setpoint", speedSetpoint);
-        //SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
+        SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
         SmartDashboard.putNumber("Shooter output", shooterFollower.getAppliedOutput());
     }
 
     public void disable() {
-        //shooterMaster.disable();
-        shooterFollower.disable();
+        shooterMaster.disable();
     }
 }

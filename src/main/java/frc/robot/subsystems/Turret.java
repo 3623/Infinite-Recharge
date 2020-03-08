@@ -94,7 +94,7 @@ public class Turret extends PIDSubsystem {
     private static final double kP = 0.65 / 18.0;
     private static final double kI = kP / 500.0;
     private static final double kD = kP * 0.1;
-    private static final double DEADBAND = 0.5;
+    private static final double DEADBAND = 0.25;
 
     private double setAngle = 0.0;
 
