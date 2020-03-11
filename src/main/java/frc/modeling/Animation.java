@@ -103,11 +103,14 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(new Waypoint(0.3, -5.9, 105.0, -0.8, true));
 		// nav.addWaypoint(new Waypoint(-0.5, -5.3, 135.0, -0.8, true));
 
-		// Right
-		model.setPosition(3.4, -3.5, 0.0);
-		nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -0.8, true));
-		nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 0.8, true));
-		nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -0.8, true));
+		// // Right
+		// model.setPosition(3.4, -3.5, 0.0);
+		// nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -0.8, true));
+		// nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 0.8, true));
+		// nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -0.8, true));
+
+		model.setPosition(0.0, -4.0, 0.0);
+		nav.addWaypoint(new Waypoint(0.5, -2.0, 30.0, 0.3, true));
 	}
 
 	// Update function

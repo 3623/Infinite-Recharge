@@ -160,6 +160,7 @@ public class Robot extends TimedRobot {
                                                                                              // Limelight Output small
     Shuffleboard.startRecording();
 
+    m_autonomousCommand = new RunOneMeter(drivetrain);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

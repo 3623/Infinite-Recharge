@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
 	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
 	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
 	// sensor-velocity-sensor-units-per-100ms).
-	private static final double kP = 0.02;
+	private static final double kP = 0.04;
 	private static final double kD = 0.0;
 	private static final double kI = 0.0;
 
@@ -95,7 +95,7 @@ public class Drivetrain extends SubsystemBase {
 		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 		rightMotorMaster.setSensorPhase(true);
 		leftMotorMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
-		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 		leftMotorMaster.setSensorPhase(true);
 
 		leftMotorMaster.configStatorCurrentLimit(currentLimiter);
@@ -158,7 +158,7 @@ public class Drivetrain extends SubsystemBase {
 		double leftSpeed = talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
 		double rightSpeed =	talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
 		model.updateSpeed(leftSpeed, rightSpeed, time);
-		model.updateSpeed(0.0, 0.0, time);
+		//model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(NavX.getAngle());
 		model.updatePosition(time);
 	}
@@ -318,12 +318,14 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	private void monitor() {
-		SmartDashboard.putNumber("Left Encoder", leftMotorMaster.getSelectedSensorVelocity());
-		SmartDashboard.putNumber("Rights Encoder", rightMotorMaster.getSelectedSensorVelocity());
+		SmartDashboard.putNumber("Left Encoder", talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity()));
+		SmartDashboard.putNumber("Rights Encoder", talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity()));
 		SmartDashboard.putNumber("Drivetrain Model X", model.center.x);
 		SmartDashboard.putNumber("Drivetrain Model Y", model.center.y);
 		SmartDashboard.putNumber("Heading", model.center.heading);
 		SmartDashboard.putNumber("Radians", model.center.r);
+		SmartDashboard.putNumber("Left Output", leftMotorMaster.getStatorCurrent());
+		SmartDashboard.putNumber("Right Output", rightMotorMaster.getStatorCurrent());
 	}
 
 	public static void main(String[] args) throws IOException {
