@@ -159,6 +159,7 @@ public class CubicSplineFollower {
         kRadiusPath = Math.abs(deltaX) * UPDATE_RATE * kScaleRadiusPath;
         double dx2 = (3.0 * a * deltaX * deltaX) + (2.0 * b * deltaX);
         double relativeFFAngle = Math.atan(dx2);
+        System.out.println(relativeFFAngle);
         double omega = relativeFFAngle * UPDATE_RATE;
 
         // Convert from derivative to angle
@@ -171,6 +172,7 @@ public class CubicSplineFollower {
         double lrSpeedDifference = omega * WHEEL_BASE;
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
+        System.out.println(desiredSpeed + " " + lrSpeedDifference);
         return new Tuple(leftSpeed, rightSpeed);
     }
 
@@ -187,9 +189,11 @@ public class CubicSplineFollower {
         double distanceFromWaypoint = Geometry.distance(startPoint, goalPoint);
         double straightPathAngle = Math.atan2(goalPoint.x - startPoint.x, goalPoint.y - startPoint.y);
         double relativeAngle = startPoint.r - straightPathAngle;
+
         double relativeOpposDist = distanceFromWaypoint * Math.sin(relativeAngle);
         double relativeAdjacDist = distanceFromWaypoint * Math.cos(relativeAngle);
         double relativeGoalAngle = startPoint.r - goalPoint.r;
+        relativeGoalAngle = Utils.limitAngleRadians(relativeGoalAngle);
         relativeGoalAngle = Utils.limit(relativeGoalAngle, kMaxSplineAngle, -kMaxSplineAngle);
         double relativeGoalDeriv = Math.tan(relativeGoalAngle);
         if (debug) {
@@ -251,6 +255,10 @@ public class CubicSplineFollower {
         waypoints.add(new Waypoint(x, y, heading, speed, isCritical));
     }
 
+    public void addWaypoint(Pose pose, double speed, Boolean isCritical) {
+        waypoints.add(new Waypoint(pose, speed, isCritical));
+    }
+
     /**
      * Contains information to define a point along a desired path
      */
@@ -275,12 +283,8 @@ public class CubicSplineFollower {
             this.isCritical = critical;
         }
 
-        public Waypoint(double x, double y, double heading) {
-            this(x, y, heading, 0.0, false);
-        }
-
-        public Waypoint(Pose pose) {
-            this(pose.x, pose.y, pose.heading, 0.0, false);
+        public Waypoint(Pose pose, double speed, Boolean critical) {
+            this(pose.x, pose.y, pose.heading, speed, critical);
 
         }
 
@@ -295,5 +299,8 @@ public class CubicSplineFollower {
     }
 
     public static void main(String[] args) {
+        double relativeGoalAngle = -3.2;
+        System.out.println((relativeGoalAngle + 2.0*Math.PI) % (2.0*Math.PI) - Math.PI);
+
     }
 }

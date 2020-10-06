@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
  * Simple Cartesian coordinate class
- * 
+ *
  * @author eric
  *
  */
@@ -15,7 +15,7 @@ public class Pose {
 	public double heading;
 	public double velocity;
 	public double angularVelocity;
-	
+
 	/**
 	 * Constructor for CartesianCoordinate class
 	 * @param x the x location in meters
@@ -36,13 +36,13 @@ public class Pose {
 	// 	this.r = r;
 	// 	this.heading = Math.toDegrees(r);
 	// }
-	
+
 	public Pose(double x, double y) {
 		this(x, y, 0.0);
 	}
-	
+
 	public Pose() {
-		this(0.0, 0.0, 0.0);		
+		this(0.0, 0.0, 0.0);
 	}
 
 	public void update(double deltaX, double deltaY, double deltaR) {
@@ -58,21 +58,20 @@ public class Pose {
 		this.r = Math.toRadians(this.heading);
 		limitAngle();
 	}
-	
+
 	private void limitAngle() {
-		if (Math.abs(this.heading) != 180.0) this.heading %= 180;
-		this.r = Math.toRadians(this.heading); 
+		this.heading = Utils.limitAngleDegrees(this.heading);
+		this.r = Math.toRadians(this.heading);
 	}
 
 	public String toString() {
 		return "x: " + x + ", y: " + y + ", heading: " + heading + ", radians: " + r;
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		Pose pose = new Pose(0, 0, 179);
 		Pose test = pose;
-		//pose.setHeading(-180);
-		pose.update(0, 0, 0.003);
+		pose.setHeading(190);
 		System.out.println(pose.toString());
 	}
 }

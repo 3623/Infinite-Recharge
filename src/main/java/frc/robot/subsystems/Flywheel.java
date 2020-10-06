@@ -38,7 +38,7 @@ public class Flywheel extends SubsystemBase {
 
     ShuffleboardTab settings = Shuffleboard.getTab("Tuning");
 
-    
+
     public double x, y, area;
 
     public Flywheel() {
@@ -52,7 +52,7 @@ public class Flywheel extends SubsystemBase {
         shooterFollower.follow(shooterMaster, true);
         shooterFollower.setIdleMode(IdleMode.kCoast);
         shooterFollower.setSmartCurrentLimit(40);
-        
+
 
         maxRPM = 5700;
         kP = 0.001; // BANANA why is this not outside of constructor?
@@ -62,7 +62,7 @@ public class Flywheel extends SubsystemBase {
         kFF = .00018;
         kMaxOutput = 1.0;
         kMinOutput = 0.0;
-        
+
 
         shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);

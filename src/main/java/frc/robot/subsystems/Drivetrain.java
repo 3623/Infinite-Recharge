@@ -23,26 +23,25 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.controls.CubicSplineFollower;
 import frc.robot.Constants;
 import frc.util.Tuple;
 import frc.util.Utils;
 
-public class Drivetrain extends SubsystemBase {
-	WPI_TalonFX rightMotorMaster, rightMotorFollower, leftMotorMaster, leftMotorFollower;
+public class Drivetrain extends TerribleSubsystem {
+	WPI_TalonFX rightMaster, rightFollower, leftMaster, leftFollower;
 	CANifier canifierRight, canifierLeft;
 
-	private static final int UPDATE_RATE = 200;
+	protected static final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
-	private static final double ENCODER_TICKS_PER_REV = 8192.0; 
+	private static final double ENCODER_TICKS_PER_REV = 8192.0;
 	public Shifter shifter;
 
 	public CubicSplineFollower waypointNav;
 
 	private static final double MAX_CURRENT = 55.0; // BANANA i think this is closer
-	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
-			MAX_CURRENT, 0.05);
+	private StatorCurrentLimitConfiguration currentLimiter =
+		new StatorCurrentLimitConfiguration(true, MAX_CURRENT, MAX_CURRENT, 0.05);
 
 	private static final int PIDIDX = 0;
 	private static final int CONFIG_TIMEOUT = 30;
@@ -67,48 +66,51 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Drivetrain() {
+		setName("Drivetrain");
 		shifter = new Shifter();
 
-		rightMotorMaster = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_MASTER);
-		rightMotorFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_FOLLOWER);
-		leftMotorMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_MASTER);
-		leftMotorFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_FOLLOWER);
-		rightMotorMaster.configFactoryDefault();
-		rightMotorFollower.configFactoryDefault();
-		leftMotorMaster.configFactoryDefault();
-		leftMotorFollower.configFactoryDefault();
-		rightMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_MASTER);
-		leftMotorFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_MASTER);
-		rightMotorMaster.setInverted(true);
-		leftMotorMaster.setInverted(false);
-		rightMotorFollower.setInverted(InvertType.FollowMaster);
-		leftMotorFollower.setInverted(InvertType.FollowMaster);
+		rightMaster = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_MASTER);
+		rightFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_FOLLOWER);
+		leftMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_MASTER);
+		leftFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_FOLLOWER);
+		rightMaster.configFactoryDefault();
+		rightFollower.configFactoryDefault();
+		leftMaster.configFactoryDefault();
+		leftFollower.configFactoryDefault();
+		rightFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_MASTER);
+		leftFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_MASTER);
+		rightMaster.setInverted(true);
+		leftMaster.setInverted(false);
+		rightFollower.setInverted(InvertType.FollowMaster);
+		leftFollower.setInverted(InvertType.FollowMaster);
 		setBrakeMode(false);
-		
-		 
+
+
 		// TODO bring up sensors
 		// TODO set phase for the encoders
 
 		canifierLeft = new CANifier(2);
 		canifierRight = new CANifier(1);
-		rightMotorMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
-		rightMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
-		rightMotorMaster.setSensorPhase(true);
-		leftMotorMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
-		leftMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
-		leftMotorMaster.setSensorPhase(true);
+		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(),
+											   RemoteSensorSource.CANifier_Quadrature, 0);
+		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
+		rightMaster.setSensorPhase(true);
+		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(),
+											  RemoteSensorSource.CANifier_Quadrature, 0);
+		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
+		leftMaster.setSensorPhase(true);
 
-		leftMotorMaster.configStatorCurrentLimit(currentLimiter);
-		rightMotorMaster.configStatorCurrentLimit(currentLimiter);
+		leftMaster.configStatorCurrentLimit(currentLimiter);
+		rightMaster.configStatorCurrentLimit(currentLimiter);
 
-		leftMotorMaster.config_kF(PIDIDX, kFF);
-		leftMotorMaster.config_kP(PIDIDX, kP);
-		leftMotorMaster.config_kD(PIDIDX, kD);
-		leftMotorMaster.config_kI(PIDIDX, kI);
-		rightMotorMaster.config_kF(PIDIDX, kFF);
-		rightMotorMaster.config_kP(PIDIDX, kP);
-		rightMotorMaster.config_kD(PIDIDX, kD);
-		rightMotorMaster.config_kI(PIDIDX, kI);
+		leftMaster.config_kF(PIDIDX, kFF);
+		leftMaster.config_kP(PIDIDX, kP);
+		leftMaster.config_kD(PIDIDX, kD);
+		leftMaster.config_kI(PIDIDX, kI);
+		rightMaster.config_kF(PIDIDX, kFF);
+		rightMaster.config_kP(PIDIDX, kP);
+		rightMaster.config_kD(PIDIDX, kD);
+		rightMaster.config_kI(PIDIDX, kI);
 
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
@@ -120,13 +122,13 @@ public class Drivetrain extends SubsystemBase {
 		this.updateThreadStart();
 	}
 
-	private void update() {
+	@Override
+	protected void update() {
 		double time = Timer.getFPGATimestamp();
 		double deltaTime = time - this.time;
 		this.time = time;
 		this.updateOdometry(deltaTime);
-		this.monitor();
-		SmartDashboard.putNumber("DT", deltaTime);
+		display("DT", deltaTime);
 
 		switch (controlState) {
 			case OPEN_LOOP:
@@ -139,24 +141,9 @@ public class Drivetrain extends SubsystemBase {
 		}
 	}
 
-	private void updateThreadStart() {
-		Thread t = new Thread(() -> {
-			while (!Thread.interrupted()) {
-				this.update();
-				try {
-					Thread.sleep(1000 / UPDATE_RATE);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		t.start();
-	}
-
 	private void updateOdometry(double time) {
-		double leftSpeed = talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity());
-		double rightSpeed =	talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity());
+		double leftSpeed = talonSpeedToLinearSpeed(leftMaster.getSelectedSensorVelocity());
+		double rightSpeed =	talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity());
 		model.updateSpeed(leftSpeed, rightSpeed, time);
 		//model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(NavX.getAngle());
@@ -164,8 +151,8 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public void zeroSensors() {
-		leftMotorMaster.setSelectedSensorPosition(0);
-		rightMotorMaster.setSelectedSensorPosition(0);
+		leftMaster.setSelectedSensorPosition(0);
+		rightMaster.setSelectedSensorPosition(0);
 		NavX.reset();
 	}
 
@@ -173,10 +160,10 @@ public class Drivetrain extends SubsystemBase {
 		if (controlState != DriveControlState.DISABLED) {
 			controlState = DriveControlState.DISABLED;
 		}
-		leftMotorMaster.stopMotor();
-		leftMotorFollower.stopMotor();
-		rightMotorMaster.stopMotor();
-		rightMotorFollower.stopMotor();
+		leftMaster.stopMotor();
+		leftFollower.stopMotor();
+		rightMaster.stopMotor();
+		rightFollower.stopMotor();
 	}
 
 	public void test(WPI_TalonFX talon) {
@@ -198,10 +185,10 @@ public class Drivetrain extends SubsystemBase {
 			mode = NeutralMode.Brake;
 		else
 			mode = NeutralMode.Coast;
-		rightMotorMaster.setNeutralMode(mode);
-		rightMotorFollower.setNeutralMode(mode);
-		leftMotorMaster.setNeutralMode(mode);
-		leftMotorFollower.setNeutralMode(mode);
+		rightMaster.setNeutralMode(mode);
+		rightFollower.setNeutralMode(mode);
+		leftMaster.setNeutralMode(mode);
+		leftFollower.setNeutralMode(mode);
 	}
 
 	public void startPathFollowing() {
@@ -217,8 +204,8 @@ public class Drivetrain extends SubsystemBase {
 		double leftSpeed = output.left;
 		double rightSpeed = output.right;
 
-		SmartDashboard.putNumber("Left Out 1", leftSpeed);
-		SmartDashboard.putNumber("Right Out 1", rightSpeed);
+		display("Left Out 1", leftSpeed);
+		display("Right Out 1", rightSpeed);
 		setSpeed(leftSpeed, rightSpeed);
 	}
 
@@ -257,41 +244,41 @@ public class Drivetrain extends SubsystemBase {
 			}
 		}
 
-		double leftMotorOutput = xSpeed + angularPower;
-		double rightMotorOutput = xSpeed - angularPower;
+		double leftOutput = xSpeed + angularPower;
+		double rightOutput = xSpeed - angularPower;
 
 		// If rotation is overpowered, reduce both outputs to within acceptable range
 		if (overPower) {
-			if (leftMotorOutput > 1.0) {
-				rightMotorOutput -= leftMotorOutput - 1.0;
-				leftMotorOutput = 1.0;
-			} else if (rightMotorOutput > 1.0) {
-				leftMotorOutput -= rightMotorOutput - 1.0;
-				rightMotorOutput = 1.0;
-			} else if (leftMotorOutput < -1.0) {
-				rightMotorOutput -= leftMotorOutput + 1.0;
-				leftMotorOutput = -1.0;
-			} else if (rightMotorOutput < -1.0) {
-				leftMotorOutput -= rightMotorOutput + 1.0;
-				rightMotorOutput = -1.0;
+			if (leftOutput > 1.0) {
+				rightOutput -= leftOutput - 1.0;
+				leftOutput = 1.0;
+			} else if (rightOutput > 1.0) {
+				leftOutput -= rightOutput - 1.0;
+				rightOutput = 1.0;
+			} else if (leftOutput < -1.0) {
+				rightOutput -= leftOutput + 1.0;
+				leftOutput = -1.0;
+			} else if (rightOutput < -1.0) {
+				leftOutput -= rightOutput + 1.0;
+				rightOutput = -1.0;
 			}
 		}
 
 		// Normalize the wheel speeds
-		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+		double maxMagnitude = Math.max(Math.abs(leftOutput), Math.abs(rightOutput));
 		if (maxMagnitude > 1.0) {
-			leftMotorOutput /= maxMagnitude;
-			rightMotorOutput /= maxMagnitude;
+			leftOutput /= maxMagnitude;
+			rightOutput /= maxMagnitude;
 		}
 
-		setOpenLoop(leftMotorOutput, rightMotorOutput);
+		setOpenLoop(leftOutput, rightOutput);
 	}
 
 	private void setSpeed(double left, double right) {
 		double leftTalonSpeed = linearSpeedToTalonSpeed(left);
 		double rightTalonSpeed = linearSpeedToTalonSpeed(right);
-		leftMotorMaster.set(ControlMode.Velocity, leftTalonSpeed);
-		rightMotorMaster.set(ControlMode.Velocity, rightTalonSpeed);
+		leftMaster.set(ControlMode.Velocity, leftTalonSpeed);
+		rightMaster.set(ControlMode.Velocity, rightTalonSpeed);
 	}
 
 	private static double linearSpeedToTalonSpeed(double linearSpeed) {
@@ -304,8 +291,8 @@ public class Drivetrain extends SubsystemBase {
 	private static double talonSpeedToLinearSpeed(double talonSpeed) {
 		double ticksPerSecond = talonSpeed * 10.0;
 		double wheelRotationalSpeed = ticksPerSecond / ENCODER_TICKS_PER_REV;
-		double wheelSpeed = wheelRotationalSpeed * DrivetrainModel.WHEEL_CIRCUMFERENCE;
-		return wheelSpeed;
+		double linearSpeed = wheelRotationalSpeed * DrivetrainModel.WHEEL_CIRCUMFERENCE;
+		return linearSpeed;
 	}
 
 	private void setOpenLoop(double left, double right) {
@@ -313,19 +300,21 @@ public class Drivetrain extends SubsystemBase {
 			System.out.println("Switching to open loop control, time: " + time);
 			controlState = DriveControlState.OPEN_LOOP;
 		}
-		leftMotorMaster.set(ControlMode.PercentOutput, left);
-		rightMotorMaster.set(ControlMode.PercentOutput, right);
+		leftMaster.set(ControlMode.PercentOutput, left);
+		rightMaster.set(ControlMode.PercentOutput, right);
 	}
 
-	private void monitor() {
-		SmartDashboard.putNumber("Left Encoder", talonSpeedToLinearSpeed(leftMotorMaster.getSelectedSensorVelocity()));
-		SmartDashboard.putNumber("Rights Encoder", talonSpeedToLinearSpeed(rightMotorMaster.getSelectedSensorVelocity()));
-		SmartDashboard.putNumber("Drivetrain Model X", model.center.x);
-		SmartDashboard.putNumber("Drivetrain Model Y", model.center.y);
-		SmartDashboard.putNumber("Heading", model.center.heading);
-		SmartDashboard.putNumber("Radians", model.center.r);
-		SmartDashboard.putNumber("Left Output", leftMotorMaster.getStatorCurrent());
-		SmartDashboard.putNumber("Right Output", rightMotorMaster.getStatorCurrent());
+	@Override
+	public void periodic() {
+		super.periodic();
+		display("Left Encoder", talonSpeedToLinearSpeed(leftMaster.getSelectedSensorVelocity()));
+		display("Rights Encoder", talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity()));
+		display("Model X", model.center.x);
+		display("Model Y", model.center.y);
+		display("Heading", model.center.heading);
+		display("Radians", model.center.r);
+		display("Left Output", leftMaster.getStatorCurrent());
+		display("Right Output", rightMaster.getStatorCurrent());
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -6,6 +6,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - CubicSplineFollower",
+      "request": "launch",
+      "mainClass": "frc.controls.CubicSplineFollower",
+      "projectName": "Infinite-Recharge"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - Pose",
+      "request": "launch",
+      "mainClass": "frc.util.Pose",
+      "projectName": "Infinite-Recharge"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - Animation",
       "request": "launch",
       "mainClass": "frc.modeling.Animation",

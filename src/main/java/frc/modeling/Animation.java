@@ -93,25 +93,33 @@ public class Animation extends JPanel implements Runnable {
 		// model.setPosition(-3.3, -3.5, 0.0);
 		// nav.addWaypoint(new Waypoint(-3.3, -5.8, 0.0, -0.8, true));
 		// nav.addWaypoint(new Waypoint(0.5, -3.0, 50.0, 0.8, true));
-		// nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true)); // Triple in
-		// middle
+		// // Triple in middle
+		// nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true));
 		// nav.addWaypoint(new Waypoint(1.0, -3.0, 0.0, 0.8, true));
 
-		// // Middle
-		// model.setPosition(2.5, -3.5, 0.0);
-		// nav.addWaypoint(new Waypoint(1.7, -5.9, 65.0, -0.8, true));
-		// nav.addWaypoint(new Waypoint(0.3, -5.9, 105.0, -0.8, true));
-		// nav.addWaypoint(new Waypoint(-0.5, -5.3, 135.0, -0.8, true));
+		// Middle
+		model.setPosition(2.5, -3.5, 0.0);
+		nav.addWaypoint(new Waypoint(1.7, -5.9, 65.0, -0.8, true));
+		nav.addWaypoint(new Waypoint(0.3, -5.9, 105.0, -0.8, false));
+		nav.addWaypoint(new Waypoint(1.0, -3.0, -140.0, -0.8, true));
 
 		// // Right
 		// model.setPosition(3.4, -3.5, 0.0);
-		// nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -0.8, true));
-		// nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 0.8, true));
-		// nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -0.8, true));
+		// nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 1.0, true));
+		// nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(2.7, -5.0, 20.0, 1.0, true));
+		// nav.addWaypoint(new Waypoint(1.6, -5.9, 70.0, -1.0, true));
 
-		model.setPosition(0.0, -4.0, 0.0);
-		nav.addWaypoint(new Waypoint(0.5, -2.0, 30.0, 0.3, true));
+		// // Steal balls
+		// model.setPosition(2.5, -3.0, 0.0);
+		// nav.addWaypoint(new Waypoint(1.6, -5.9, 70.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(-1.6, -8.8, -20.0, -1.0, false));
+		// nav.addWaypoint(new Waypoint(-0.6, -9.6, -70.0, -1.0, false));
+		// nav.addWaypoint(new Waypoint(1.0, -9.5, -110.0, -1.0, true));
+		// nav.addWaypoint(new Waypoint(2.0, -4.5, -180.0, -1.0, true));
 	}
+
 
 	// Update function
 	public void paintComponent(Graphics g) {

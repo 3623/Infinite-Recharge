@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.util.Utils;
 
-public class Shooter extends SubsystemBase {
-  private final int UPDATE_RATE = 70;
+public class Shooter extends TerribleSubsystem {
+  protected final int UPDATE_RATE = 70;
 
   public Turret turret;
   public Feeder feeder;
@@ -41,6 +41,10 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry ty = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
   NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
   NetworkTableEntry tv = Lime.getEntry("tv"); // Valid Targets (0 or 1)
+
+  private final double LIMELIGHT_ELEVATION_OFFSET = 20.0;
+  private final double TARGET_RELATIVE_HEIGHT = 2.0; // meters
+  private final double TARGET_WIDTH = 1.0; // m
 
   // Operator Display Network Table Entries
   NetworkTableEntry flywheelRunning = Shuffleboard.getTab("In-Match")
@@ -66,22 +70,7 @@ public class Shooter extends SubsystemBase {
     this.updateThreadStart();
   }
 
-  private void updateThreadStart() {
-    Thread t = new Thread(() -> {
-      while (!Thread.interrupted()) {
-        this.update();
-        try {
-          Thread.sleep(1000 / UPDATE_RATE);
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    });
-    t.start();
-  }
-
-  private void update() {
+  protected void update() {
     x = tx.getDouble(0.0);
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
@@ -122,10 +111,6 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public boolean getLimelightLEDMode(){
-    return LEDStatus;
-  }
-
   public void setCameraMode(Boolean vision) {
     if (vision) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
@@ -138,5 +123,10 @@ public class Shooter extends SubsystemBase {
     turret.disable();
     hood.disable();
     flywheel.disable();
+  }
+
+  public double getDistance(double targetY) {
+    double realElevation = targetY + LIMELIGHT_ELEVATION_OFFSET;
+    return TARGET_RELATIVE_HEIGHT / Math.sin(Math.toRadians(realElevation));
   }
 }

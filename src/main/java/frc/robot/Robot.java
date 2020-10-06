@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
   // private Spinner spinner;
 
   AnalogInput transducer = new AnalogInput(0);
-  
+
   private double flywheelRPMAccum = 0.0;
   private double flywheelIncreaseValue = 200.0;
   private boolean POVDebounce;
@@ -76,15 +76,15 @@ public class Robot extends TimedRobot {
     driver = new XboxController(Constants.IO.DRIVER_CONTROLLER);
     operator = new XboxController(Constants.IO.OPERATOR_CONTROLLER);
     drivetrain = new Drivetrain();
-    intake = new Intake();
-    shooter = new Shooter();
+    // intake = new Intake();
+    // shooter = new Shooter();
     // spinner = new Spinner();
-    climber = new Climber();
+    // climber = new Climber();
 
     // Set up Port Forwarding so we can access Limelight over USB tether to robot.
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
-    PortForwarder.add(5805, "limelight.local", 5805);   
+    PortForwarder.add(5805, "limelight.local", 5805);
 
     setControls();
 
@@ -98,14 +98,14 @@ public class Robot extends TimedRobot {
     intake.setDefaultCommand(
         new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
-    shooter.feeder.setDefaultCommand(
-        new RunCommand(() -> shooter.feeder.runFeeder(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.feeder));
+    // shooter.feeder.setDefaultCommand(
+    //     new RunCommand(() -> shooter.feeder.runFeeder(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.feeder));
 
-    shooter.hood.setDefaultCommand(
-        new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
+    // shooter.hood.setDefaultCommand(
+    //     new RunCommand(() -> shooter.hood.setRelative(3.0 * -operator.getY(Hand.kRight)), shooter.hood));
 
-    shooter.turret.setDefaultCommand(
-        new RunCommand(() -> shooter.turret.setRelative(8.0 * operator.getX(Hand.kLeft)), shooter.turret));
+    // shooter.turret.setDefaultCommand(
+    //     new RunCommand(() -> shooter.turret.setRelative(8.0 * operator.getX(Hand.kLeft)), shooter.turret));
 
   }
 
@@ -145,17 +145,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    shooter.turret.zero();
-    shooter.hood.zero();
+    // shooter.turret.zero();
+    // shooter.hood.zero();
     drivetrain.zeroSensors();
 
-    shooter.hood.enable();
-    shooter.turret.enable();
+    // shooter.hood.enable();
+    // shooter.turret.enable();
 
     drivetrain.shifter.lowGear();
 
     Shuffleboard.selectTab("Auto Telemetry");
-    shooter.setLimelightLED(false);
+    // shooter.setLimelightLED(false);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
                                                                                              // Limelight Output small
     Shuffleboard.startRecording();
@@ -185,12 +185,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     //flywheelRPMAccum = 0;
-    shooter.turret.enable();
-    shooter.hood.enable();
+    // shooter.turret.enable();
+    // shooter.hood.enable();
     Shuffleboard.selectTab("In-Match");
-    shooter.setLimelightLED(false);
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
-                                                                                             // Limelight Output small
+    // shooter.setLimelightLED(false);
+    // USB Camera big, Limelight Output small
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2);
   }
 
   /**
@@ -198,14 +198,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if (operator.getYButtonPressed()) {
-      new SequentialCommandGroup(new PreAim(shooter, () -> /*drivetrain.model.center.heading*/ 0),
-          new VisionAim(shooter, () -> /*drivetrain.model.center.heading*/ 0, () -> operator.getYButton())).schedule();
-    }
+    // if (operator.getYButtonPressed()) {
+    //   new SequentialCommandGroup(new PreAim(shooter, () -> /*drivetrain.model.center.heading*/ 0),
+    //       new VisionAim(shooter, () -> /*drivetrain.model.center.heading*/ 0, () -> operator.getYButton())).schedule();
+    // }
 
     if (driver.getBumperPressed(Hand.kRight)) {
       drivetrain.shifter.lowGear();
-    } 
+    }
     else if (driver.getBumperPressed(Hand.kLeft)) {
       drivetrain.shifter.highGear();
     }
@@ -239,25 +239,25 @@ public class Robot extends TimedRobot {
       }
     }*/
 
-    if (operator.getXButtonPressed()){
-      if (!shooter.getLimelightLEDMode()){
-        shooter.setLimelightLED(true);
-      }
-      else 
-      {
-        shooter.setLimelightLED(false);
-      }
-    }
-    
+    // if (operator.getXButtonPressed()){
+    //   if (!shooter.getLimelightLEDMode()){
+    //     shooter.setLimelightLED(true);
+    //   }
+    //   else
+    //   {
+    //     shooter.setLimelightLED(false);
+    //   }
+    // }
+
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    shooter.flywheel.setSpeed(10000.0);
-    shooter.turret.enable();
-    shooter.hood.enable();
+    // shooter.flywheel.setSpeed(10000.0);
+    // shooter.turret.enable();
+    // shooter.hood.enable();
   }
 
   /**
@@ -265,11 +265,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    
+
   }
 
- 
 
-  // 
+
+  //
 
 }
