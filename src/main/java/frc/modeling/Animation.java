@@ -3,6 +3,7 @@ package frc.modeling;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import frc.modeling.FieldPositions;
 import frc.controls.CubicSplineFollower;
 import frc.controls.CubicSplineFollower.Waypoint;
 import frc.robot.subsystems.DrivetrainModel;
@@ -13,6 +14,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class Animation extends JPanel implements Runnable {
@@ -90,34 +92,33 @@ public class Animation extends JPanel implements Runnable {
 	private void setWaypoints() {
 
 		// // Left
-		// model.setPosition(-3.3, -3.5, 0.0);
-		// nav.addWaypoint(new Waypoint(-3.3, -5.8, 0.0, -0.8, true));
-		// nav.addWaypoint(new Waypoint(0.5, -3.0, 50.0, 0.8, true));
-		// // Triple in middle
-		// nav.addWaypoint(new Waypoint(-0.2, -5.5, -25.0, -0.8, true));
-		// nav.addWaypoint(new Waypoint(1.0, -3.0, 0.0, 0.8, true));
+		// model.setPosition(FieldPositions.LEFT_START);
+		// nav.addWaypoint(FieldPositions.LEFT1);
+		// nav.addWaypoint(FieldPositions.LEFT2);
+		// nav.addWaypoint(FieldPositions.LEFT3);
+		// nav.addWaypoint(FieldPositions.LEFT4);
 
 		// Middle
-		model.setPosition(2.5, -3.5, 0.0);
-		nav.addWaypoint(new Waypoint(1.7, -5.9, 65.0, -0.8, true));
-		nav.addWaypoint(new Waypoint(0.3, -5.9, 105.0, -0.8, false));
-		nav.addWaypoint(new Waypoint(1.0, -3.0, -140.0, -0.8, true));
+		model.setPosition(FieldPositions.MIDDLE_START);
+		nav.addWaypoint(FieldPositions.MIDDLE1);
+		nav.addWaypoint(FieldPositions.MIDDLE2);
+		nav.addWaypoint(FieldPositions.MIDDLE3);
 
 		// // Right
-		// model.setPosition(3.4, -3.5, 0.0);
-		// nav.addWaypoint(new Waypoint(3.4, -6.5, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(3.4, -5.0, 0.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(3.4, -9.1, 0.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(2.7, -5.0, 20.0, 1.0, true));
-		// nav.addWaypoint(new Waypoint(1.6, -5.9, 70.0, -1.0, true));
+		// model.setPosition(FieldPositions.RIGHT_START);
+		// nav.addWaypoint(FieldPositions.RIGHT1);
+		// nav.addWaypoint(FieldPositions.RIGHT2);
+		// nav.addWaypoint(FieldPositions.RIGHT3);
+		// nav.addWaypoint(FieldPositions.RIGHT4);
+		// nav.addWaypoint(FieldPositions.RIGHT5);
 
 		// // Steal balls
-		// model.setPosition(2.5, -3.0, 0.0);
-		// nav.addWaypoint(new Waypoint(1.6, -5.9, 70.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(-1.6, -8.8, -20.0, -1.0, false));
-		// nav.addWaypoint(new Waypoint(-0.6, -9.6, -70.0, -1.0, false));
-		// nav.addWaypoint(new Waypoint(1.0, -9.5, -110.0, -1.0, true));
-		// nav.addWaypoint(new Waypoint(2.0, -4.5, -180.0, -1.0, true));
+		// model.setPosition(FieldPositions.STEAL_START);
+		// nav.addWaypoint(FieldPositions.STEAL1);
+		// nav.addWaypoint(FieldPositions.STEAL2);
+		// nav.addWaypoint(FieldPositions.STEAL3);
+		// nav.addWaypoint(FieldPositions.STEAL4);
+		// nav.addWaypoint(FieldPositions.STEAL5);
 	}
 
 

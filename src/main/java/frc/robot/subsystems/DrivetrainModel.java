@@ -61,6 +61,10 @@ public class DrivetrainModel {
 		zero();
 	}
 
+	public void setPosition(Pose pose) {
+		setPosition(pose.x, pose.y, pose.heading);
+	}
+
 	/**
 	 * Zeros the velocity and acceleration of each drivetrain side
 	 */
@@ -327,4 +331,5 @@ public class DrivetrainModel {
 			model.limitAcceleration(12.0, 12.0);
 		}
 	}
+
 }
