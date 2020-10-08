@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
 
   private void setControls() {
     drivetrain.setDefaultCommand(
-        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> -driver.getX(Hand.kRight)));
+        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
     // intake.setDefaultCommand(
     //     new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));

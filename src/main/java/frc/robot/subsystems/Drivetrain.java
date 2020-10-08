@@ -180,7 +180,7 @@ public class Drivetrain extends TerribleSubsystem {
 
 	public void test() {
 		testSide(rightMaster, "Right ", 1.0);
-		testSide(leftMaster, "Left ", -1.0);
+		testSide(leftMaster, "Left ", 0.0);
 	}
 
 	public void setBrakeMode(Boolean enabled) {
