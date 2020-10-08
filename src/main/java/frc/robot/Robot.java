@@ -45,24 +45,20 @@ public class Robot extends TimedRobot {
 
   private XboxController driver;
   private XboxController operator;
-  private Climber climber;
+  // private Climber climber;
   private Drivetrain drivetrain;
-  private Intake intake;
-  private Shooter shooter;
+  // private Intake intake;
+  // private Shooter shooter;
   // private Spinner spinner;
 
   AnalogInput transducer = new AnalogInput(0);
 
-  private double flywheelRPMAccum = 0.0;
-  private double flywheelIncreaseValue = 200.0;
-  private boolean POVDebounce;
-
-  public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
-  public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
-  public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
-  NetworkTableEntry mainPressure = Shuffleboard.getTab("Pre-Match").add("Main System Pressure",0)
-   .withWidget(BuiltInWidgets.kDial)
-   .withProperties(Map.of("min", 0, "max", 130)).getEntry();
+  // public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
+  // public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
+  // public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
+  // NetworkTableEntry mainPressure = Shuffleboard.getTab("Pre-Match").add("Main System Pressure",0)
+  //  .withWidget(BuiltInWidgets.kDial)
+  //  .withProperties(Map.of("min", 0, "max", 130)).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -93,10 +89,10 @@ public class Robot extends TimedRobot {
 
   private void setControls() {
     drivetrain.setDefaultCommand(
-        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
+        new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> -driver.getX(Hand.kRight)));
 
-    intake.setDefaultCommand(
-        new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
+    // intake.setDefaultCommand(
+    //     new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
 
     // shooter.feeder.setDefaultCommand(
     //     new RunCommand(() -> shooter.feeder.runFeeder(operator.getTriggerAxis(Hand.kLeft) / 2), shooter.feeder));
@@ -121,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
+    // mainPressure.setDouble(250 * (transducer.getVoltage() / 5) - 25);
   }
 
   /**
@@ -130,7 +126,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     //drivetrain.disable();
-    shooter.disable();
+    // shooter.disable();
 
     Shuffleboard.stopRecording();
   }
