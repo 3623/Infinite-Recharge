@@ -55,7 +55,7 @@ public class Drivetrain extends TerribleSubsystem {
 
 	private double time;
 
-	private AHRS NavX;
+	private AHRS navx;
 
 	private DriveControlState controlState = DriveControlState.DISABLED;
 
@@ -117,7 +117,7 @@ public class Drivetrain extends TerribleSubsystem {
 
 		waypointNav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
 
-		NavX = new AHRS(SPI.Port.kMXP);
+		navx = new AHRS(SPI.Port.kMXP);
 
 		this.updateThreadStart();
 	}
@@ -146,14 +146,14 @@ public class Drivetrain extends TerribleSubsystem {
 		double rightSpeed =	talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity());
 		model.updateSpeed(leftSpeed, rightSpeed, time);
 		//model.updateSpeed(0.0, 0.0, time);
-		model.updateHeading(NavX.getAngle());
+		model.updateHeading(navx.getAngle());
 		model.updatePosition(time);
 	}
 
 	public void zeroSensors() {
 		leftMaster.setSelectedSensorPosition(0);
 		rightMaster.setSelectedSensorPosition(0);
-		NavX.reset();
+		navx.reset();
 	}
 
 	public void disable() {

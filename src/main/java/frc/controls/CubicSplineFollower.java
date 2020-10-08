@@ -198,7 +198,7 @@ public class CubicSplineFollower {
         relativeGoalAngle = Utils.limitAngleRadians(relativeGoalAngle);
         relativeGoalAngle = Utils.limit(relativeGoalAngle, kMaxSplineAngle, -kMaxSplineAngle);
         double relativeGoalDeriv = Math.tan(relativeGoalAngle);
-        if (true) {
+        if (debug) {
             System.out.println(relativeAdjacDist + " " + relativeOpposDist + " " + relativeGoalDeriv);
         }
         return generateSpline(relativeAdjacDist, relativeOpposDist, relativeGoalDeriv);

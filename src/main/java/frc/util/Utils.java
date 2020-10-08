@@ -10,6 +10,12 @@ public class Utils {
 		return Math.abs(value - center) >= deadband;
 	}
 
+	public static Tuple limitTuple(Tuple tuple, double upperBound, double lowerBound) {
+		tuple.left = limit(tuple.left, upperBound, lowerBound);
+		tuple.right = limit(tuple.right, upperBound, lowerBound);
+		return tuple;
+	}
+
 	public static double limit(double value, double upperBound, double lowerBound) {
 		return Math.max(lowerBound, Math.min(upperBound, value));
 	}

@@ -8,6 +8,7 @@ import frc.controls.CubicSplineFollower;
 import frc.controls.CubicSplineFollower.Waypoint;
 import frc.robot.subsystems.DrivetrainModel;
 import frc.util.Tuple;
+import frc.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -98,11 +99,11 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(FieldPositions.LEFT3);
 		// nav.addWaypoint(FieldPositions.LEFT4);
 
-		// Middle
-		model.setPosition(FieldPositions.MIDDLE_START);
-		nav.addWaypoint(FieldPositions.MIDDLE1);
-		nav.addWaypoint(FieldPositions.MIDDLE2);
-		nav.addWaypoint(FieldPositions.MIDDLE3);
+		// // Middle
+		// model.setPosition(FieldPositions.MIDDLE_START);
+		// nav.addWaypoint(FieldPositions.MIDDLE1);
+		// nav.addWaypoint(FieldPositions.MIDDLE2);
+		// nav.addWaypoint(FieldPositions.MIDDLE3);
 
 		// // Right
 		// model.setPosition(FieldPositions.RIGHT_START);
@@ -112,13 +113,13 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(FieldPositions.RIGHT4);
 		// nav.addWaypoint(FieldPositions.RIGHT5);
 
-		// // Steal balls
-		// model.setPosition(FieldPositions.STEAL_START);
-		// nav.addWaypoint(FieldPositions.STEAL1);
-		// nav.addWaypoint(FieldPositions.STEAL2);
-		// nav.addWaypoint(FieldPositions.STEAL3);
-		// nav.addWaypoint(FieldPositions.STEAL4);
-		// nav.addWaypoint(FieldPositions.STEAL5);
+		// Steal balls
+		model.setPosition(FieldPositions.STEAL_START);
+		nav.addWaypoint(FieldPositions.STEAL1);
+		nav.addWaypoint(FieldPositions.STEAL2);
+		nav.addWaypoint(FieldPositions.STEAL3);
+		nav.addWaypoint(FieldPositions.STEAL4);
+		nav.addWaypoint(FieldPositions.STEAL5);
 	}
 
 
@@ -223,6 +224,9 @@ public class Animation extends JPanel implements Runnable {
 			while (!Thread.interrupted()) {
 
 				Tuple output = nav.updatePursuit(model.center);
+				output.left += (Math.random() - 0.0) * 0.5; // Some random error. Well, a lot
+				output.right += (Math.random() - 0.5) * 0.3;
+
 				model.updateSpeed(output.left, output.right, 1.0 / CONTROL_UPDATE_RATE);
 
 				// System.out.println("Left Voltage: " + leftVoltage + ", Right Voltage: " +
@@ -246,8 +250,6 @@ public class Animation extends JPanel implements Runnable {
 			while (!Thread.interrupted()) {
 				time += 1000 / ODOMETRY_UPDATE_RATE;
 
-				// leftVoltage += (Math.random() - 0.5) * 4.0; // Some random error. Well, a lot
-				// rightVoltage += (Math.random() - 0.5) * 4.0;
 
 				model.updateVoltage(leftVoltage, rightVoltage, 1.0 / ODOMETRY_UPDATE_RATE);
 				model.updatePosition(1.0 / ODOMETRY_UPDATE_RATE);
