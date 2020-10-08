@@ -30,7 +30,7 @@ public class CubicSplineFollower {
 
     private static final double kMaxAccelDefault = 0.1; // m/s^2 * 200
     private double kMaxAccel;
-    private static final double kMaxAngularDiff = 1.5;
+    private static final double kMaxAngularDiff = 2.5;
     private static final double kSlowdownRadiusCritical = 1.3;
     private static final double kMinApproachSpeedCritical = 0.2;
     private static final double kRadiusCriticalDefault = 0.05; // m
@@ -160,7 +160,7 @@ public class CubicSplineFollower {
         kRadiusPath = Math.abs(deltaX) * UPDATE_RATE * kScaleRadiusPath;
         double dx2 = (3.0 * a * deltaX * deltaX) + (2.0 * b * deltaX);
         double relativeFFAngle = Math.atan(dx2);
-        System.out.println(relativeFFAngle);
+        if (debug) System.out.println(relativeFFAngle);
         double omega = relativeFFAngle * UPDATE_RATE;
 
         // Convert from derivative to angle
@@ -172,9 +172,13 @@ public class CubicSplineFollower {
             desiredSpeed = robotPose.velocity - kMaxAccel;
         double lrSpeedDifference = omega * WHEEL_BASE;
         lrSpeedDifference = Utils.limit(lrSpeedDifference, kMaxAngularDiff, -kMaxAngularDiff);
+        if (desiredSpeed + Math.abs(lrSpeedDifference) > MAX_SPEED)
+            desiredSpeed = MAX_SPEED - Math.abs(lrSpeedDifference);
+        else if (desiredSpeed - Math.abs(lrSpeedDifference) < -MAX_SPEED)
+            desiredSpeed = -MAX_SPEED + Math.abs(lrSpeedDifference);
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
-        System.out.println(desiredSpeed + " " + lrSpeedDifference);
+        if (debug) System.out.println(desiredSpeed + " " + lrSpeedDifference);
         return new Tuple(leftSpeed, rightSpeed);
     }
 

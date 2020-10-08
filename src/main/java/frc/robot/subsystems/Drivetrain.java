@@ -166,16 +166,21 @@ public class Drivetrain extends TerribleSubsystem {
 		rightFollower.stopMotor();
 	}
 
-	public void test(WPI_TalonFX talon) {
+	private void testSide(WPI_TalonFX talon, String name, double speed) {
 		Faults faults = new Faults();
 		/* update motor controller */
-		talon.set(ControlMode.PercentOutput, 1.0);
+		talon.set(ControlMode.PercentOutput, speed);
 		/* check our live faults */
 		talon.getFaults(faults);
-		System.out.println("Sensor Vel:" + talon.getSelectedSensorVelocity());
-		System.out.println("Sensor Pos:" + talon.getSelectedSensorPosition());
-		System.out.println("Out %" + talon.getMotorOutputPercent());
-		System.out.println("Out Of Phase:" + faults.SensorOutOfPhase);
+		System.out.println(name + "Sensor Vel:" + talon.getSelectedSensorVelocity());
+		System.out.println(name + "Sensor Pos:" + talon.getSelectedSensorPosition());
+		System.out.println(name + "Out %" + talon.getMotorOutputPercent());
+		System.out.println(name + "Out Of Phase:" + faults.SensorOutOfPhase);
+	}
+
+	public void test() {
+		testSide(rightMaster, "Right ", 1.0);
+		testSide(leftMaster, "Left ", -1.0);
 	}
 
 	public void setBrakeMode(Boolean enabled) {
