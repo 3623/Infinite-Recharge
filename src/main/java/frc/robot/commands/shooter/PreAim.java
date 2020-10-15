@@ -11,31 +11,32 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.util.Pose;
 
 public class PreAim extends CommandBase {
-    private static Shooter shooterSystem;
-    private static DoubleSupplier robotHeading;
+    private Shooter shooter;
+    private Pose loc;
 
     /*
      * Constructor of The Command Arguments - Spinner Subsystem
      */
-    public PreAim(Shooter shooter, DoubleSupplier heading) {
-        shooterSystem = shooter;
-        robotHeading = heading;
+    public PreAim(Shooter shooterSubsystem, Pose robotPose) {
+        shooter = shooterSubsystem;
+        loc = robotPose;
         addRequirements(shooter.turret);
     }
 
     // Initialize is called immediately when the command is scheduled.
     public void initialize() {
-        shooterSystem.setLimelightLED(true);
+        shooter.setLimelightLED(true);
     }
 
     public void execute() {
-        shooterSystem.turret.setAngle(-robotHeading.getAsDouble());
+        shooter.turret.setAngle(-robotHeading.getAsDouble());
     }
 
     public boolean isFinished() {
-        return shooterSystem.targetAcquired;
+        return shooter.targetAcquired;
     }
 
     public void end(boolean interrupted){

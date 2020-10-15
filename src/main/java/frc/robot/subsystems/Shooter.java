@@ -113,4 +113,10 @@ public class Shooter extends TerribleSubsystem {
     double realElevation = targetY + LIMELIGHT_ELEVATION_OFFSET;
     return TARGET_RELATIVE_HEIGHT / Math.sin(Math.toRadians(realElevation));
   }
+
+  private double angleToGoal(Pose robotPose) {
+
+  }
+
+  Utils.limitAngleDegrees(global-model.center.heading);
 }

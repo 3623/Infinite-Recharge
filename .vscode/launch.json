@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - Utils",
+      "request": "launch",
+      "mainClass": "frc.util.Utils",
+      "projectName": "Infinite-Recharge"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - CubicSplineFollower",
       "request": "launch",
       "mainClass": "frc.controls.CubicSplineFollower",

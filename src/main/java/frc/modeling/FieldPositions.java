@@ -34,4 +34,6 @@ public class FieldPositions {
 	public static final Waypoint STEAL4 = new Waypoint(1.0, -9.5, -110.0, -1.0, false);
 	public static final Waypoint STEAL5 = new Waypoint(2.0, -4.5, -180.0, -1.0, true);
 
+	public static final Pose OUR_GOAL = new Pose(1.71, 16.45);
+	public static final Pose THEIR_GOAL = new Pose(-1.71, -16.45);
 }

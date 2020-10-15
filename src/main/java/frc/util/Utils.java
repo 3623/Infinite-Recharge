@@ -51,7 +51,15 @@ public class Utils {
 		return limitAngle(angle, Math.PI);
 	}
 
+	public static double angleBetweenDegrees(Pose looker, Pose reference) {
+		return Math.toDegrees(Math.atan2(reference.x - looker.x, reference.y - looker.y));
+	}
+
 	private static double limitAngle(double angle, double maxAngle) {
 		return (((angle + maxAngle) % (2*maxAngle)) + (2*maxAngle)) % (2*maxAngle) - maxAngle;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(Math.atan2(-.1, 1.0));
 	}
 }
