@@ -10,9 +10,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -62,15 +59,6 @@ public class Spinner extends SubsystemBase {
     } else {
       colorString = "Unknown Color";
     }
-    // Shuffleboard Output Shows Black or the Color that's Matched.
-    Shuffleboard.getTab("SmartDashboard").addBoolean("isRed", () -> match.color == kRedTarget)
-        .withProperties(Map.of("colorWhenTrue", "red"));
-    Shuffleboard.getTab("SmartDashboard").addBoolean("isYellow", () -> match.color == kYellowTarget)
-        .withProperties(Map.of("colorWhenTrue", "yellow"));
-    Shuffleboard.getTab("SmartDashboard").addBoolean("isBlue", () -> match.color == kBlueTarget)
-        .withProperties(Map.of("colorWhenTrue", "blue"));
-    Shuffleboard.getTab("SmartDashboard").addBoolean("isGreen", () -> match.color == kGreenTarget)
-        .withProperties(Map.of("colorWhenTrue", "green"));
     return colorString;
   }
 

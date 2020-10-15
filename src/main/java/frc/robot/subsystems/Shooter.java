@@ -12,10 +12,7 @@ import java.util.Map;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.util.Utils;
 
@@ -45,19 +42,6 @@ public class Shooter extends TerribleSubsystem {
   private final double LIMELIGHT_ELEVATION_OFFSET = 20.0;
   private final double TARGET_RELATIVE_HEIGHT = 2.0; // meters
   private final double TARGET_WIDTH = 1.0; // m
-
-  // Operator Display Network Table Entries
-  NetworkTableEntry flywheelRunning = Shuffleboard.getTab("In-Match")
-    .add("Is Flywheel Spinning?", false)
-    .getEntry();
-  NetworkTableEntry currentRPM = Shuffleboard.getTab("In-Match")
-    .add("Shooter RPM", 0)
-    .withWidget(BuiltInWidgets.kDial)
-    .withProperties(Map.of("min", 0, "max", 11050))
-    .getEntry();
-  NetworkTableEntry IsAimed = Shuffleboard.getTab("In-Match")
-    .add("Is Aimed?", false)
-    .getEntry();
 
   public double x, y, area, valid;
 

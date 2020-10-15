@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import java.util.Map;
 
@@ -31,9 +29,6 @@ public class Hood extends PIDSubsystem {
     private static final double kI = kP / 500.0;
     private static final double kD = kP * 0.1;
     private static final double DEADBAND = .25;
-
-    NetworkTableEntry HoodAngle = Shuffleboard.getTab("In-Match").add("Hood Angle", 0).withWidget(BuiltInWidgets.kDial)
-            .withProperties(Map.of("min", 45, "max", 80)).getEntry();
 
     public Hood() {
         super(new PIDController(kP, kI, kD));

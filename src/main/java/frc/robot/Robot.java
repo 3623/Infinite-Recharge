@@ -15,9 +15,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -53,13 +50,6 @@ public class Robot extends TimedRobot {
 
   AnalogInput transducer = new AnalogInput(0);
 
-  // public final ShuffleboardTab preMatchTab = Shuffleboard.getTab("Pre-Match");
-  // public final ShuffleboardTab AutonomousTelemetry = Shuffleboard.getTab("Auto Telemetry");
-  // public final ShuffleboardTab MatchScreen = Shuffleboard.getTab("In-Match");
-  // NetworkTableEntry mainPressure = Shuffleboard.getTab("Pre-Match").add("Main System Pressure",0)
-  //  .withWidget(BuiltInWidgets.kDial)
-  //  .withProperties(Map.of("min", 0, "max", 130)).getEntry();
-
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -83,8 +73,6 @@ public class Robot extends TimedRobot {
     PortForwarder.add(5805, "limelight.local", 5805);
 
     setControls();
-
-    Shuffleboard.selectTab("Pre-Match");
   }
 
   private void setControls() {
@@ -127,8 +115,6 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     //drivetrain.disable();
     // shooter.disable();
-
-    Shuffleboard.stopRecording();
   }
 
   @Override
@@ -150,11 +136,9 @@ public class Robot extends TimedRobot {
 
     drivetrain.shifter.lowGear();
 
-    Shuffleboard.selectTab("Auto Telemetry");
     // shooter.setLimelightLED(false);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
                                                                                              // Limelight Output small
-    Shuffleboard.startRecording();
 
     m_autonomousCommand = new TestDrive(drivetrain);
 
@@ -183,7 +167,6 @@ public class Robot extends TimedRobot {
     //flywheelRPMAccum = 0;
     // shooter.turret.enable();
     // shooter.hood.enable();
-    Shuffleboard.selectTab("In-Match");
     // shooter.setLimelightLED(false);
     // USB Camera big, Limelight Output small
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2);
