@@ -25,7 +25,7 @@ public class DrivetrainModel {
 	public Pose center;
 
 	private DrivetrainSide left, right;
-	public static final double WHEEL_RADIUS = 0.0774; // meters
+	public static final double WHEEL_RADIUS = 0.081; // meters
 	public static final double WHEEL_CIRCUMFERENCE = DrivetrainModel.WHEEL_RADIUS * 2.0 * Math.PI;
 	private static final double CIMS_PER_SIDE = 2.0; // Minicim is 0.58
 	public static final double GEAR_RATIO = 10.75 / 1.0; // Reduction

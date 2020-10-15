@@ -8,16 +8,15 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.controls.CubicSplineFollower.Waypoint;
+import frc.modeling.FieldPositions;
 import frc.robot.subsystems.Drivetrain;
 
-public class RunOneMeter extends CommandBase {
+public class TestDrive extends CommandBase {
 
     private final Drivetrain dt;
 
-    public RunOneMeter(Drivetrain drive) {
+    public TestDrive(Drivetrain drive) {
         dt = drive;
         addRequirements(drive);
     }
@@ -26,8 +25,26 @@ public class RunOneMeter extends CommandBase {
     public void initialize() {
         dt.waypointNav.clearWaypoints();
         dt.zeroSensors();
-        dt.model.setPosition(0.0, 0.0, 0.0);
-        dt.waypointNav.addWaypoint(new Waypoint(0.5, 2.0, 45.0, 0.3, true));
+        // dt.model.setPosition(0.0, 0.0, 0.0);
+        // dt.waypointNav.addWaypoint(new Waypoint(0.0, 1.0, 0.0, 0.3, true));
+        // dt.startPathFollowing();
+
+        // // Right
+		// dt.model.setPosition(FieldPositions.RIGHT_START);
+		// dt.waypointNav.addWaypoint(FieldPositions.RIGHT1);
+		// dt.waypointNav.addWaypoint(FieldPositions.RIGHT2);
+		// dt.waypointNav.addWaypoint(FieldPositions.RIGHT3);
+		// dt.waypointNav.addWaypoint(FieldPositions.RIGHT4);
+        // dt.waypointNav.addWaypoint(FieldPositions.RIGHT5);
+        // dt.startPathFollowing();
+
+        // Steal balls
+		dt.model.setPosition(FieldPositions.STEAL_START);
+		dt.waypointNav.addWaypoint(FieldPositions.STEAL1);
+		dt.waypointNav.addWaypoint(FieldPositions.STEAL2);
+		dt.waypointNav.addWaypoint(FieldPositions.STEAL3);
+		dt.waypointNav.addWaypoint(FieldPositions.STEAL4);
+        dt.waypointNav.addWaypoint(FieldPositions.STEAL5);
         dt.startPathFollowing();
     }
 

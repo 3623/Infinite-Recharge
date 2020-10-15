@@ -28,12 +28,12 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private static final double kMaxAccelDefault = 0.1; // m/s^2 * 200
+    private static final double kMaxAccelDefault = 0.3; // m/s^2 * 200
     private double kMaxAccel;
-    private static final double kMaxAngularDiff = 2.5;
+    private static final double kMaxAngularDiff = 3.5;
     private static final double kSlowdownRadiusCritical = 1.3;
     private static final double kMinApproachSpeedCritical = 0.2;
-    private static final double kRadiusCriticalDefault = 0.05; // m
+    private static final double kRadiusCriticalDefault = 0.1; // m
     private double kRadiusCritical; // m
     private static final double kScaleRadiusPathDefault = 0.1; // constant
     private double kScaleRadiusPath; // constant
@@ -178,7 +178,7 @@ public class CubicSplineFollower {
             desiredSpeed = -MAX_SPEED + Math.abs(lrSpeedDifference);
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
-        if (debug) System.out.println(desiredSpeed + " " + lrSpeedDifference);
+        if (true) System.out.println(desiredSpeed + " " + lrSpeedDifference);
         return new Tuple(leftSpeed, rightSpeed);
     }
 
