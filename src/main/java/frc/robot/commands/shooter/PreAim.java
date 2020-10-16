@@ -23,7 +23,7 @@ public class PreAim extends CommandBase {
     public PreAim(Shooter shooterSubsystem, Pose robotPose) {
         shooter = shooterSubsystem;
         loc = robotPose;
-        addRequirements(shooter.turret);
+        addRequirements(shooter);
     }
 
     // Initialize is called immediately when the command is scheduled.
@@ -46,6 +46,6 @@ public class PreAim extends CommandBase {
         else{
             System.out.println("Pre-Aim Interruped");
         }
-        
+
     }
 }

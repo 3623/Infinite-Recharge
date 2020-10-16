@@ -4,7 +4,7 @@ public class Geometry {
 
 	/**
 	 * Returns side b, calculated using law of sines
-	 * 
+	 *
 	 * @param a    length of side a
 	 * @param sinA value for sine of angle A, opposite of side a
 	 * @param sinB value for sine of angle B, opposite of side b
@@ -31,11 +31,6 @@ public class Geometry {
 
 	// Testing calculations
 	public static void main(String[] args) {
-		Geometry test = new Geometry();
-		Pose left = new Pose(6, 5);
-		Pose right = new Pose(5, 4);
-
-		// System.out.println(Geometry.distance(left, right));
-		System.out.println(((180 - (-90)) + 360.0) % 360.0);
+		System.out.println();
 	}
 }

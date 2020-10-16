@@ -69,9 +69,6 @@ public class Pose {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Pose pose = new Pose(0, 0, 179);
-		Pose test = pose;
-		pose.setHeading(190);
-		System.out.println(pose.toString());
+		System.out.println();
 	}
 }

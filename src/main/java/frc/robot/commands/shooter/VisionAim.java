@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
 public class VisionAim extends CommandBase {
-    private static final double FOCUS_POINT_SCALING_FACTOR = 0.05;
     private static Shooter shooterSystem;
     private static DoubleSupplier robotHeading;
     private BooleanSupplier hold;
@@ -22,7 +21,7 @@ public class VisionAim extends CommandBase {
         shooterSystem = shooter;
         robotHeading = heading;
         this.hold = hold;
-        addRequirements(shooter.turret);
+        addRequirements(shooter);
     }
 
     // Initialize is called immediately when the command is scheduled.

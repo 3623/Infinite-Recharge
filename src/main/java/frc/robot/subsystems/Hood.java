@@ -1,12 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
-
-import java.util.Map;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -42,7 +38,7 @@ public class Hood extends PIDSubsystem {
     }
 
     public void monitor() {
-        HoodAngle.setNumber(this.getMeasurement() + 45);
+        SmartDashboard.putNumber("Hood Position", this.getMeasurement() + 45);
         SmartDashboard.putNumber("Hood Output", (int) motor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Hood Error", getController().getPositionError());
         SmartDashboard.putNumber("Hood Setpoint", getController().getSetpoint());

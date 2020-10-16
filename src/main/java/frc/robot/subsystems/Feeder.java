@@ -14,27 +14,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
- * An example subsystem. You can replace me with your own Subsystem.
- */
+* An example subsystem. You can replace me with your own Subsystem.
+*/
 public class Feeder extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+    // Put methods for controlling this subsystem
+    // here. Call these from Commands.
 
-  private WPI_TalonSRX feederSRX;
+    private WPI_TalonSRX feederSRX;
 
-  // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
-  // ballSensor5;
+    // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
+    // ballSensor5;
 
-  public Feeder() {
-    feederSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
-  }
+    public Feeder() {
+        feederSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
+    }
 
-  public void runFeeder(double feederSpeed) {
-    feederSRX.set(ControlMode.PercentOutput, feederSpeed);
-  }
+    public void runFeeder(double feederSpeed) {
+        feederSRX.set(ControlMode.PercentOutput, feederSpeed);
+    }
 
-  public void stopFeeder() {
-    feederSRX.set(ControlMode.PercentOutput, 0.0);
-  }
+    public void stopFeeder() {
+        feederSRX.set(ControlMode.PercentOutput, 0.0);
+    }
 
 }

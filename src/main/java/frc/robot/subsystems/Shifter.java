@@ -12,27 +12,31 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
- * An example subsystem. You can replace me with your own Subsystem.
- */
+* An example subsystem. You can replace me with your own Subsystem.
+*/
 public class Shifter extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+    // Put methods for controlling this subsystem
+    // here. Call these from Commands.
 
-  Solenoid shifter_Piston;
+    Solenoid shifter_Piston;
 
-  public Shifter() {
-    shifter_Piston = new Solenoid(Constants.Shifter.SHIFTER_SOLENOID);
-  }
+    public Shifter() {
+        shifter_Piston = new Solenoid(Constants.Shifter.SHIFTER_SOLENOID);
+    }
 
-  public void lowGear() {
-    shifter_Piston.set(false);
-  }
+    public void lowGear() {
+        shifter_Piston.set(false);
+    }
 
-  public void highGear() {
-    shifter_Piston.set(true);
-  }
+    public void highGear() {
+        shifter_Piston.set(true);
+    }
 
-  public Boolean shifterStatus() {
-    return shifter_Piston.get();
-  }
+    /**
+     *
+     * @return true if shifter in high gear
+     */
+    public Boolean shifterStatus() {
+        return shifter_Piston.get();
+    }
 }

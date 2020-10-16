@@ -6,30 +6,25 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
-
-import java.util.Map;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.subsystems.Turret;
 import frc.util.Utils;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class Flywheel extends SubsystemBase {
     private static final double SPEED_THRESHOLD = 100.0;
     private CANSparkMax shooterMaster, shooterFollower;
-    private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+    private static final double kP = 0.001;
+    private static final double kI = 0;
+    private static final double kD = 0;
+    private static final double kIz = 0;
+    private static final double kFF = 0.00018;
+    private static final double kMaxOutput = 1.0;
+    private static final double kMinOutput = 0.0;
+    // private static final double maxRPM = 5700;
 
     private double speedSetpoint = 0.0;
 
@@ -47,17 +42,6 @@ public class Flywheel extends SubsystemBase {
         shooterFollower.setIdleMode(IdleMode.kCoast);
         shooterFollower.setSmartCurrentLimit(40);
 
-
-        maxRPM = 5700;
-        kP = 0.001; // BANANA why is this not outside of constructor?
-        kI = 0;
-        kD = 0;
-        kIz = 0;
-        kFF = .00018;
-        kMaxOutput = 1.0;
-        kMinOutput = 0.0;
-
-
         shooterMaster.getPIDController().setP(kP);
         shooterMaster.getPIDController().setI(kI);
         shooterMaster.getPIDController().setD(kD);
@@ -66,7 +50,8 @@ public class Flywheel extends SubsystemBase {
         shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
     }
 
-    public void setSpeed(double RPM) { // ALWAYS USE FINAL OUTPUT TARGET RPM!!!!!!!!!
+    public void setSpeed(double RPM) {
+        // Use actual target rpm of motor
         System.out.println("RPM Input set at " + RPM);
         System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
         speedSetpoint = RPM * (18.0/35.0);

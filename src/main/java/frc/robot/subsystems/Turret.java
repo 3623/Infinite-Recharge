@@ -26,8 +26,6 @@ public class Turret extends PIDSubsystem {
     private static final double kD = kP * 0.1;
     private static final double DEADBAND = 0.25;
 
-    private double setAngle = 0.0;
-
     public Turret() {
         super(new PIDController(kP, kI, kD));
         getController().setTolerance(DEADBAND);
@@ -42,13 +40,6 @@ public class Turret extends PIDSubsystem {
         SmartDashboard.putNumber("Turret Angle", this.getMeasurement());
         SmartDashboard.putNumber("Turret Output", (int) turretMotor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Turret Error", getController().getPositionError());
-    }
-
-    private static int degreesToTalonUnits(double degrees) {
-        double turretRevs = degrees / 360.0;
-        double encoderRevs = turretRevs * ENCODER_REVS_PER_TURRET_REV;
-        double encoderTicks = encoderRevs * TICKS_PER_ENCODER_REV;
-        return (int) encoderTicks; // BANANA check this
     }
 
     public void setAngle(double angle) {
