@@ -332,4 +332,8 @@ public class DrivetrainModel {
 		}
 	}
 
+	public double topSpeed() {
+		return MAX_SPEED;
+	}
+
 }

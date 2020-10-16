@@ -22,7 +22,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controls.CubicSplineFollower;
 import frc.robot.Constants;
 import frc.util.Tuple;
@@ -115,7 +114,7 @@ public class Drivetrain extends TerribleSubsystem {
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
 
-		waypointNav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
+		waypointNav = new CubicSplineFollower(model);
 
 		navx = new AHRS(SPI.Port.kMXP);
 

@@ -9,6 +9,7 @@ package frc.controls;
 
 import java.util.ArrayList;
 
+import frc.robot.subsystems.DrivetrainModel;
 import frc.util.Geometry;
 import frc.util.Pose;
 import frc.util.Tuple;
@@ -18,9 +19,8 @@ import frc.util.Utils;
  * Add your docs here.
  */
 public class CubicSplineFollower {
-    private final double MAX_SPEED;
     private final double WHEEL_BASE;
-    private final double UPDATE_RATE;
+    private static final double UPDATE_RATE = 200.0;
 
     private ArrayList<Waypoint> waypoints;
     private Waypoint curWaypoint;
@@ -28,45 +28,30 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private static final double kMaxAccelDefault = 0.3; // m/s^2 * 200
-    private double kMaxAccel;
-    private static final double kMaxAngularDiff = 3.5;
-    private static final double kSlowdownRadiusCritical = 1.3;
-    private static final double kMinApproachSpeedCritical = 0.2;
-    private static final double kRadiusCriticalDefault = 0.1; // m
-    private double kRadiusCritical; // m
-    private static final double kScaleRadiusPathDefault = 0.1; // constant
-    private double kScaleRadiusPath; // constant
+    private double kMaxAccel = 0.3; // m/s^2 * 200
+    private static final double kMaxAngularDiff = 3.5; // m/s * 2
+    private static final double kSlowdownRadius = 1.0; // m
+    private static final double kMinApproachSpeedCritical = 0.2; // %
+    private static final double kRadiusCritical = 0.1;; // m
+    private static final double kScaleRadiusPath = 0.1; // constant
     private double kRadiusPath = 0.0; // this updates dynamically
-    private static final double kAngularErrorPathDefault = 5.0;
     // deg, keeping this because this dictates when the robot switches
-    private double kAngularErrorPath;
-    private double kMaxSplineAngle = Math.PI * 0.3;
+    private static final double kAngularErrorPath = 5.0;
+    private static final double kMaxSplineAngle = Math.PI * 0.3;
 
-    double ffSpeed = 0.0;
+    private DrivetrainModel drivetrainState;
 
-    private Boolean debug;
+    private double maxSpeed;
+    private double ffSpeed = 0.0;
+    private double maxTurn = 0.0;
 
-    public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase, double updateRate, Boolean debug,
-            double maxAccel, double goalRadius, double pathRadiusScale, double pathAngularError) {
-        MAX_SPEED = robotMaxSpeed;
-        WHEEL_BASE = robotWheelBase;
+    private static final Boolean debug = false;
 
-        UPDATE_RATE = updateRate;
-
-        this.debug = debug;
-
-        kMaxAccel = maxAccel;
-        kRadiusCritical = goalRadius;
-        kScaleRadiusPath = pathRadiusScale;
-        kAngularErrorPath = pathAngularError;
+    public CubicSplineFollower(DrivetrainModel drivetrain) {
+        drivetrainState = drivetrain;
+        WHEEL_BASE = DrivetrainModel.WHEEL_BASE;
 
         waypoints = new ArrayList<Waypoint>();
-    }
-
-    public CubicSplineFollower(double robotMaxSpeed, double robotWheelBase) {
-        this(robotMaxSpeed, robotWheelBase, 200.0, false, kMaxAccelDefault, kRadiusCriticalDefault,
-                kScaleRadiusPathDefault, kAngularErrorPathDefault);
     }
 
     /**
@@ -81,13 +66,16 @@ public class CubicSplineFollower {
             return new Tuple(0.0, 0.0);
         curWaypoint = waypoints.get(index);
         double distanceFromWaypoint = Geometry.distance(robotPose, curWaypoint);
+        maxSpeed = drivetrainState.topSpeed();
         ffSpeed = curWaypoint.kSpeed;
+        maxTurn = kMaxAngularDiff;
         if (curWaypoint.isCritical) { // important to be at exactly
 
-            if (distanceFromWaypoint < Math.abs(ffSpeed) * kSlowdownRadiusCritical) {
+            if (distanceFromWaypoint < Math.abs(ffSpeed) * kSlowdownRadius) {
                 // speed reduces as distance gets smaller
                 // TODO This is probably unnecesarry since FPID should be used now
-                ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadiusCritical, ffSpeed);
+                ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadius, ffSpeed);
+                maxTurn *= (distanceFromWaypoint / kSlowdownRadius);
                 if (Math.abs(ffSpeed) < kMinApproachSpeedCritical) {
                     ffSpeed = Math.copySign(kMinApproachSpeedCritical, ffSpeed);
                 }
@@ -137,7 +125,7 @@ public class CubicSplineFollower {
         Tuple pathCoefficients = getPathGeometry(robotPose, curWaypoint);
         double a = pathCoefficients.left;
         double b = pathCoefficients.right;
-        double nextSpeed = ((MAX_SPEED * ffSpeed) * 0.1) + (robotPose.velocity * 0.9);
+        double nextSpeed = ((maxSpeed * ffSpeed) * 0.1) + (robotPose.velocity * 0.9);
         double deltaX = nextSpeed / UPDATE_RATE;
         if (Math.signum(deltaX) != Math.signum(ffSpeed))
             deltaX = 0.0;
@@ -165,17 +153,17 @@ public class CubicSplineFollower {
 
         // Convert from derivative to angle
 
-        double desiredSpeed = ffSpeed * MAX_SPEED;
+        double desiredSpeed = ffSpeed * maxSpeed;
         if (desiredSpeed - robotPose.velocity > kMaxAccel)
             desiredSpeed = robotPose.velocity + kMaxAccel;
         else if (desiredSpeed - robotPose.velocity < -kMaxAccel)
             desiredSpeed = robotPose.velocity - kMaxAccel;
         double lrSpeedDifference = omega * WHEEL_BASE;
-        lrSpeedDifference = Utils.limit(lrSpeedDifference, kMaxAngularDiff, -kMaxAngularDiff);
-        if (desiredSpeed + Math.abs(lrSpeedDifference) > MAX_SPEED)
-            desiredSpeed = MAX_SPEED - Math.abs(lrSpeedDifference);
-        else if (desiredSpeed - Math.abs(lrSpeedDifference) < -MAX_SPEED)
-            desiredSpeed = -MAX_SPEED + Math.abs(lrSpeedDifference);
+        lrSpeedDifference = Utils.limit(lrSpeedDifference, maxTurn, -maxTurn);
+        if (desiredSpeed + Math.abs(lrSpeedDifference) > maxSpeed)
+            desiredSpeed = maxSpeed - Math.abs(lrSpeedDifference);
+        else if (desiredSpeed - Math.abs(lrSpeedDifference) < -maxSpeed)
+            desiredSpeed = -maxSpeed + Math.abs(lrSpeedDifference);
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
         if (true) System.out.println(desiredSpeed + " " + lrSpeedDifference);

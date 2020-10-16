@@ -3,19 +3,15 @@ package frc.modeling;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import frc.modeling.FieldPositions;
 import frc.controls.CubicSplineFollower;
-import frc.controls.CubicSplineFollower.Waypoint;
 import frc.robot.subsystems.DrivetrainModel;
 import frc.util.Tuple;
-import frc.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class Animation extends JPanel implements Runnable {
@@ -78,7 +74,7 @@ public class Animation extends JPanel implements Runnable {
 		scale = fieldImageWidth / FIELD_REAL_WIDTH;
 
 		model = new DrivetrainModel();
-		nav = new CubicSplineFollower(DrivetrainModel.MAX_SPEED, DrivetrainModel.WHEEL_BASE);
+		nav = new CubicSplineFollower(model);
 
 		this.setWaypoints();
 
