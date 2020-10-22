@@ -43,12 +43,12 @@ public class Turret extends PIDSubsystem {
     }
 
     public void setAngle(double angle) {
+        // TODO change this to Utils.limitAngle
         if (angle > MAX_GOAL) {
             angle = MAX_GOAL;
         } else if (angle < MIN_GOAL) {
             angle = MIN_GOAL;
         }
-        setAngle = angle;
         setSetpoint(angle);
     }
 

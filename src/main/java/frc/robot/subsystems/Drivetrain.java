@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import java.io.IOException;
 
 import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -20,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import frc.controls.CubicSplineFollower;
@@ -34,18 +36,19 @@ public class Drivetrain extends TerribleSubsystem {
 	protected static final int UPDATE_RATE = 200;
 	public DrivetrainModel model;
 	private static final double ENCODER_TICKS_PER_REV = 8192.0;
-	public Shifter shifter;
+	private Shifter shifter;
 
 	public CubicSplineFollower waypointNav;
 
 	private static final double MAX_CURRENT = 55.0; // BANANA i think this is closer
-	private StatorCurrentLimitConfiguration currentLimiter =
-		new StatorCurrentLimitConfiguration(true, MAX_CURRENT, MAX_CURRENT, 0.05);
+	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
+			MAX_CURRENT, 0.05);
 
-	private static final int PIDIDX = 0;
+	private static final int PID_ID_LOW = 0;
+	private static final int PID_ID_HIGH = 1;
 	private static final int CONFIG_TIMEOUT = 30;
 
-	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED);
+	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);
 	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
 	// sensor-velocity-sensor-units-per-100ms).
 	private static final double kP = 0.04;
@@ -84,32 +87,29 @@ public class Drivetrain extends TerribleSubsystem {
 		leftFollower.setInverted(InvertType.FollowMaster);
 		setBrakeMode(false);
 
-
 		// TODO bring up sensors
 		// TODO set phase for the encoders
 
 		canifierLeft = new CANifier(2);
 		canifierRight = new CANifier(1);
-		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(),
-											   RemoteSensorSource.CANifier_Quadrature, 0);
+		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 		rightMaster.setSensorPhase(true);
-		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(),
-											  RemoteSensorSource.CANifier_Quadrature, 0);
+		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 		leftMaster.setSensorPhase(true);
 
 		leftMaster.configStatorCurrentLimit(currentLimiter);
 		rightMaster.configStatorCurrentLimit(currentLimiter);
 
-		leftMaster.config_kF(PIDIDX, kFF);
-		leftMaster.config_kP(PIDIDX, kP);
-		leftMaster.config_kD(PIDIDX, kD);
-		leftMaster.config_kI(PIDIDX, kI);
-		rightMaster.config_kF(PIDIDX, kFF);
-		rightMaster.config_kP(PIDIDX, kP);
-		rightMaster.config_kD(PIDIDX, kD);
-		rightMaster.config_kI(PIDIDX, kI);
+		leftMaster.config_kF(PID_ID_LOW, kFF);
+		leftMaster.config_kP(PID_ID_LOW, kP);
+		leftMaster.config_kD(PID_ID_LOW, kD);
+		leftMaster.config_kI(PID_ID_LOW, kI);
+		rightMaster.config_kF(PID_ID_LOW, kFF);
+		rightMaster.config_kP(PID_ID_LOW, kP);
+		rightMaster.config_kD(PID_ID_LOW, kD);
+		rightMaster.config_kI(PID_ID_LOW, kI);
 
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
@@ -142,9 +142,9 @@ public class Drivetrain extends TerribleSubsystem {
 
 	private void updateOdometry(double time) {
 		double leftSpeed = talonSpeedToLinearSpeed(leftMaster.getSelectedSensorVelocity());
-		double rightSpeed =	talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity());
+		double rightSpeed = talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity());
 		model.updateSpeed(leftSpeed, rightSpeed, time);
-		//model.updateSpeed(0.0, 0.0, time);
+		// model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(navx.getAngle());
 		model.updatePosition(time);
 	}
@@ -165,21 +165,36 @@ public class Drivetrain extends TerribleSubsystem {
 		rightFollower.stopMotor();
 	}
 
-	private void testSide(WPI_TalonFX talon, String name, double speed) {
+	private boolean testSide(WPI_TalonFX talon, String name, double speed) {
 		Faults faults = new Faults();
 		/* update motor controller */
 		talon.set(ControlMode.PercentOutput, speed);
-		/* check our live faults */
-		talon.getFaults(faults);
-		System.out.println(name + "Sensor Vel:" + talon.getSelectedSensorVelocity());
-		System.out.println(name + "Sensor Pos:" + talon.getSelectedSensorPosition());
-		System.out.println(name + "Out %" + talon.getMotorOutputPercent());
-		System.out.println(name + "Out Of Phase:" + faults.SensorOutOfPhase);
+		boolean error = false;
+		try {
+			Thread.sleep(1000);
+			ErrorCode errors = talon.getFaults(faults);
+			error = errors.value != 0;
+			error &= Utils.withinThreshold(talonSpeedToLinearSpeed(talon.getSelectedSensorVelocity()),
+					model.topSpeed * speed, model.topSpeed * speed * 0.05);
+		} catch (InterruptedException e) {
+			error = true;
+		}
+		// System.out.println(name + "Sensor Vel:" + talon.getSelectedSensorVelocity());
+		// System.out.println(name + "Sensor Pos:" + talon.getSelectedSensorPosition());
+		// System.out.println(name + "Out %" + talon.getMotorOutputPercent());
+		// System.out.println(name + "Out Of Phase:" + faults.SensorOutOfPhase);
+		talon.set(ControlMode.PercentOutput, 0.0);
+		if (error) DriverStation.reportError(getName() + "Test " + name, true);
+		return error;
 	}
 
-	public void test() {
-		testSide(rightMaster, "Right ", 1.0);
-		testSide(leftMaster, "Left ", 0.0);
+	protected boolean test() {
+		setShiftMode(true);
+		testSide(rightMaster, "Right Forward", 1.0);
+		testSide(rightMaster, "Right Reverse", -1.0);
+		testSide(leftMaster, "Left Forward", 1.0);
+		testSide(leftMaster, "Left Reverse", -1.0);
+		return true;
 	}
 
 	public void setBrakeMode(Boolean enabled) {
@@ -306,6 +321,15 @@ public class Drivetrain extends TerribleSubsystem {
 		}
 		leftMaster.set(ControlMode.PercentOutput, left);
 		rightMaster.set(ControlMode.PercentOutput, right);
+	}
+
+	/**
+	 * @param true if high gear (faster dt) desired
+	 */
+	public void setShiftMode(boolean high) {
+		model.shiftMode(high);
+		shifter.setGear(high);
+		// TODO change PID constants
 	}
 
 	@Override

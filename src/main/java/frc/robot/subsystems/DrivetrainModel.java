@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import frc.modeling.motors.CIMMotor;
+import frc.modeling.motors.Falcon;
 import frc.util.Geometry;
 import frc.util.Pose;
 import frc.util.Tuple;
@@ -19,19 +19,20 @@ import frc.util.Utils;
 public class DrivetrainModel {
 
 	private static final double DRIVETRAIN_MASS = 63.5; // kg
-	public static final double MAX_SPEED = 2.4;
+	public double topSpeed;
+	protected static final double MAX_SPEED_LOW = 2.4;
+	protected static final double MAX_SPEED_HIGH = 4.0;
 	public static final double WHEEL_BASE = 0.68; // meters
 	private Boolean COAST_MODE = false;
 	public Pose center;
-
 	private DrivetrainSide left, right;
 	public static final double WHEEL_RADIUS = 0.081; // meters
 	public static final double WHEEL_CIRCUMFERENCE = DrivetrainModel.WHEEL_RADIUS * 2.0 * Math.PI;
-	private static final double CIMS_PER_SIDE = 2.0; // Minicim is 0.58
-	public static final double GEAR_RATIO = 10.75 / 1.0; // Reduction
+	private static final double MOTORS_PER_SIDE = 2.0; // Minicim is 0.58
+	private double gearRatio;
+	private static final double BASE_GEAR_RATIO = 10.75 / 1.0; // Reduction
+	private static final double HIGH_GEAR_RATIO_MODIFIER = 2.0;
 	private static final double DRIVETRAIN_FRICTION = 115;
-	private static final double MAX_FORCE = 200.0; // 250 is still under max, but 200 is conservative
-	private static final double MAX_TORQUE = MAX_FORCE * WHEEL_RADIUS;
 
 	public DrivetrainModel() {
 		center = new Pose(0.0, 0.0, 0.0); // Initial robot position
@@ -44,6 +45,17 @@ public class DrivetrainModel {
 		} else {
 			left.coast = false;
 			right.coast = false;
+		}
+		shiftMode(false);
+	}
+
+	public void shiftMode(boolean high) {
+		if (high) {
+			topSpeed = MAX_SPEED_HIGH;
+			gearRatio = BASE_GEAR_RATIO / HIGH_GEAR_RATIO_MODIFIER;
+		} else {
+			topSpeed = MAX_SPEED_LOW;
+			gearRatio = BASE_GEAR_RATIO;
 		}
 	}
 
@@ -147,51 +159,12 @@ public class DrivetrainModel {
 		// movementY);
 	}
 
-	/**
-	 * Limits acceleration using the models velocity and information about motors
-	 *
-	 * @param unchecked output voltage
-	 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
-	 * @deprecated Be Careful!
-	 */
-	public Tuple limitAcceleration(Tuple out) {
-		double leftVoltage = out.left;
-		double rightVoltage = out.right;
-		double voltageDif = (leftVoltage - rightVoltage) / 2.0;
-		double avg = (left.limitAcceleration(leftVoltage) + right.limitAcceleration(rightVoltage)) / 2.0;
-		double leftVoltageChecked = left.limitAcceleration(leftVoltage) + voltageDif;
-		double rightVoltageChecked = right.limitAcceleration(rightVoltage) - voltageDif;
-		leftVoltageChecked = avg + voltageDif;
-		// leftVoltageChecked = left.limitAcceleration(leftVoltageChecked);
-		rightVoltageChecked = avg - voltageDif;
-		// rightVoltageChecked = right.limitAcceleration(rightVoltageChecked);
-		// rightVoltageChecked = right.limitAcceleration(rightVoltageChecked);
 
-		// Boolean isLeftGreater = Math.abs(voltageDif) == voltageDif;
-		// Boolean isLeftNeg = Math.abs(leftVoltageChecked) > leftVoltageChecked;
-		// Boolean isRightNeg = Math.abs(rightVoltageChecked) > rightVoltageChecked;
-
-		Tuple checkedOutput = new Tuple(leftVoltageChecked, rightVoltageChecked);
-		return checkedOutput;
-	}
-
-	/**
-	 * Limits acceleration using the models velocity and information about motors
-	 *
-	 * @param unchecked output voltage
-	 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
-	 * @deprecated
-	 */
-	public Tuple limitAcceleration(double leftOut, double rightOut) {
-		return limitAcceleration(new Tuple(leftOut, rightOut));
-	}
-
-	private static class DrivetrainSide {
+	private class DrivetrainSide {
 		double velocity;
 		double acceleration;
 		private double psuedoMass;
 		private Boolean coast;
-		// private CIMMotor cim = new CIMMotor();
 
 		public DrivetrainSide() {
 			velocity = 0.0;
@@ -223,7 +196,7 @@ public class DrivetrainModel {
 			double motorSpeed = this.wheelSpeedToMotorSpeed(this.velocity);
 			// double newAcceleration = this.wheelAcceleration(voltage, motorSpeed);
 
-			double totalTorque = CIMMotor.outputTorque(voltage, motorSpeed) * GEAR_RATIO * CIMS_PER_SIDE;
+			double totalTorque = Falcon.outputTorque(voltage, motorSpeed) * gearRatio * MOTORS_PER_SIDE;
 
 			if (coast && Utils.withinThreshold(voltage, 0.0, 0.05))
 				totalTorque = 0.0;
@@ -237,26 +210,6 @@ public class DrivetrainModel {
 		}
 
 		/**
-		 * Limits acceleration using the models velocity and information about motors
-		 *
-		 * @param unchecked output voltage
-		 * @return checked voltage, limited to acceleration of MAX_TORQUE constant
-		 * @deprecated
-		 */
-		protected double limitAcceleration(double outputVoltage) {
-			double motorSpeed = this.wheelSpeedToMotorSpeed(this.velocity);
-			double maxVoltage = CIMMotor.torqueToVoltage(MAX_TORQUE / CIMS_PER_SIDE / GEAR_RATIO, motorSpeed);
-			double minVoltage = CIMMotor.torqueToVoltage(-MAX_TORQUE / CIMS_PER_SIDE / GEAR_RATIO, motorSpeed);
-
-			double limitedVoltage = Utils.limit(outputVoltage, maxVoltage, minVoltage);
-
-			// System.out.println("Max: " + maxVoltage + ", Min: " + minVoltage + ",
-			// Limited: " + limitedVoltage);
-
-			return limitedVoltage;
-		}
-
-		/**
 		 * Converts linear wheel speed back to motor angular speed
 		 *
 		 * @param speed meters/sec
@@ -265,7 +218,7 @@ public class DrivetrainModel {
 		private double wheelSpeedToMotorSpeed(double speed) {
 			double wheelCircum = WHEEL_RADIUS * 2 * Math.PI;
 			double wheelRevs = speed / wheelCircum * 60.0;
-			double motorRevs = wheelRevs * GEAR_RATIO;
+			double motorRevs = wheelRevs * gearRatio;
 			return motorRevs;
 		}
 
@@ -328,12 +281,6 @@ public class DrivetrainModel {
 		DrivetrainModel model = new DrivetrainModel();
 		for (int i = 0; i < 1; i++) {
 			model.updateSpeed(3.0, 3.0, 0.02);
-			model.limitAcceleration(12.0, 12.0);
 		}
 	}
-
-	public double topSpeed() {
-		return MAX_SPEED;
-	}
-
 }

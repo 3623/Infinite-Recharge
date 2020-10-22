@@ -18,25 +18,13 @@ public class Shifter extends SubsystemBase {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
-    Solenoid shifter_Piston;
+    private Solenoid piston;
 
     public Shifter() {
-        shifter_Piston = new Solenoid(Constants.Shifter.SHIFTER_SOLENOID);
+        piston = new Solenoid(Constants.Shifter.SHIFTER_SOLENOID);
     }
 
-    public void lowGear() {
-        shifter_Piston.set(false);
-    }
-
-    public void highGear() {
-        shifter_Piston.set(true);
-    }
-
-    /**
-     *
-     * @return true if shifter in high gear
-     */
-    public Boolean shifterStatus() {
-        return shifter_Piston.get();
+    public void setGear(boolean high) {
+        piston.set(high);
     }
 }

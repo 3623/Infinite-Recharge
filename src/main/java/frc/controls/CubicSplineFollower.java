@@ -66,7 +66,7 @@ public class CubicSplineFollower {
             return new Tuple(0.0, 0.0);
         curWaypoint = waypoints.get(index);
         double distanceFromWaypoint = Geometry.distance(robotPose, curWaypoint);
-        maxSpeed = drivetrainState.topSpeed();
+        maxSpeed = drivetrainState.topSpeed;
         ffSpeed = curWaypoint.kSpeed;
         maxTurn = kMaxAngularDiff;
         if (curWaypoint.isCritical) { // important to be at exactly

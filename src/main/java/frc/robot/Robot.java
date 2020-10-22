@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
         // shooter.hood.enable();
         // shooter.turret.enable();
 
-        drivetrain.shifter.lowGear();
+        drivetrain.setShiftMode(false);
 
         // shooter.setLimelightLED(false);
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
@@ -172,9 +172,9 @@ public class Robot extends TimedRobot {
         // }
 
         if (driver.getBumperPressed(Hand.kRight)) {
-            drivetrain.shifter.lowGear();
+            drivetrain.setShiftMode(false);
         } else if (driver.getBumperPressed(Hand.kLeft)) {
-            drivetrain.shifter.highGear();
+            drivetrain.setShiftMode(true);
         }
 
         if (driver.getStartButtonPressed()) {
@@ -219,6 +219,7 @@ public class Robot extends TimedRobot {
         // shooter.flywheel.setSpeed(10000.0);
         // shooter.turret.enable();
         // shooter.hood.enable();
+        drivetrain.runTests();
     }
 
     /**
@@ -226,7 +227,6 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void testPeriodic() {
-        drivetrain.test();
     }
 
 

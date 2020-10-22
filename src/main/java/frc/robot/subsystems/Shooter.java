@@ -76,26 +76,6 @@ public class Shooter extends TerribleSubsystem {
         return Utils.withinThreshold(x, 0.0, AIM_THRESHOLD);
     }
 
-    public void setLimelightLED(Boolean on) {
-        if (on) {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
-            .setNumber(Constants.Shooter.LIMELIGHT_LED_FORCE_ON);
-            LEDStatus = true;
-        } else {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode")
-            .setNumber(Constants.Shooter.LIMELIGHT_LED_FORCE_OFF);
-            LEDStatus = false;
-        }
-    }
-
-    public void setCameraMode(Boolean vision) {
-        if (vision) {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
-        } else {
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2);
-        }
-    }
-
     public void disable() {
         turret.disable();
         hood.disable();
@@ -111,6 +91,17 @@ public class Shooter extends TerribleSubsystem {
         double globalAngle = Utils.angleBetweenDegrees(robotPose, FieldPositions.OUR_GOAL);
         double localAngle = globalAngle - robotPose.heading;
         return Utils.limitAngleDegrees(localAngle);
+    }
+
+    public void setVision(boolean on) {
+        NetworkTable lm =NetworkTableInstance.getDefault().getTable("limelight");
+        if (on) {
+            lm.getEntry("ledMode").setNumber(3);
+            lm.getEntry("stream").setNumber(1);
+        } else {
+            lm.getEntry("ledMode").setNumber(1);
+            lm.getEntry("stream").setNumber(2);
+        }
     }
 
 }

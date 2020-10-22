@@ -22,6 +22,24 @@ public class TerribleSubsystem extends SubsystemBase{
         t.start();
     }
 
+    /**
+     * Override this to implement a test for subsystem function
+     */
+    protected boolean test() {
+        return true;
+    }
+
+    protected boolean checkValue(String name, double value, double goal, double percThreshold) {
+        return true;
+    }
+
+    public void runTests() {
+        Thread t = new Thread(() -> {
+            this.test();
+        });
+        t.start();
+    }
+
     protected void update(){    }
 
     @Override
