@@ -32,34 +32,7 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * Takes an angle and converts it to base degrees (-180 - 180)
-	 * @param angle angle in degrees
-	 * @return limited angle in degrees
-	 */
-	public static double limitAngleDegrees(double angle){
-		return limitAngle(angle, 180.0);
-	}
-
-	/**
-	 * Takes an angle and converts it to base degrees (-180 - 180)
-	 *
-	 * @param angle angle in degrees
-	 * @return limited angle in degrees
-	 */
-	public static double limitAngleRadians(double angle) {
-		return limitAngle(angle, Math.PI);
-	}
-
-	public static double angleBetweenDegrees(Pose looker, Pose reference) {
-		return Math.toDegrees(Math.atan2(reference.x - looker.x, reference.y - looker.y));
-	}
-
-	private static double limitAngle(double angle, double maxAngle) {
-		return (((angle + maxAngle) % (2*maxAngle)) + (2*maxAngle)) % (2*maxAngle) - maxAngle;
-	}
-
 	public static void main(String[] args) {
-		System.out.println(Math.atan2(-.1, 1.0));
+		System.out.println();
 	}
 }

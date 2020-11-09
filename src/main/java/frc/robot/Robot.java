@@ -35,7 +35,6 @@ public class Robot extends TimedRobot {
     private Drivetrain drivetrain;
     // private Intake intake;
     // private Shooter shooter;
-    // private Spinner spinner;
 
     AnalogInput transducer = new AnalogInput(0);
 

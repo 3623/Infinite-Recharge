@@ -44,16 +44,20 @@ public class Drivetrain extends TerribleSubsystem {
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
 			MAX_CURRENT, 0.05);
 
-	private static final int PID_ID_LOW = 0;
-	private static final int PID_ID_HIGH = 1;
-	private static final int CONFIG_TIMEOUT = 30;
+	private static final int PID_ID = 0; // Primary closed loop
+	private static final int PID_SLOT_LOW = 0;
+	private static final int PID_SLOT_HIGH = 1;
+	private static final int CONFIG_TIMEOUT = 30; // Should this be used?
 
-	private static final double kFF = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);
-	// TODO This is wrong, has to be tuned, should be (1023 * duty-cycle /
-	// sensor-velocity-sensor-units-per-100ms).
-	private static final double kP = 0.04;
-	private static final double kD = 0.0;
-	private static final double kI = 0.0;
+	// TODO CHECK, should be (1023 * duty-cycle /  sensor-velocity-sensor-units-per-100ms).
+	private static final double kFF_LOW = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);
+	private static final double kP_LOW = 0.04;
+	private static final double kD_LOW = 0.0;
+	private static final double kI_LOW = 0.0;
+	private static final double kFF_HIGH = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_HIGH);
+	private static final double kP_HIGH = 0.04;
+	private static final double kD_HIGH = 0.0;
+	private static final double kI_HIGH = 0.0;
 
 	private double time;
 
@@ -87,30 +91,35 @@ public class Drivetrain extends TerribleSubsystem {
 		leftFollower.setInverted(InvertType.FollowMaster);
 		setBrakeMode(false);
 
-		// TODO bring up sensors
-		// TODO set phase for the encoders
-
 		canifierLeft = new CANifier(2);
 		canifierRight = new CANifier(1);
 		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
-		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
+		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, PID_ID, 10);
 		rightMaster.setSensorPhase(true);
 		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
-		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
+		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, PID_ID, 10);
 		leftMaster.setSensorPhase(true);
 
+		// TODO this needs to be changed for high and low gear
 		leftMaster.configStatorCurrentLimit(currentLimiter);
 		rightMaster.configStatorCurrentLimit(currentLimiter);
 
-		leftMaster.config_kF(PID_ID_LOW, kFF);
-		leftMaster.config_kP(PID_ID_LOW, kP);
-		leftMaster.config_kD(PID_ID_LOW, kD);
-		leftMaster.config_kI(PID_ID_LOW, kI);
-		rightMaster.config_kF(PID_ID_LOW, kFF);
-		rightMaster.config_kP(PID_ID_LOW, kP);
-		rightMaster.config_kD(PID_ID_LOW, kD);
-		rightMaster.config_kI(PID_ID_LOW, kI);
-
+		leftMaster.config_kF(PID_SLOT_LOW, kFF_LOW);
+		leftMaster.config_kP(PID_SLOT_LOW, kP_LOW);
+		leftMaster.config_kD(PID_SLOT_LOW, kD_LOW);
+		leftMaster.config_kI(PID_SLOT_LOW, kI_LOW);
+		rightMaster.config_kF(PID_SLOT_LOW, kFF_LOW);
+		rightMaster.config_kP(PID_SLOT_LOW, kP_LOW);
+		rightMaster.config_kD(PID_SLOT_LOW, kD_LOW);
+		rightMaster.config_kI(PID_SLOT_LOW, kI_LOW);
+		leftMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH);
+		leftMaster.config_kP(PID_SLOT_HIGH, kP_HIGH);
+		leftMaster.config_kD(PID_SLOT_HIGH, kD_HIGH);
+		leftMaster.config_kI(PID_SLOT_HIGH, kI_HIGH);
+		rightMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH);
+		rightMaster.config_kP(PID_SLOT_HIGH, kP_HIGH);
+		rightMaster.config_kD(PID_SLOT_HIGH, kD_HIGH);
+		rightMaster.config_kI(PID_SLOT_HIGH, kI_HIGH);
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
 
@@ -119,6 +128,9 @@ public class Drivetrain extends TerribleSubsystem {
 		navx = new AHRS(SPI.Port.kMXP);
 
 		this.updateThreadStart();
+
+		setShiftMode(true);
+		// TODO check high and low speed for path following
 	}
 
 	@Override
@@ -329,7 +341,10 @@ public class Drivetrain extends TerribleSubsystem {
 	public void setShiftMode(boolean high) {
 		model.shiftMode(high);
 		shifter.setGear(high);
-		// TODO change PID constants
+		int pidSlot = PID_SLOT_LOW;
+		if (high) pidSlot = PID_SLOT_HIGH;
+		// TODO Check if this works
+ 		leftMaster.selectProfileSlot(pidSlot, PID_ID);
 	}
 
 	@Override

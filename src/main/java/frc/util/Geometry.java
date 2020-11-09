@@ -29,6 +29,35 @@ public class Geometry {
 		return distance(0.0, a, 0.0, b);
 	}
 
+
+	/**
+	 * Takes an angle and converts it to base degrees (-180 - 180)
+	 *
+	 * @param angle angle in degrees
+	 * @return limited angle in degrees
+	 */
+	public static double limitAngleDegrees(double angle) {
+		return limitAngle(angle, 180.0);
+	}
+
+	/**
+	 * Takes an angle and converts it to base degrees (-180 - 180)
+	 *
+	 * @param angle angle in degrees
+	 * @return limited angle in degrees
+	 */
+	public static double limitAngleRadians(double angle) {
+		return limitAngle(angle, Math.PI);
+	}
+
+	public static double angleBetweenDegrees(Pose looker, Pose reference) {
+		return Math.toDegrees(Math.atan2(reference.x - looker.x, reference.y - looker.y));
+	}
+
+	private static double limitAngle(double angle, double maxAngle) {
+		return (((angle + maxAngle) % (2 * maxAngle)) + (2 * maxAngle)) % (2 * maxAngle) - maxAngle;
+	}
+
 	// Testing calculations
 	public static void main(String[] args) {
 		System.out.println();

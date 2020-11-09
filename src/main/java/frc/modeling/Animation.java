@@ -38,7 +38,7 @@ public class Animation extends JPanel implements Runnable {
 
 	private static final String FIELD_FILE = "sim/2020-Field.png";
 	private static final double FIELD_REAL_WIDTH = 8.23;
-	private static final double FIELD_REAL_HEIGHT = 13.0;
+	// private static final double FIELD_REAL_HEIGHT = 13.0;
 	private int fieldImageWidth, fieldImageHeight; // image dim of viewing area in pixels
 	protected Dimension screenSize; // size of viewing area
 	protected Image image; // off-screen image
@@ -63,7 +63,7 @@ public class Animation extends JPanel implements Runnable {
 	protected double time = 0.0;
 
 	public Animation() throws IOException {
-		field = ImageIO.read(new File("sim/2020-field.png"));
+		field = ImageIO.read(new File(FIELD_FILE));
 		robot = ImageIO.read(new File("sim/robot-blue2.png"));
 
 		// Set the width and heigth and size

@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import frc.modeling.motors.Falcon;
 import frc.util.Geometry;
 import frc.util.Pose;
-import frc.util.Tuple;
 import frc.util.Utils;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

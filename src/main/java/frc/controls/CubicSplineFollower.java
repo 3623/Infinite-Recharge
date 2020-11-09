@@ -187,7 +187,7 @@ public class CubicSplineFollower {
         double relativeOpposDist = distanceFromWaypoint * Math.sin(relativeAngle);
         double relativeAdjacDist = distanceFromWaypoint * Math.cos(relativeAngle);
         double relativeGoalAngle = startPoint.r - goalPoint.r;
-        relativeGoalAngle = Utils.limitAngleRadians(relativeGoalAngle);
+        relativeGoalAngle = Geometry.limitAngleRadians(relativeGoalAngle);
         relativeGoalAngle = Utils.limit(relativeGoalAngle, kMaxSplineAngle, -kMaxSplineAngle);
         double relativeGoalDeriv = Math.tan(relativeGoalAngle);
         if (debug) {
