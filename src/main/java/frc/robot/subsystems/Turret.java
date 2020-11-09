@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.Constants;
 
+
+// TODO Switch this to motion magic!!
+// or feedforward with current limiting for smooth motion
 public class Turret extends PIDSubsystem {
     WPI_TalonSRX turretMotor;
 
@@ -40,24 +43,6 @@ public class Turret extends PIDSubsystem {
         SmartDashboard.putNumber("Turret Angle", this.getMeasurement());
         SmartDashboard.putNumber("Turret Output", (int) turretMotor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Turret Error", getController().getPositionError());
-    }
-
-    public void setAngle(double angle) {
-        // TODO change this to Utils.limitAngle
-        if (angle > MAX_GOAL) {
-            angle = MAX_GOAL;
-        } else if (angle < MIN_GOAL) {
-            angle = MIN_GOAL;
-        }
-        setSetpoint(angle);
-    }
-
-    public void setRelative(double offset) {
-        setAngle(this.getMeasurement() + offset);
-    }
-
-    public Double getAngle() {
-        return this.getMeasurement(); // BANANA TODO
     }
 
     public void zero() {

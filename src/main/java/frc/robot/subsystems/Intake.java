@@ -29,21 +29,13 @@ public class Intake extends SubsystemBase {
         piston = new Solenoid(Constants.Intake.INTAKE_DROP_SOLENOID);
     }
 
-    public void setIntaking(Boolean intake) {
+    protected void setIntaking(Boolean intake) {
         if (intake) {
             piston.set(true);
-            setSpeed(INTAKE_SPEED);
+            rollers.set(ControlMode.PercentOutput, INTAKE_SPEED);
         } else {
             piston.set(false);
             rollers.disable();
         }
-    }
-
-    private void setSpeed(double rollersSpeed) {
-        rollers.set(ControlMode.PercentOutput, rollersSpeed);
-    }
-
-    protected boolean rollersStatus() {
-        return piston.get();
     }
 }
