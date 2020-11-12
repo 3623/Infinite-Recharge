@@ -40,7 +40,7 @@ public class Drivetrain extends TerribleSubsystem {
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 55.0; // BANANA i think this is closer
+	private static final double MAX_CURRENT = 30.0; // BANANA i think this is closer
 	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
 			MAX_CURRENT, 0.05);
 
@@ -93,14 +93,18 @@ public class Drivetrain extends TerribleSubsystem {
 
 		canifierLeft = new CANifier(2);
 		canifierRight = new CANifier(1);
-		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
+		rightMaster.configRemoteFeedbackFilter(canifierRight.getDeviceID(),
+											   RemoteSensorSource.CANifier_Quadrature, 0);
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, PID_ID, 10);
 		rightMaster.setSensorPhase(true);
-		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(), RemoteSensorSource.CANifier_Quadrature, 0);
+		leftMaster.configRemoteFeedbackFilter(canifierLeft.getDeviceID(),
+											   RemoteSensorSource.CANifier_Quadrature, 0);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, PID_ID, 10);
 		leftMaster.setSensorPhase(true);
 
-		// TODO this needs to be changed for high and low gear
+		// Set max current to the max current without slipping for low gear
+		// high gear will then be even less torquey but this is fine,
+		// we just want to drive faster in high gear
 		leftMaster.configStatorCurrentLimit(currentLimiter);
 		rightMaster.configStatorCurrentLimit(currentLimiter);
 
@@ -130,7 +134,6 @@ public class Drivetrain extends TerribleSubsystem {
 		this.updateThreadStart();
 
 		setShiftMode(true);
-		// TODO check high and low speed for path following
 	}
 
 	@Override
