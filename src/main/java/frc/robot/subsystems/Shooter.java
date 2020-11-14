@@ -27,15 +27,14 @@ public class Shooter extends TerribleSubsystem {
     // degrees, +/- that shooter will stil aim for inner port, outside it will shoot at target
     private static final double INNER_GOAL_AIM_THRESHOLD = 20.0;
 
-    private Pose robotLoc;
+    private Pose robotPose;
     private Pose targetPose = FieldPositions.OUR_GOAL;
 
     private double targetDistance = 0.0;
     private double targetAngle = 0.0; // global coordinates
     private double innerPortOffset = 0.0;
     private boolean shooting = false;
-    private boolean readyToFire = false;
-    private boolean fullyAimed = false;
+    public boolean readyToFire = false;
 
     NetworkTable Lime = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry targetX = Lime.getEntry("tx"); // Horizontal Offset From Crosshair to Target (-27 to 27 degrees)
@@ -45,7 +44,6 @@ public class Shooter extends TerribleSubsystem {
 
     private final double LIMELIGHT_ELEVATION_OFFSET = 20.0;
     private final double TARGET_RELATIVE_HEIGHT = 2.0; // meters
-    private final double TARGET_WIDTH = 1.0; // m
     private final double LIMELIGHT_FOV = 54.0;
 
 	private enum ShooterControlState {
@@ -55,7 +53,7 @@ public class Shooter extends TerribleSubsystem {
     }
     private ShooterControlState controlState = ShooterControlState.DISABLED;
 
-    private enum Target {
+    public enum Target {
         GOAL,
         // LOADING_ZONE, // Maybe these will be used for localization..
         ENEMY_GOAL,
@@ -63,13 +61,15 @@ public class Shooter extends TerribleSubsystem {
     }
     private Target target = Target.GOAL;
 
-    public Shooter() {
+    public Shooter(Pose odometryModel) {
+        robotPose = odometryModel;
         turret = new Turret();
         hood = new Hood();
         feeder = new Feeder();
         flywheel = new Flywheel();
 
         this.updateThreadStart();
+        disable();
     }
 
     /**
@@ -88,6 +88,7 @@ public class Shooter extends TerribleSubsystem {
         }
         controlState = ShooterControlState.BLIND_AIM;
         setVision(true);
+        enable();
     }
 
     protected void update() {
@@ -104,16 +105,16 @@ public class Shooter extends TerribleSubsystem {
     }
 
     private void updateBlind() {
-        targetAngle = Geometry.angleBetweenDegrees(robotLoc, targetPose);
-        targetDistance = Geometry.distance(robotLoc, targetPose);
+        targetAngle = Geometry.angleBetweenDegrees(robotPose, targetPose);
+        targetDistance = Geometry.distance(robotPose, targetPose);
         readyToFire = false;
+        setAngle(targetAngle);
         if (Utils.withinThreshold(turret.getMeasurement(), targetAngle, LIMELIGHT_FOV/2.0)
             && targets.getDouble(0.0) == 1) {
                 controlState = ShooterControlState.VISION_TRACKING;
                 updateVision();
             }
-        else {
-            setAngle(targetAngle);
+        else if (shooting) {
             setDistance(targetDistance);
         }
     }
@@ -125,22 +126,55 @@ public class Shooter extends TerribleSubsystem {
         if (Utils.outsideDeadband(targetAngle, 0.0, INNER_GOAL_AIM_THRESHOLD))
             innerPortOffset = 0.0;
         else innerPortOffset = targetAngle * 0.2; // maybe this should be a sin func?
-        setAngle(targetAngle - innerPortOffset);
-        setDistance(targetDistance);
-        readyToFire = Utils.withinThreshold(targetX, 0.0, AIM_THRESHOLD); // TODO check hood and flywheel
+        if (shooting) {
+            setAngle(targetAngle - innerPortOffset);
+            setDistance(targetDistance);
+            readyToFire = Utils.withinThreshold(targetX, 0.0, AIM_THRESHOLD); // TODO check hood and flywheel
+        }
         // Decide when to localize odometry if there is a vision target
         // Might be a time for filters!
     }
 
-    /** This should be called periodically when balls are wanted to be launched
-     *  It will handle whether the balls are ready to fire
+    private double visionEstimateDistance(double targetY) {
+        double realElevation = targetY + LIMELIGHT_ELEVATION_OFFSET;
+        return TARGET_RELATIVE_HEIGHT / Math.sin(Math.toRadians(realElevation));
+    }
+
+    private double visionEstimateAngle(double targetX) {
+        return targetX + robotPose.heading + turret.getMeasurement();
+    }
+
+    /**
+     * Set the turret pid setpoint, adjusted for robot rotation
+     *
+     * @param angle - in global coordinations
      */
-    private void fire() {
-        if (!shooting) return;
-        if (!readyToFire) return;
-        feeder.runFeeder(1.0);
-        // time.sleep(1); // TODO this is a placeholder, pretend it spindexes x rotations
-        disable();
+    public void setAngle(double angle) { // This is only public for testing
+        turret.setSetpoint(Geometry.limitAngleDegrees(angle - robotPose.heading));
+    }
+
+    /**
+     * Controls the flywheel and hood
+     * TODO make this do something smart
+     * @param angle
+     */
+    private void setDistance(double distance) {
+        // flywheel.setSpeed(6000.0);
+        // hood.setSetpoint(0.0);
+    }
+
+    /**
+     * Sets limelight leds and camera mode
+     */
+    private void setVision(boolean on) {
+        NetworkTable lm = NetworkTableInstance.getDefault().getTable("limelight");
+        if (on) {
+            lm.getEntry("ledMode").setNumber(3);
+            lm.getEntry("stream").setNumber(1);
+        } else {
+            lm.getEntry("ledMode").setNumber(1);
+            lm.getEntry("stream").setNumber(2);
+        }
     }
 
     /**
@@ -150,53 +184,24 @@ public class Shooter extends TerribleSubsystem {
         controlState = ShooterControlState.DISABLED;
         setVision(false);
         shooting = false;
-        fullyAimed = false;
         readyToFire = false;
         turret.disable();
         hood.disable();
         flywheel.disable();
     }
 
-    public double visionEstimateDistance(double targetY) {
-        double realElevation = targetY + LIMELIGHT_ELEVATION_OFFSET;
-        return TARGET_RELATIVE_HEIGHT / Math.sin(Math.toRadians(realElevation));
+    public void enable() {
+        turret.enable();
+        hood.enable();
     }
 
-    private double visionEstimateAngle(double targetX) {
-        return targetX + robotLoc.heading + turret.getMeasurement();
+    public void fire() {
+        feeder.runFeeder(1.0);
     }
 
-    /**
-     * Set the turret pid setpoint, adjusted for robot rotation
-     *
-     * @param angle - in global coordinations
-     */
-    public void setAngle(double angle) {
-        turret.setSetpoint(Geometry.limitAngleDegrees(angle - robotLoc.heading));
-    }
-
-    /**
-     * Controls the flywheel and hood
-     * TODO make this do something smart
-     * @param angle
-     */
-    public void setDistance(double distance) {
-        flywheel.setSpeed(6000.0);
-        hood.setSetpoint(0.0);
-    }
-
-    /**
-     * Sets limelight leds and camera mode
-     */
-    private void setVision(boolean on) {
-        NetworkTable lm =NetworkTableInstance.getDefault().getTable("limelight");
-        if (on) {
-            lm.getEntry("ledMode").setNumber(3);
-            lm.getEntry("stream").setNumber(1);
-        } else {
-            lm.getEntry("ledMode").setNumber(1);
-            lm.getEntry("stream").setNumber(2);
-        }
+    public void zeroSensors() {
+        turret.zero();
+        hood.zero();
     }
 
     @Override

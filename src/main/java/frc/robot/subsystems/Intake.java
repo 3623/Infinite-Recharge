@@ -25,11 +25,10 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         rollers = new WPI_VictorSPX(Constants.Intake.INTAKE_COLLECTOR_MOTOR_SPX);
-
         piston = new Solenoid(Constants.Intake.INTAKE_DROP_SOLENOID);
     }
 
-    protected void setIntaking(Boolean intake) {
+    public void setIntaking(Boolean intake) {
         if (intake) {
             piston.set(true);
             rollers.set(ControlMode.PercentOutput, INTAKE_SPEED);

@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.autonomous;
+package frc.robot.commands.autonomous.driving;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.modeling.FieldPositions;
@@ -17,7 +17,7 @@ public class TestDrive extends CommandBase {
 
     public TestDrive(Drivetrain drive) {
         dt = drive;
-        addRequirements(drive);
+        addRequirements(dt);
     }
 
     @Override

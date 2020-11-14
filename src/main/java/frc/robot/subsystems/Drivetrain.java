@@ -134,6 +134,7 @@ public class Drivetrain extends TerribleSubsystem {
 		this.updateThreadStart();
 
 		setShiftMode(true);
+		disable();
 	}
 
 	@Override
@@ -159,7 +160,6 @@ public class Drivetrain extends TerribleSubsystem {
 		double leftSpeed = talonSpeedToLinearSpeed(leftMaster.getSelectedSensorVelocity());
 		double rightSpeed = talonSpeedToLinearSpeed(rightMaster.getSelectedSensorVelocity());
 		model.updateSpeed(leftSpeed, rightSpeed, time);
-		// model.updateSpeed(0.0, 0.0, time);
 		model.updateHeading(navx.getAngle());
 		model.updatePosition(time);
 	}
@@ -171,9 +171,7 @@ public class Drivetrain extends TerribleSubsystem {
 	}
 
 	public void disable() {
-		if (controlState != DriveControlState.DISABLED) {
-			controlState = DriveControlState.DISABLED;
-		}
+		controlState = DriveControlState.DISABLED;
 		leftMaster.stopMotor();
 		leftFollower.stopMotor();
 		rightMaster.stopMotor();
