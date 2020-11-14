@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
         // Limelight Output small
 
-        // m_autonomousCommand = new TestDrive(drivetrain);
+        m_autonomousCommand = new TestDrive(drivetrain);
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
