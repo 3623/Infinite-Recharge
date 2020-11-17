@@ -36,4 +36,9 @@ public class FieldPositions {
 
 	public static final Pose OUR_GOAL = new Pose(1.71, 0.5);
 	public static final Pose THEIR_GOAL = new Pose(-1.71, 16.9);
+
+	public static final Pose PRE_TRENCH_CYCLE = new Pose(3.4, -10.0, 0.0);
+	public static final Pose TRENCH_CYCLE_SHOT = new Pose(3.4, -6.0, 0.0);
+	public static final double TRENCH_CUTOFF = -10.0;
+	public static final double FAR_CUTOFF = -4.0;
 }

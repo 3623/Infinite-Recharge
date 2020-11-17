@@ -8,6 +8,7 @@
 package frc.controls;
 
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.DrivetrainModel;
 import frc.util.Geometry;
@@ -67,7 +68,7 @@ public class CubicSplineFollower {
         curWaypoint = waypoints.get(index);
         double distanceFromWaypoint = Geometry.distance(robotPose, curWaypoint);
         maxSpeed = drivetrainState.topSpeed;
-        ffSpeed = curWaypoint.kSpeed;
+        ffSpeed = curWaypoint.speed();
         maxTurn = kMaxAngularDiff;
         if (curWaypoint.isCritical) { // important to be at exactly
 
@@ -258,8 +259,14 @@ public class CubicSplineFollower {
      */
     public static class Waypoint extends Pose {
         // public final Pose point;
-        protected double kSpeed;
+        private DoubleSupplier kSpeed;
         protected Boolean isCritical;
+
+        public Waypoint(double x, double y, double heading, DoubleSupplier speed, Boolean critical) {
+            super(x, y, heading);
+            this.kSpeed = speed;
+            this.isCritical = critical;
+        }
 
         /**
          * Constructor for waypoint
@@ -273,13 +280,24 @@ public class CubicSplineFollower {
          */
         public Waypoint(double x, double y, double heading, double speed, Boolean critical) {
             super(x, y, heading);
-            this.kSpeed = speed;
+            this.kSpeed = () -> speed;
             this.isCritical = critical;
+        }
+
+        public Waypoint(Pose pose, DoubleSupplier speed, Boolean critical) {
+            this(pose.x, pose.y, pose.heading, speed, critical);
+        }
+
+        public Waypoint(Pose pose, double heading, DoubleSupplier speed, Boolean critical) {
+            this(pose.x, pose.y, heading, speed, critical);
+        }
+
+        public Waypoint(Pose pose, double heading, double speed, Boolean critical) {
+            this(pose.x, pose.y, heading, speed, critical);
         }
 
         public Waypoint(Pose pose, double speed, Boolean critical) {
             this(pose.x, pose.y, pose.heading, speed, critical);
-
         }
 
         public Waypoint(double x, double y, double heading, double speed) {
@@ -289,6 +307,10 @@ public class CubicSplineFollower {
         @Override
         public String toString() {
             return "x: " + x + ", y: " + y + ", heading: " + heading + ", speed: " + kSpeed;
+        }
+
+        public double speed() {
+            return kSpeed.getAsDouble();
         }
     }
 

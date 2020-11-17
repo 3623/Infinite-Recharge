@@ -35,20 +35,10 @@ public class DriverControl extends CommandBase {
         double joystickY = -m_forward.getAsDouble();
         double joystickR = m_rotation.getAsDouble();
         Boolean quickTurn;
-        if (Math.abs(joystickY) < 0.5)
-            quickTurn = true;
-        else
-            quickTurn = false;
+        if (Math.abs(joystickY) < 0.5) quickTurn = true;
+        else quickTurn = false;
 
-        /*
-         * if (m_seekTarget.getAsBoolean() && tv.getDouble(0.0) > 0) { double x =
-         * tx.getDouble(0.0); double headingError = -tx.getDouble(0.0); double
-         * steeringAdjust = 0.0; if (x > 1.0) { steeringAdjust = kP * headingError -
-         * minCommand; } else if (x < -1.0) { steeringAdjust = kP * headingError +
-         * minCommand; }
-         *
-         * Drive.terribleDrive(joystickY, joystickR + steeringAdjust, true); } else
-         */ if (quickTurn) {
+        if (quickTurn) {
             Drive.terribleDrive(joystickY * 0.5, joystickR, quickTurn);
         } else {
             Drive.terribleDrive(joystickY * Math.abs(joystickY), joystickR * 0.5, quickTurn);

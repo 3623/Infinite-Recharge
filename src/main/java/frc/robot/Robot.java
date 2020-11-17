@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -14,11 +7,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.autonomous.*;
+import frc.robot.commands.AssistedTrenchDrive;
 import frc.robot.commands.DriverControl;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
 
 
 public class Robot extends TimedRobot {
@@ -26,9 +25,13 @@ public class Robot extends TimedRobot {
 
     private XboxController driver;
     private XboxController operator;
+    private Button intakeButton;
+    private Button shooterButton;
+    private Button trenchDriveButton;
     // private Climber climber;
     private Drivetrain drivetrain;
-    // private Intake intake;
+    private Intake intake;
+    private Spindexer spindexer;
     private Shooter shooter;
 
     AnalogInput transducer = new AnalogInput(0);
@@ -38,9 +41,13 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         driver = new XboxController(Constants.IO.DRIVER_CONTROLLER);
         operator = new XboxController(Constants.IO.OPERATOR_CONTROLLER);
+        intakeButton = new Button(() -> (driver.getTriggerAxis(Hand.kLeft) > 0.1));
+        trenchDriveButton = new Button(() -> (driver.getTriggerAxis(Hand.kRight) > 0.1));
+        shooterButton= new Button(() -> operator.getXButton());
         drivetrain = new Drivetrain();
         shooter = new Shooter(drivetrain.model.center);
-        // intake = new Intake();
+        intake = new Intake();
+        spindexer = new Spindexer();
         // climber = new Climber();
 
         // Set up Port Forwarding so we can access Limelight over USB tether to robot.
@@ -51,8 +58,10 @@ public class Robot extends TimedRobot {
         drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
-        // intake.setDefaultCommand(
-        //     new RunCommand(() -> intake.setIntaking(operator.getTriggerAxis(Hand.kRight) > 0.3), intake));
+        intakeButton.whenPressed(new IntakeCommand(intake, spindexer, () -> intakeButton.get()));
+        shooterButton.whenPressed(new ShootCommand(shooter, spindexer));
+        trenchDriveButton.whileActiveOnce(new AssistedTrenchDrive(drivetrain,
+                                                () -> driver.getTriggerAxis(Hand.kRight)));
     }
 
 
@@ -110,8 +119,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        // if (operator.getYButtonPressed()) {}
-
         if (driver.getBumperPressed(Hand.kRight)) {
             drivetrain.setShiftMode(false);
         } else if (driver.getBumperPressed(Hand.kLeft)) {

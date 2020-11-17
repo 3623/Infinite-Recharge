@@ -7,10 +7,18 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.Target;
 
 public class ShootCommand extends SequentialCommandGroup{
+    private Shooter shooter;
+    private Spindexer spindexer;
 
     public ShootCommand(Shooter shooter, Spindexer spindexer) {
+        this.spindexer = spindexer;
+        this.shooter = shooter;
         addCommands(new PrepareToShoot(shooter, spindexer),
-                    (new Fire(shooter, spindexer)).withTimeout(Spindexer.SHOOT_TIME));
+                    newFireCommand());
+    }
+
+    public CommandBase newFireCommand() {
+        return (new Fire(shooter, spindexer)).withTimeout(Spindexer.SHOOT_TIME);
     }
 
     public class PrepareToShoot extends CommandBase {
@@ -36,7 +44,7 @@ public class ShootCommand extends SequentialCommandGroup{
         }
     }
 
-    public class Fire extends CommandBase {
+    private class Fire extends CommandBase {
         private Shooter shooter;
         private Spindexer spindexer;
 

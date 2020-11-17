@@ -4,14 +4,24 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Intake;
 
 public class IntakeCommand extends SequentialCommandGroup{
 
-    public IntakeCommand(BooleanSupplier stop, Intake intake, Spindexer spindexer) {
+    public IntakeCommand(Intake intake, Spindexer spindexer, BooleanSupplier stop) {
         addCommands((new IntakeActive(intake, spindexer)).withInterrupt(stop),
-                    (new IndexBalls(spindexer)).withTimeout(Spindexer.INDEX_TIME));
+                    (new StartEndCommand(() -> spindexer.setIndexing(true),
+                                         () -> spindexer.setIndexing(false),
+                                         spindexer)).withTimeout(Spindexer.INDEX_TIME));
+    }
+
+    public IntakeCommand(Intake intake, Spindexer spindexer, double time) {
+        addCommands((new IntakeActive(intake, spindexer)).withTimeout(time),
+                    (new StartEndCommand(() -> spindexer.setIndexing(true),
+                                         () -> spindexer.setIndexing(false),
+                                         spindexer)).withTimeout(Spindexer.INDEX_TIME));
     }
 
 
@@ -27,14 +37,12 @@ public class IntakeCommand extends SequentialCommandGroup{
 
         @Override
         public void initialize() {
-            super.initialize();
             intake.setIntaking(true);
             spindexer.setIndexing(true);
         }
 
         @Override
         public void end(boolean interrupted) {
-            super.end(interrupted);
             intake.setIntaking(false);
         }
     }
