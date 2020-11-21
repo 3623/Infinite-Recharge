@@ -28,7 +28,7 @@ public class Spindexer extends SubsystemBase {
     // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
     // ballSensor5;
 
-    public Spindexer() {
+    public Spindexer() { // TODO this should be the spindexer motor
         spindexerSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
     }
 

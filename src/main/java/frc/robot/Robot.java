@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -81,7 +80,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-    }
+    } // Limelight Output small
 
 
     @Override
@@ -90,10 +89,6 @@ public class Robot extends TimedRobot {
         shooter.zeroSensors();
 
         drivetrain.setShiftMode(true);
-
-        // shooter.setLimelightLED(false);
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
-        // Limelight Output small
 
         m_autonomousCommand = new OurTrench(drivetrain, intake, shooter, spindexer);
 
