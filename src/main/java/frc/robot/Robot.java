@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpiutil.net.PortForwarder;
-import frc.robot.commands.autonomous.*;
 import frc.robot.commands.AssistedTrenchDrive;
 import frc.robot.commands.DriverControl;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.OurTrench;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
         drivetrain.setDefaultCommand(
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
-        intakeButton.whenPressed(new IntakeCommand(intake, spindexer, () -> intakeButton.get()));
+        intakeButton.whenPressed(new IntakeCommand(intake, spindexer).withInterrupt(()-> !intakeButton.get()));
         shooterButton.whenPressed(new ShootCommand(shooter, spindexer));
         trenchDriveButton.whileActiveOnce(new AssistedTrenchDrive(drivetrain,
                                                 () -> driver.getTriggerAxis(Hand.kRight)));
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(2); // USB Camera big,
         // Limelight Output small
 
-        m_autonomousCommand = new TestDrive(drivetrain);
+        m_autonomousCommand = new OurTrench(drivetrain, intake, shooter, spindexer);
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {

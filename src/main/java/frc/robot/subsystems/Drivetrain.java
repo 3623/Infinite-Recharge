@@ -47,7 +47,7 @@ public class Drivetrain extends TerribleSubsystem {
 	private static final int PID_ID = 0; // Primary closed loop
 	private static final int PID_SLOT_LOW = 0;
 	private static final int PID_SLOT_HIGH = 1;
-	private static final int CONFIG_TIMEOUT = 30; // Should this be used?
+	// private static final int CONFIG_TIMEOUT = 30; // TODO Should this be used?
 
 	// TODO CHECK, should be (1023 * duty-cycle /  sensor-velocity-sensor-units-per-100ms).
 	private static final double kFF_LOW = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);

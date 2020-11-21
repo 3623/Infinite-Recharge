@@ -21,8 +21,8 @@ public class Turret extends PIDSubsystem {
     private static final double ENCODER_REVS_PER_TURRET_REV = 196.0 / 18.0;
     private static final double DISTANCE_PER_PULSE = 360.0 / ENCODER_REVS_PER_TURRET_REV / TICKS_PER_ENCODER_REV;
 
-    private double MAX_GOAL = 180.0;
-    private double MIN_GOAL = -180.0;
+    // private double MAX_GOAL = 180.0;
+    // private double MIN_GOAL = -180.0;
 
     private static final double kP = 0.65 / 18.0;
     private static final double kI = kP / 500.0;

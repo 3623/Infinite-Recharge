@@ -7,25 +7,20 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.Target;
 
 public class ShootCommand extends SequentialCommandGroup{
-    private Shooter shooter;
-    private Spindexer spindexer;
-
     public ShootCommand(Shooter shooter, Spindexer spindexer) {
-        this.spindexer = spindexer;
-        this.shooter = shooter;
-        addCommands(new PrepareToShoot(shooter, spindexer),
-                    newFireCommand());
+        addCommands(new Prepare(shooter, spindexer),
+                    newFireCommand(shooter, spindexer));
     }
 
-    public CommandBase newFireCommand() {
+    public static CommandBase newFireCommand(Shooter shooter, Spindexer spindexer) {
         return (new Fire(shooter, spindexer)).withTimeout(Spindexer.SHOOT_TIME);
     }
 
-    public class PrepareToShoot extends CommandBase {
+    public static class Prepare extends CommandBase {
         private Shooter shooter;
         private Spindexer spindexer;
 
-        private PrepareToShoot(Shooter shooter, Spindexer spindexer) {
+        public Prepare(Shooter shooter, Spindexer spindexer) {
             this.spindexer = spindexer;
             this.shooter = shooter;
             addRequirements(shooter);
@@ -44,11 +39,11 @@ public class ShootCommand extends SequentialCommandGroup{
         }
     }
 
-    private class Fire extends CommandBase {
+    private static class Fire extends CommandBase {
         private Shooter shooter;
         private Spindexer spindexer;
 
-        public Fire(Shooter shooter, Spindexer spindexer) {
+        private Fire(Shooter shooter, Spindexer spindexer) {
             this.shooter = shooter;
             this.spindexer = spindexer;
             addRequirements(shooter);

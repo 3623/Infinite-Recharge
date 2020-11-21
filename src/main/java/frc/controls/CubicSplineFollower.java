@@ -28,7 +28,7 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private double kMaxAccel = 0.04; // m/s^2 * 200
+    private double kMaxAccel = 0.05; // m/s^2 * 200
     private static final double kMaxAngularDiff = 3.5; // m/s * 2
     private static final double kSlowdownRadius = 1.0; // m
     private static final double kMinApproachSpeedCritical = 0.2; // %
@@ -77,15 +77,11 @@ public class CubicSplineFollower {
                 // speed reduces as distance gets smaller
                 ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadius, ffSpeed);
                 maxTurn *= (distanceFromWaypoint / kSlowdownRadius);
-                if (Math.abs(ffSpeed) < kMinApproachSpeedCritical)
+                if (Math.abs(ffSpeed) < kMinApproachSpeedCritical) // TODO this might not be necessary
                     ffSpeed = Math.copySign(kMinApproachSpeedCritical, ffSpeed);
             }
             if (distanceFromWaypoint < kRadiusCritical || isFinished) nextWaypoint = true;
                 // at point and heading, we're done
-                /* if it wass at point but not heading, the code originally called PTR
-                Im deleting this a DrivetrainControls
-                What should be done is PTR becomes a function in Drivetrain
-                Then the command should dictate to use PTR or not */
         } else if (distanceFromWaypoint < kRadiusPath
                 && Utils.withinThreshold(robotPose.heading, curWaypoint.heading, kAngularErrorPath))
                 // at non-critical waypoint
@@ -292,7 +288,7 @@ public class CubicSplineFollower {
 
         @Override
         public String toString() {
-            return "x: " + x + ", y: " + y + ", heading: " + heading + ", speed: " + kSpeed;
+            return "x: " + x + ", y: " + y + ", heading: " + heading + ", speed: " + kSpeed.getAsDouble();
         }
 
         public double speed() {

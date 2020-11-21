@@ -88,43 +88,8 @@ public class Animation extends JPanel implements Runnable {
 	}
 
 	private void setWaypoints() {
-
-		// // Left
-		// model.setPosition(FieldPositions.LEFT_START);
-		// nav.addWaypoint(FieldPositions.LEFT1);
-		// nav.addWaypoint(FieldPositions.LEFT2);
-		// nav.addWaypoint(FieldPositions.LEFT3);
-		// nav.addWaypoint(FieldPositions.LEFT4);
-
-		// // Middle
-		// model.setPosition(FieldPositions.MIDDLE_START);
-		// nav.addWaypoint(FieldPositions.MIDDLE1);
-		// nav.addWaypoint(FieldPositions.MIDDLE2);
-		// nav.addWaypoint(FieldPositions.MIDDLE3);
-
-		// // Right
-		// model.setPosition(FieldPositions.RIGHT_START);
-		// nav.addWaypoint(FieldPositions.RIGHT1);
-		// nav.addWaypoint(FieldPositions.RIGHT2);
-		// nav.addWaypoint(FieldPositions.RIGHT3);
-		// nav.addWaypoint(FieldPositions.RIGHT4);
-		// nav.addWaypoint(FieldPositions.RIGHT5);
-
-		// // Steal balls
-		// model.setPosition(FieldPositions.STEAL_START);
-		// nav.addWaypoint(FieldPositions.STEAL1);
-		// nav.addWaypoint(FieldPositions.STEAL2);
-		// nav.addWaypoint(FieldPositions.STEAL3);
-		// nav.addWaypoint(FieldPositions.STEAL4);
-		// nav.addWaypoint(FieldPositions.STEAL5);
-
-		// Block
-		model.setPosition(FieldPositions.BLOCK_START);
-		nav.addWaypoint(FieldPositions.BLOCK1);
-		nav.addWaypoint(FieldPositions.BLOCK2);
-		nav.addWaypoint(FieldPositions.BLOCK3);
-		nav.addWaypoint(FieldPositions.BLOCK4);
-		nav.addWaypoint(FieldPositions.BLOCK5);
+		model.setPosition(FieldPositions.RIGHT.START);
+		for (Waypoint waypoint : FieldPositions.RIGHT.WAYPOINTS) nav.addWaypoint(waypoint);
 	}
 
 

@@ -7,42 +7,37 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.controls.CubicSplineFollower.Waypoint;
-import frc.modeling.FieldPositions;
 import frc.robot.subsystems.Drivetrain;
+import frc.util.Pose;
 
-// TODO make this use DrivePath!
-public class AssistedTrenchDrive extends CommandBase {
+public class DrivePath extends CommandBase {
 
-    private Drivetrain dt;
-    private DoubleSupplier speed;
+    private final Drivetrain dt;
+    private Pose startPose;
+    private Waypoint[] waypoints;
 
-    public AssistedTrenchDrive(Drivetrain drive, DoubleSupplier speed) {
+    public DrivePath(Drivetrain drive, Pose startPose, Waypoint... waypoints) {
         dt = drive;
-        this.speed = speed;
         addRequirements(dt);
+        this.startPose = startPose;
+        this.waypoints = waypoints;
+    }
+
+    public DrivePath(Drivetrain drive, Waypoint... waypoints) {
+        this(drive, null, waypoints);
     }
 
     @Override
     public void initialize() {
-        dt.waypointNav.clearWaypoints();
-        double y = dt.model.center.y;
-        if (y < FieldPositions.TRENCH_CUTOFF)
-            dt.waypointNav.addWaypoint(new Waypoint(FieldPositions.PRE_TRENCH_CYCLE, speed, false));
-        double heading = 0.0;
-        double speed = 1.0;
-        if (y > FieldPositions.FAR_CUTOFF) {
-            heading = 90.0;
-            if (dt.model.center.heading < 0) {
-                heading = -90.0;
-                speed = -1.0;
-            }
+        if (startPose != null) {
+            dt.waypointNav.clearWaypoints();
+            dt.zeroSensors();
+            dt.model.setPosition(startPose);
         }
-        dt.waypointNav.addWaypoint(new Waypoint(FieldPositions.TRENCH_CYCLE_SHOT, heading, speed, true));
-        dt.setShiftMode(true);
+
+        for (Waypoint waypoint : waypoints) dt.waypointNav.addWaypoint(waypoint);
         dt.startPathFollowing();
     }
 
