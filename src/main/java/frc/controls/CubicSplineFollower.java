@@ -7,7 +7,7 @@
 
 package frc.controls;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.DrivetrainModel;
@@ -23,13 +23,12 @@ public class CubicSplineFollower {
     private final double WHEEL_BASE;
     private static final double UPDATE_RATE = 200.0;
 
-    private ArrayList<Waypoint> waypoints;
-    private Waypoint curWaypoint;
-    private int index = 0;
+    private LinkedList<Waypoint> waypoints;
+    private Waypoint curWaypoint = null;
 
     public Boolean isFinished = false;
 
-    private double kMaxAccel = 0.3; // m/s^2 * 200
+    private double kMaxAccel = 0.04; // m/s^2 * 200
     private static final double kMaxAngularDiff = 3.5; // m/s * 2
     private static final double kSlowdownRadius = 1.0; // m
     private static final double kMinApproachSpeedCritical = 0.2; // %
@@ -52,7 +51,7 @@ public class CubicSplineFollower {
         drivetrainState = drivetrain;
         WHEEL_BASE = DrivetrainModel.WHEEL_BASE;
 
-        waypoints = new ArrayList<Waypoint>();
+        waypoints = new LinkedList<Waypoint>();
     }
 
     /**
@@ -60,53 +59,42 @@ public class CubicSplineFollower {
      * equal to {@code UPDATE_RATE}.
      *
      * @param robotPose the current robot pose, with position and velocities
-     * @return a tuple with left and right wheel voltages
+     * @return a tuple with left and right wheel speeds, n/s
      */
     public Tuple updatePursuit(Pose robotPose) {
-        if (waypoints.size() < 1)
-            return new Tuple(0.0, 0.0);
-        curWaypoint = waypoints.get(index);
+        boolean finished = waypoints.isEmpty() && curWaypoint == null;
+        if (finished && !isFinished) System.out.println("Finished Path Following");
+        isFinished = finished;
+        if (isFinished) return new Tuple(0.0, 0.0);
+        if (curWaypoint == null) curWaypoint = waypoints.pollFirst();
         double distanceFromWaypoint = Geometry.distance(robotPose, curWaypoint);
         maxSpeed = drivetrainState.topSpeed;
         ffSpeed = curWaypoint.speed();
         maxTurn = kMaxAngularDiff;
+        boolean nextWaypoint = false;
         if (curWaypoint.isCritical) { // important to be at exactly
-
             if (distanceFromWaypoint < Math.abs(ffSpeed) * kSlowdownRadius) {
                 // speed reduces as distance gets smaller
-                // TODO This is probably unnecesarry since FPID should be used now
                 ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadius, ffSpeed);
                 maxTurn *= (distanceFromWaypoint / kSlowdownRadius);
-                if (Math.abs(ffSpeed) < kMinApproachSpeedCritical) {
+                if (Math.abs(ffSpeed) < kMinApproachSpeedCritical)
                     ffSpeed = Math.copySign(kMinApproachSpeedCritical, ffSpeed);
-                }
             }
-            if (distanceFromWaypoint < kRadiusCritical || isFinished) {
-                ffSpeed = 0.0;
+            if (distanceFromWaypoint < kRadiusCritical || isFinished) nextWaypoint = true;
                 // at point and heading, we're done
-                if (!isFinished)
-                    System.out.println("At Waypoint: " + index + " (" + curWaypoint.toString() + ")");
-                if (index == waypoints.size() - 1 || isFinished) {
-                    if (!isFinished)
-                        System.out.println("Finished Path Following");
-                    isFinished = true;
-                    return new Tuple(0.0, 0.0);
-                } else {
-                    index++;
-                    curWaypoint = waypoints.get(index);
-                }
-
-                // if it is at point but not heading, the code originally called PTR
-                // Im deleting this a DrivetrainControls
-                // What should be done is PTR becomes a function in Drivetrain
-                // Then the command should dictate to use PTR or not
-            }
+                /* if it wass at point but not heading, the code originally called PTR
+                Im deleting this a DrivetrainControls
+                What should be done is PTR becomes a function in Drivetrain
+                Then the command should dictate to use PTR or not */
         } else if (distanceFromWaypoint < kRadiusPath
-                && Utils.withinThreshold(robotPose.heading, curWaypoint.heading, kAngularErrorPath)) {
-            // at non-critical waypoint
-            System.out.println("At Waypoint: " + index + " (" + curWaypoint.toString() + ")");
-            index++;
-            curWaypoint = waypoints.get(index);
+                && Utils.withinThreshold(robotPose.heading, curWaypoint.heading, kAngularErrorPath))
+                // at non-critical waypoint
+                nextWaypoint = true;
+
+        if (nextWaypoint) {
+            System.out.println("At Waypoint: " + curWaypoint.toString());
+            curWaypoint = waypoints.pollFirst();
+            return updatePursuit(robotPose);
         }
         // if not in a special case, just run path following
         return pathFollowing(robotPose);
@@ -167,7 +155,7 @@ public class CubicSplineFollower {
             desiredSpeed = -maxSpeed + Math.abs(lrSpeedDifference);
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
-        if (true) System.out.println(desiredSpeed + " " + lrSpeedDifference);
+        if (debug) System.out.println(desiredSpeed + " " + lrSpeedDifference);
         return new Tuple(leftSpeed, rightSpeed);
     }
 
@@ -224,8 +212,6 @@ public class CubicSplineFollower {
      */
     public void clearWaypoints() {
         waypoints.clear();
-        index = 0;
-        isFinished = false;
     }
 
     /**

@@ -26,6 +26,14 @@ public class FieldPositions {
 	public static final Waypoint RIGHT4 = new Waypoint(2.7, -5.0, 20.0, 1.0, true);
 	public static final Waypoint RIGHT5 = new Waypoint(1.6, -5.9, 70.0, -1.0, true);
 
+	// Right
+	public static final Pose BLOCK_START = new Pose(3.4, -3.5, 0.0);
+	public static final Waypoint BLOCK1 = new Waypoint(3.4, -10.5, 0.0, -1.0, true);
+	public static final Waypoint BLOCK2 = new Waypoint(2.9, -5.0, 10.0, 1.0, true);
+	public static final Waypoint BLOCK3 = new Waypoint(3.3, -8.2, -55.0, -1.0, true);
+	public static final Waypoint BLOCK4 = new Waypoint(1.2, -5.9, -15.0, 1.0, true);
+	public static final Waypoint BLOCK5 = new Waypoint(1.2, -5.9, -30.0, -1.0, true);
+
     // Steal balls
 	public static final Pose STEAL_START = new Pose(2.5, -3.0, 0.0);
 	public static final Waypoint STEAL1 = new Waypoint(1.6, -5.9, 70.0, -1.0, true);

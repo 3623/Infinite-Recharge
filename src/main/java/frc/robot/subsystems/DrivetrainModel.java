@@ -45,7 +45,7 @@ public class DrivetrainModel {
 			left.coast = false;
 			right.coast = false;
 		}
-		shiftMode(false);
+		shiftMode(true);
 	}
 
 	public void shiftMode(boolean high) {
@@ -103,7 +103,7 @@ public class DrivetrainModel {
 	 * Updates the models heading with a set heading. For using a gyro to more
 	 * accurately track heading
 	 *
-	 * @param angle in degrees
+	 * @param heading angle in degrees
 	 */
 	public void updateHeading(double heading) {
 		center.setHeading(heading);
@@ -113,9 +113,9 @@ public class DrivetrainModel {
 	 * Updates velocity and acceleration of each side of the drivetrain using motor
 	 * curves
 	 *
-	 * @param left  voltage
-	 * @param right voltage
-	 * @param the   elapsedtime between updates, in seconds
+	 * @param lVoltage left voltage
+	 * @param rVoltage right voltage
+	 * @param time     elapsed time between updates, in seconds
 	 */
 	public void updateVoltage(double lVoltage, double rVoltage, double time) {
 		left.updateVoltage(lVoltage, time);
@@ -125,7 +125,7 @@ public class DrivetrainModel {
 	/**
 	 * Updates the models position from each sides velocity
 	 *
-	 * @param the elapsed time between updates, in seconds
+	 * @param time elapsed time between updates, in seconds
 	 */
 	public void updatePosition(double time) {
 		double radius = radiusICC(WHEEL_BASE, left.velocity, right.velocity);
@@ -170,6 +170,7 @@ public class DrivetrainModel {
 			acceleration = 0.0;
 			psuedoMass = DRIVETRAIN_MASS / 2;
 			coast = false;
+			new Falcon();
 		}
 
 		/**
@@ -192,11 +193,9 @@ public class DrivetrainModel {
 		 * @param the     elapsedtime between updates, in seconds
 		 */
 		protected void updateVoltage(double voltage, double time) {
+			voltage = Utils.limit(voltage, 14.0, -14.0);
 			double motorSpeed = this.wheelSpeedToMotorSpeed(this.velocity);
-			// double newAcceleration = this.wheelAcceleration(voltage, motorSpeed);
-
 			double totalTorque = Falcon.outputTorque(voltage, motorSpeed) * gearRatio * MOTORS_PER_SIDE;
-
 			if (coast && Utils.withinThreshold(voltage, 0.0, 0.05))
 				totalTorque = 0.0;
 			double wheelForce = (totalTorque / WHEEL_RADIUS);

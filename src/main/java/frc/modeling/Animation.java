@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import frc.controls.CubicSplineFollower;
+import frc.controls.CubicSplineFollower.Waypoint;
 import frc.robot.subsystems.DrivetrainModel;
 import frc.util.Tuple;
 
@@ -34,33 +35,33 @@ public class Animation extends JPanel implements Runnable {
 		frame.setVisible(true);
 	}
 
-	protected Thread sim; // animation thread
+	private Thread sim; // animation thread
 
-	private static final String FIELD_FILE = "sim/2020-Field.png";
+	private static final String FIELD_FILE = "sim/2020-field.png";
 	private static final double FIELD_REAL_WIDTH = 8.23;
 	// private static final double FIELD_REAL_HEIGHT = 13.0;
 	private int fieldImageWidth, fieldImageHeight; // image dim of viewing area in pixels
-	protected Dimension screenSize; // size of viewing area
-	protected Image image; // off-screen image
-	protected Graphics offScreen; // off-screen graphics
-	protected Image field;
-	protected BufferedImage robot;
-	protected final double scale; // pixels per meter
-	protected int robotImageWidth, robotImageHeight;
+	private Dimension screenSize; // size of viewing area
+	private Image image; // off-screen image
+	private Graphics offScreen; // off-screen graphics
+	private Image field;
+	private BufferedImage robot;
+	private final double scale; // pixels per meter
+	private int robotImageWidth, robotImageHeight;
 
-	protected ArrayList<Tuple> trajectory;// array for storing points passed through by robot
-	protected final int SPEED = 1; // replay speed
-	protected final int FRAME_RATE = 60; // interval between frames in millisec
+	private ArrayList<Tuple> trajectory;// array for storing points passed through by robot
+	private final int SPEED = 1; // replay speed
+	private final int FRAME_RATE = 60; // interval between frames in millisec
 
 	private DrivetrainModel model;
 	private CubicSplineFollower nav;
 
-	protected final int ODOMETRY_UPDATE_RATE = 200;
-	protected final int CONTROL_UPDATE_RATE = 200;
-	protected double leftVoltage = 0.0;
-	protected double rightVoltage = 0.0;
+	private static final int ODOMETRY_UPDATE_RATE = 200;
+	private static final int CONTROL_UPDATE_RATE = 200;
+	private double leftVoltage = 0.0;
+	private double rightVoltage = 0.0;
 
-	protected double time = 0.0;
+	private double time = 0.0;
 
 	public Animation() throws IOException {
 		field = ImageIO.read(new File(FIELD_FILE));
@@ -109,13 +110,21 @@ public class Animation extends JPanel implements Runnable {
 		// nav.addWaypoint(FieldPositions.RIGHT4);
 		// nav.addWaypoint(FieldPositions.RIGHT5);
 
-		// Steal balls
-		model.setPosition(FieldPositions.STEAL_START);
-		nav.addWaypoint(FieldPositions.STEAL1);
-		nav.addWaypoint(FieldPositions.STEAL2);
-		nav.addWaypoint(FieldPositions.STEAL3);
-		nav.addWaypoint(FieldPositions.STEAL4);
-		nav.addWaypoint(FieldPositions.STEAL5);
+		// // Steal balls
+		// model.setPosition(FieldPositions.STEAL_START);
+		// nav.addWaypoint(FieldPositions.STEAL1);
+		// nav.addWaypoint(FieldPositions.STEAL2);
+		// nav.addWaypoint(FieldPositions.STEAL3);
+		// nav.addWaypoint(FieldPositions.STEAL4);
+		// nav.addWaypoint(FieldPositions.STEAL5);
+
+		// Block
+		model.setPosition(FieldPositions.BLOCK_START);
+		nav.addWaypoint(FieldPositions.BLOCK1);
+		nav.addWaypoint(FieldPositions.BLOCK2);
+		nav.addWaypoint(FieldPositions.BLOCK3);
+		nav.addWaypoint(FieldPositions.BLOCK4);
+		nav.addWaypoint(FieldPositions.BLOCK5);
 	}
 
 
@@ -141,9 +150,12 @@ public class Animation extends JPanel implements Runnable {
 		offScreen.drawImage(robotRotated, robotImageOffsetX, robotImageOffsetY, this);
 
 		// Draw waypoints
-		Tuple waypointLoc = fieldCoordsToImageCoords(nav.getCurrentWaypoint().x, nav.getCurrentWaypoint().y);
-		offScreen.setColor(Color.yellow);
-		offScreen.drawOval((int) waypointLoc.left - 3, (int) waypointLoc.right - 3, 6, 6);
+		Waypoint curWaypoint = nav.getCurrentWaypoint();
+		if (curWaypoint != null) {
+			Tuple waypointLoc = fieldCoordsToImageCoords(curWaypoint.x, curWaypoint.y);
+			offScreen.setColor(Color.yellow);
+			offScreen.drawOval((int) waypointLoc.left - 3, (int) waypointLoc.right - 3, 6, 6);
+		}
 
 		// Draw trajectory
 		for (Tuple point : trajectory) {
@@ -220,13 +232,7 @@ public class Animation extends JPanel implements Runnable {
 			while (!Thread.interrupted()) {
 
 				Tuple output = nav.updatePursuit(model.center);
-				output.left += (Math.random() - 0.0) * 0.5; // Some random error. Well, a lot
-				output.right += (Math.random() - 0.5) * 0.3;
-
-				model.updateSpeed(output.left, output.right, 1.0 / CONTROL_UPDATE_RATE);
-
-				// System.out.println("Left Voltage: " + leftVoltage + ", Right Voltage: " +
-				// rightVoltage);
+				model.updateSpeed(output.left, output.right, 1.0/CONTROL_UPDATE_RATE);
 
 				if (nav.isFinished) {
 				}
@@ -247,7 +253,7 @@ public class Animation extends JPanel implements Runnable {
 				time += 1000 / ODOMETRY_UPDATE_RATE;
 
 
-				model.updateVoltage(leftVoltage, rightVoltage, 1.0 / ODOMETRY_UPDATE_RATE);
+				// model.updateVoltage(leftVoltage, rightVoltage, 1.0 / ODOMETRY_UPDATE_RATE);
 				model.updatePosition(1.0 / ODOMETRY_UPDATE_RATE);
 				// System.out.println(model.center.x);
 
