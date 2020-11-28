@@ -102,6 +102,7 @@ public class Shooter extends TerribleSubsystem {
             case DISABLED:
                 break;
         }
+        if (readyToFire) System.out.println("Ready to fire!");
     }
 
     private void updateBlind() {
@@ -111,6 +112,7 @@ public class Shooter extends TerribleSubsystem {
         setAngle(targetAngle);
         if (Utils.withinThreshold(turret.getMeasurement(), targetAngle, LIMELIGHT_FOV/2.0)
             && targets.getDouble(0.0) == 1) {
+                System.out.println("Found vision target, switching to vision tracking");
                 controlState = ShooterControlState.VISION_TRACKING;
                 updateVision();
             }
@@ -159,21 +161,21 @@ public class Shooter extends TerribleSubsystem {
      * @param angle
      */
     private void setDistance(double distance) {
-        // flywheel.setSpeed(6000.0);
+        flywheel.setSpeed(1000.0);
         // hood.setSetpoint(0.0);
     }
 
     /**
      * Sets limelight leds and camera mode
      */
-    private void setVision(boolean on) {
+    public void setVision(boolean on) {
         NetworkTable lm = NetworkTableInstance.getDefault().getTable("limelight");
         if (on) {
             lm.getEntry("ledMode").setNumber(3);
-            lm.getEntry("stream").setNumber(1);
+            lm.getEntry("camMode").setNumber(0);
         } else {
             lm.getEntry("ledMode").setNumber(1);
-            lm.getEntry("stream").setNumber(2);
+            lm.getEntry("camMode").setNumber(1);
         }
     }
 
@@ -181,6 +183,7 @@ public class Shooter extends TerribleSubsystem {
      * Called whenever robot is disabled and after all balls are shot
      */
     public void disable() {
+        System.out.println("Shooter disabled");
         controlState = ShooterControlState.DISABLED;
         setVision(false);
         shooting = false;

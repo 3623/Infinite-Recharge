@@ -21,12 +21,12 @@ public class Turret extends PIDSubsystem {
     private static final double ENCODER_REVS_PER_TURRET_REV = 196.0 / 18.0;
     private static final double DISTANCE_PER_PULSE = 360.0 / ENCODER_REVS_PER_TURRET_REV / TICKS_PER_ENCODER_REV;
 
-    // private double MAX_GOAL = 180.0;
-    // private double MIN_GOAL = -180.0;
+    private double MAX_GOAL = 180.0;
+    private double MIN_GOAL = -180.0;
 
-    private static final double kP = 0.65 / 18.0;
-    private static final double kI = kP / 500.0;
-    private static final double kD = kP * 0.1;
+    private static final double kP = 13.0 / 180.0;
+    private static final double kI = kP / 500.0 * 0.0;
+    private static final double kD = kP * 0.005;
     private static final double DEADBAND = 0.25;
 
     public Turret() {
@@ -43,6 +43,7 @@ public class Turret extends PIDSubsystem {
         SmartDashboard.putNumber("Turret Angle", this.getMeasurement());
         SmartDashboard.putNumber("Turret Output", (int) turretMotor.getMotorOutputPercent() * 100);
         SmartDashboard.putNumber("Turret Error", getController().getPositionError());
+        SmartDashboard.putNumber("Turret Setpoint", this.getController().getSetpoint());
     }
 
     public void zero() {

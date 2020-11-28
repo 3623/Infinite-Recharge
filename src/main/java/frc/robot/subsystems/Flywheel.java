@@ -52,10 +52,10 @@ public class Flywheel extends SubsystemBase {
 
     public void setSpeed(double RPM) {
         // Use actual target rpm of motor
-        System.out.println("RPM Input set at " + RPM);
-        System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
+        // System.out.println("RPM Input set at " + RPM);
+        // System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
         speedSetpoint = RPM * (18.0/35.0);
-        System.out.println("Got Here. Setting Setpoint at " + speedSetpoint);
+        // System.out.println("Got Here. Setting Setpoint at " + speedSetpoint);
         shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
 

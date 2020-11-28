@@ -67,7 +67,6 @@ public class Hood extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         motor.set(ControlMode.PercentOutput, output);
-        System.out.println("Hood Output: " + output );
     }
 
     public void runWithOutput(double output) {

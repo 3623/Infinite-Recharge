@@ -29,7 +29,7 @@ public final class Constants {
         public static final int SHOOTER_LEFT_MOTOR_NEO = 1;
         public static final int SHOOTER_RIGHT_MOTOR_NEO = 2;
         public static final int SHOOTER_TURRET_MOTOR_SRX = 6;
-        public static final int SHOOTER_HOOD_MOTOR_SPX = 3;
+        public static final int SHOOTER_HOOD_MOTOR_SPX = 4;
         // Limelight Pipeline Constants
         public static final int CONTROL_PANEL_REAR_PIPELINE = 0;
         public static final int INITITATION_LINE_PIPELINE = 1;
