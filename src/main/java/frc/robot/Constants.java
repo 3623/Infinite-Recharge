@@ -28,8 +28,8 @@ public final class Constants {
     public static final class Shooter {
         public static final int SHOOTER_LEFT_MOTOR_NEO = 1;
         public static final int SHOOTER_RIGHT_MOTOR_NEO = 2;
-        public static final int SHOOTER_TURRET_MOTOR_SRX = 5;
-        public static final int SHOOTER_HOOD_MOTOR_SPX = 1;
+        public static final int SHOOTER_TURRET_MOTOR_SRX = 6;
+        public static final int SHOOTER_HOOD_MOTOR_SPX = 3;
         // Limelight Pipeline Constants
         public static final int CONTROL_PANEL_REAR_PIPELINE = 0;
         public static final int INITITATION_LINE_PIPELINE = 1;
@@ -42,14 +42,13 @@ public final class Constants {
         public static final int LIMEIGHT_LED_BLINK = 2;
         public static final int LIMELIGHT_LED_FORCE_ON = 3;
 
-        public static final int FEEDER_MOTOR_SRX = 6;
+        public static final int FEEDER_MOTOR_SRX = 7;
+        public static final int SPINDEXER_MOTOR_SPX = 2;
     }
 
     public static final class Intake {
-        public static final int INTAKE_COLLECTOR_MOTOR_SPX = 4;
+        public static final int INTAKE_COLLECTOR_MOTOR_SPX = 1;
         public static final int INTAKE_DROP_SOLENOID = 6;
-        public static final int INTAKE_TRAY_MOTOR_LEFT_SPX = 2;
-        public static final int INTAKE_TRAY_MOTOR_RIGHT_SPX = 3;
     }
 
     public static final class Spinner {

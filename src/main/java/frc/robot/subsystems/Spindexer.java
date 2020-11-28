@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,13 +24,13 @@ public class Spindexer extends SubsystemBase {
     private static final double SHOOT_SPEED = 1.0;
     private boolean indexing = false;
     private boolean shooting = false;
-    private WPI_TalonSRX spindexerSRX;
+    private WPI_VictorSPX spindexerSPX;
 
     // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
     // ballSensor5;
 
-    public Spindexer() { // TODO this should be the spindexer motor
-        spindexerSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
+    public Spindexer() { 
+        spindexerSPX = new WPI_VictorSPX(Constants.Shooter.SPINDEXER_MOTOR_SPX);
     }
 
     /**
@@ -55,6 +56,6 @@ public class Spindexer extends SubsystemBase {
     }
 
     private void setSpinning(double feederSpeed) {
-        spindexerSRX.set(ControlMode.PercentOutput, feederSpeed);
+        spindexerSPX.set(ControlMode.PercentOutput, feederSpeed);
     }
 }
