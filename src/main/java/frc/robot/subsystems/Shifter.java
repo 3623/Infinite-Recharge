@@ -11,12 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-/**
-* An example subsystem. You can replace me with your own Subsystem.
-*/
 public class Shifter extends SubsystemBase {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
 
     private Solenoid piston;
 

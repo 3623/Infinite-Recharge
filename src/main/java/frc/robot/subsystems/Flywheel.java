@@ -12,10 +12,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.util.Utils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Flywheel extends SubsystemBase {
-    private static final double SPEED_THRESHOLD = 100.0;
+public class Flywheel extends TerribleSubsystem {
+    private static final double SPEED_THRESHOLD = 50.0;
     private CANSparkMax shooterMaster, shooterFollower;
     private static final double kP = 0.001;
     private static final double kI = 0;
@@ -31,6 +30,7 @@ public class Flywheel extends SubsystemBase {
     public double x, y, area;
 
     public Flywheel() {
+        setName("Flywheel");
         shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
         shooterMaster.restoreFactoryDefaults();
         shooterMaster.setInverted(true);
@@ -50,12 +50,12 @@ public class Flywheel extends SubsystemBase {
         shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
     }
 
+    /**
+     * Set the flywheels to speed control
+     * @param RPM target rpm of motor
+     */
     public void setSpeed(double RPM) {
-        // Use actual target rpm of motor
-        // System.out.println("RPM Input set at " + RPM);
-        // System.out.println("Speed Setpoint Calculation: " + (RPM * (18.0/35.0)));
         speedSetpoint = RPM * (18.0/35.0);
-        // System.out.println("Got Here. Setting Setpoint at " + speedSetpoint);
         shooterMaster.getPIDController().setReference(speedSetpoint, ControlType.kVelocity);
     }
 
@@ -76,10 +76,9 @@ public class Flywheel extends SubsystemBase {
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Shooter velocity", getVelocity());
-        SmartDashboard.putNumber("Shooter setpoint", speedSetpoint);
-        SmartDashboard.putNumber("Shooter output", shooterMaster.getAppliedOutput());
-        SmartDashboard.putNumber("Shooter output", shooterFollower.getAppliedOutput());
+        display("Velocity", getVelocity());
+        display("Setpoint", speedSetpoint);
+        display("Output", shooterMaster.getAppliedOutput());
     }
 
     public void disable() {
