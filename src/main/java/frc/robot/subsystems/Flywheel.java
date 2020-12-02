@@ -52,7 +52,7 @@ public class Flywheel extends TerribleSubsystem {
 
     /**
      * Set the flywheels to speed control
-     * @param RPM target rpm of motor
+     * @param RPM target rpm of flywheel
      */
     public void setSpeed(double RPM) {
         speedSetpoint = RPM * (18.0/35.0);

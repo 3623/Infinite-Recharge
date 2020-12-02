@@ -23,7 +23,13 @@ public class IntakeCommand extends CommandBase{
     }
 
     @Override
+    public void execute() {
+        spindexer.setIndexing(true);
+    }
+
+    @Override
     public void end(boolean interrupted) {
+        // TODO keep the spinner running until shots
         intake.setIntaking(false);
         CommandScheduler.getInstance().
             schedule(new StartEndCommand(() -> spindexer.setIndexing(true),

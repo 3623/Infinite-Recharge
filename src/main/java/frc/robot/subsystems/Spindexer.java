@@ -18,9 +18,9 @@ import frc.robot.Constants;
 * An example subsystem. You can replace me with your own Subsystem.
 */
 public class Spindexer extends SubsystemBase {
-    public static final double SHOOT_TIME = 1.0;
+    public static final double SHOOT_TIME = 10.0;
     public static final double INDEX_TIME = 1.0;
-    private static final double INDEX_SPEED = -0.5;
+    private static final double INDEX_SPEED = 0.5;
     private static final double SHOOT_SPEED = 1.0;
     private boolean indexing = false;
     private boolean shooting = false;

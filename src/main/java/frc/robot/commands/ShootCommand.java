@@ -58,6 +58,7 @@ public class ShootCommand extends SequentialCommandGroup{
         @Override
         public void end(boolean interrupted) {
             spindexer.setShooting(false);
+            spindexer.setIndexing(false);
             shooter.disable();
         }
     }

@@ -127,11 +127,13 @@ public class Shooter extends TerribleSubsystem {
         targetDistance = visionEstimateDistance(targetY.getDouble(0.0));
         if (Utils.outsideDeadband(targetAngle, 0.0, INNER_GOAL_AIM_THRESHOLD))
             innerPortOffset = 0.0;
-        else innerPortOffset = targetAngle * 0.2; // maybe this should be a sin func?
+        else innerPortOffset = targetAngle * 0.1; // maybe this should be a sin func?
         if (shooting) {
             setAngle(targetAngle - innerPortOffset);
+            System.out.println(targetAngle + " " + innerPortOffset);
             setDistance(targetDistance);
-            readyToFire = Utils.withinThreshold(targetX, 0.0, AIM_THRESHOLD); // TODO check hood and flywheel
+            readyToFire = Utils.withinThreshold(targetX, 0.0, AIM_THRESHOLD);
+            readyToFire &= flywheel.isAtSpeed(); // TODO check hood;
         }
         // Decide when to localize odometry if there is a vision target
         // Might be a time for filters!
@@ -161,7 +163,7 @@ public class Shooter extends TerribleSubsystem {
      * @param angle
      */
     private void setDistance(double distance) {
-        flywheel.setSpeed(1000.0);
+        flywheel.setSpeed(8000.0);
         // hood.setSetpoint(0.0);
     }
 

@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.Constants;
 
 
-// TODO Switch this to motion magic!!
-// or feedforward with current limiting for smooth motion
+// This is pretty good right now
 public class Turret extends PIDSubsystem {
     WPI_TalonSRX turretMotor;
 
@@ -25,7 +24,7 @@ public class Turret extends PIDSubsystem {
     private double MIN_GOAL = -180.0;
 
     private static final double kP = 13.0 / 180.0;
-    private static final double kI = kP / 500.0 * 0.0;
+    private static final double kI = kP * 0.0001;
     private static final double kD = kP * 0.005;
     private static final double DEADBAND = 0.25;
 
