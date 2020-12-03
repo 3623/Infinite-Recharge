@@ -75,7 +75,8 @@ public class Flywheel extends TerribleSubsystem {
         return shooterMaster.getEncoder().getVelocity() * 35.0/18.0;
     }
 
-    public void monitor() {
+    @Override
+    public void periodic() {
         display("Velocity", getVelocity());
         display("Setpoint", speedSetpoint);
         display("Output", shooterMaster.getAppliedOutput());

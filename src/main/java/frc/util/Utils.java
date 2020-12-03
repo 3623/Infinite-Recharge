@@ -7,7 +7,7 @@ public class Utils {
 	}
 
 	public static Boolean outsideDeadband(double value, double center, double deadband) {
-		return Math.abs(value - center) >= deadband;
+		return !withinThreshold(value, center, deadband);
 	}
 
 	public static Tuple limitTuple(Tuple tuple, double upperBound, double lowerBound) {

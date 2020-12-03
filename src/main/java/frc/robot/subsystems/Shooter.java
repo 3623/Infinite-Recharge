@@ -25,14 +25,15 @@ public class Shooter extends TerribleSubsystem {
 
     private static final double AIM_THRESHOLD = 2.0;
     // degrees, +/- that shooter will stil aim for inner port, outside it will shoot at target
-    private static final double INNER_GOAL_AIM_THRESHOLD = 20.0;
+    private static final double INNER_PORT_DEPTH = 0.7; // meters
+    private static final double INNER_VISIBLE_TRESHOLD = 20.0;
 
     private Pose robotPose;
     private Pose targetPose = FieldPositions.OUR_GOAL;
 
     private double targetDistance = 0.0;
     private double targetAngle = 0.0; // global coordinates
-    private double innerPortOffset = 0.0;
+    private double innerPortAngle = 0.0;
     private boolean shooting = false;
     public boolean readyToFire = false;
 
@@ -42,7 +43,7 @@ public class Shooter extends TerribleSubsystem {
     NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
     NetworkTableEntry targets = Lime.getEntry("tv"); // Valid Targets (0 or 1)
 
-    private final double LIMELIGHT_ELEVATION_OFFSET = 20.0;
+    private final double LIMELIGHT_ELEVATION_OFFSET = 20.5; // deg
     private final double TARGET_RELATIVE_HEIGHT = 2.0; // meters
     private final double LIMELIGHT_FOV = 54.0;
 
@@ -62,6 +63,7 @@ public class Shooter extends TerribleSubsystem {
     private Target target = Target.GOAL;
 
     public Shooter(Pose odometryModel) {
+        setName("Shooter");
         robotPose = odometryModel;
         turret = new Turret();
         hood = new Hood();
@@ -125,12 +127,12 @@ public class Shooter extends TerribleSubsystem {
         double targetX = this.targetX.getDouble(0.0);
         targetAngle = visionEstimateAngle(targetX);
         targetDistance = visionEstimateDistance(targetY.getDouble(0.0));
-        if (Utils.outsideDeadband(targetAngle, 0.0, INNER_GOAL_AIM_THRESHOLD))
-            innerPortOffset = 0.0;
-        else innerPortOffset = targetAngle * 0.1; // maybe this should be a sin func?
+        if (Utils.withinThreshold(targetAngle, 0.0, INNER_VISIBLE_TRESHOLD))
+            innerPortAngle = Math.atan(targetDistance * Math.sin(Math.toRadians(targetAngle)) /
+                                    (targetDistance * Math.cos(Math.toRadians(targetAngle)) + INNER_PORT_DEPTH));
+        else innerPortAngle = targetAngle;
         if (shooting) {
-            setAngle(targetAngle - innerPortOffset);
-            System.out.println(targetAngle + " " + innerPortOffset);
+            setAngle(innerPortAngle);
             setDistance(targetDistance);
             readyToFire = Utils.withinThreshold(targetX, 0.0, AIM_THRESHOLD);
             readyToFire &= flywheel.isAtSpeed(); // TODO check hood;
@@ -212,7 +214,9 @@ public class Shooter extends TerribleSubsystem {
     @Override
     public void periodic() {
         super.periodic();
-        flywheel.monitor();
+        display("Distance", targetDistance);
+        display("Angle", targetAngle);
+        display("Inner port", innerPortAngle);
         turret.monitor();
         hood.monitor();
     }
