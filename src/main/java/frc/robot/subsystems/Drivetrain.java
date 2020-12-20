@@ -40,14 +40,17 @@ public class Drivetrain extends TerribleSubsystem {
 
 	public CubicSplineFollower waypointNav;
 
-	private static final double MAX_CURRENT = 30.0; // BANANA i think this is closer
-	private StatorCurrentLimitConfiguration currentLimiter = new StatorCurrentLimitConfiguration(true, MAX_CURRENT,
-			MAX_CURRENT, 0.05);
+	// The time shouldn't matter, see
+	// https://phoenix-documentation.readthedocs.io/en/latest/ch21_Errata.html#stator-current-limit-threshold-configs
+	private StatorCurrentLimitConfiguration HIGH_GEAR_CURRENT_LIM = new StatorCurrentLimitConfiguration(
+																			true, 50.0, 50.0, 0.001);
+	private StatorCurrentLimitConfiguration LOW_GEAR_CURRENT_LIM = new StatorCurrentLimitConfiguration(
+																			true, 35.0, 35.0, 0.001);
 
 	private static final int PID_ID = 0; // Primary closed loop
 	private static final int PID_SLOT_LOW = 0;
 	private static final int PID_SLOT_HIGH = 1;
-	// private static final int CONFIG_TIMEOUT = 30; // TODO Should this be used?
+	private static final int CONFIG_TIMEOUT = 30;
 
 	// TODO CHECK, should be (1023 * duty-cycle /  sensor-velocity-sensor-units-per-100ms).
 	private static final double kFF_LOW = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);
@@ -79,10 +82,10 @@ public class Drivetrain extends TerribleSubsystem {
 		rightFollower = new WPI_TalonFX(Constants.Drivetrain.RIGHT_MOTOR_FOLLOWER);
 		leftMaster = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_MASTER);
 		leftFollower = new WPI_TalonFX(Constants.Drivetrain.LEFT_MOTOR_FOLLOWER);
-		rightMaster.configFactoryDefault();
-		rightFollower.configFactoryDefault();
-		leftMaster.configFactoryDefault();
-		leftFollower.configFactoryDefault();
+		rightMaster.configFactoryDefault(CONFIG_TIMEOUT);
+		rightFollower.configFactoryDefault(CONFIG_TIMEOUT);
+		leftMaster.configFactoryDefault(CONFIG_TIMEOUT);
+		leftFollower.configFactoryDefault(CONFIG_TIMEOUT);
 		rightFollower.set(ControlMode.Follower, Constants.Drivetrain.RIGHT_MOTOR_MASTER);
 		leftFollower.set(ControlMode.Follower, Constants.Drivetrain.LEFT_MOTOR_MASTER);
 		rightMaster.setInverted(true);
@@ -102,28 +105,22 @@ public class Drivetrain extends TerribleSubsystem {
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, PID_ID, 10);
 		leftMaster.setSensorPhase(true);
 
-		// Set max current to the max current without slipping for low gear
-		// high gear will then be even less torquey but this is fine,
-		// we just want to drive faster in high gear
-		leftMaster.configStatorCurrentLimit(currentLimiter);
-		rightMaster.configStatorCurrentLimit(currentLimiter);
-
-		leftMaster.config_kF(PID_SLOT_LOW, kFF_LOW);
-		leftMaster.config_kP(PID_SLOT_LOW, kP_LOW);
-		leftMaster.config_kD(PID_SLOT_LOW, kD_LOW);
-		leftMaster.config_kI(PID_SLOT_LOW, kI_LOW);
-		rightMaster.config_kF(PID_SLOT_LOW, kFF_LOW);
-		rightMaster.config_kP(PID_SLOT_LOW, kP_LOW);
-		rightMaster.config_kD(PID_SLOT_LOW, kD_LOW);
-		rightMaster.config_kI(PID_SLOT_LOW, kI_LOW);
-		leftMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH);
-		leftMaster.config_kP(PID_SLOT_HIGH, kP_HIGH);
-		leftMaster.config_kD(PID_SLOT_HIGH, kD_HIGH);
-		leftMaster.config_kI(PID_SLOT_HIGH, kI_HIGH);
-		rightMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH);
-		rightMaster.config_kP(PID_SLOT_HIGH, kP_HIGH);
-		rightMaster.config_kD(PID_SLOT_HIGH, kD_HIGH);
-		rightMaster.config_kI(PID_SLOT_HIGH, kI_HIGH);
+		leftMaster.config_kF(PID_SLOT_LOW, kFF_LOW, CONFIG_TIMEOUT);
+		leftMaster.config_kP(PID_SLOT_LOW, kP_LOW, CONFIG_TIMEOUT);
+		leftMaster.config_kD(PID_SLOT_LOW, kD_LOW, CONFIG_TIMEOUT);
+		leftMaster.config_kI(PID_SLOT_LOW, kI_LOW, CONFIG_TIMEOUT);
+		rightMaster.config_kF(PID_SLOT_LOW, kFF_LOW, CONFIG_TIMEOUT);
+		rightMaster.config_kP(PID_SLOT_LOW, kP_LOW, CONFIG_TIMEOUT);
+		rightMaster.config_kD(PID_SLOT_LOW, kD_LOW, CONFIG_TIMEOUT);
+		rightMaster.config_kI(PID_SLOT_LOW, kI_LOW, CONFIG_TIMEOUT);
+		leftMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH, CONFIG_TIMEOUT);
+		leftMaster.config_kP(PID_SLOT_HIGH, kP_HIGH, CONFIG_TIMEOUT);
+		leftMaster.config_kD(PID_SLOT_HIGH, kD_HIGH, CONFIG_TIMEOUT);
+		leftMaster.config_kI(PID_SLOT_HIGH, kI_HIGH, CONFIG_TIMEOUT);
+		rightMaster.config_kF(PID_SLOT_HIGH, kFF_HIGH, CONFIG_TIMEOUT);
+		rightMaster.config_kP(PID_SLOT_HIGH, kP_HIGH, CONFIG_TIMEOUT);
+		rightMaster.config_kD(PID_SLOT_HIGH, kD_HIGH, CONFIG_TIMEOUT);
+		rightMaster.config_kI(PID_SLOT_HIGH, kI_HIGH, CONFIG_TIMEOUT);
 		model = new DrivetrainModel();
 		model.setPosition(0.0, 0.0, 0.0);
 
@@ -343,9 +340,14 @@ public class Drivetrain extends TerribleSubsystem {
 		model.shiftMode(high);
 		shifter.setGear(high);
 		int pidSlot = PID_SLOT_LOW;
-		if (high) pidSlot = PID_SLOT_HIGH;
-		// TODO Check if this works
- 		leftMaster.selectProfileSlot(pidSlot, PID_ID);
+		StatorCurrentLimitConfiguration curLim = LOW_GEAR_CURRENT_LIM;
+		if (high) {
+			pidSlot = PID_SLOT_HIGH;
+			curLim = HIGH_GEAR_CURRENT_LIM;
+		}
+		leftMaster.selectProfileSlot(pidSlot, PID_ID); // TODO Check if this works
+		leftMaster.configStatorCurrentLimit(curLim, CONFIG_TIMEOUT);
+		rightMaster.configStatorCurrentLimit(curLim, CONFIG_TIMEOUT);
 	}
 
 	@Override

@@ -48,6 +48,8 @@ public class Flywheel extends TerribleSubsystem {
         shooterMaster.getPIDController().setIZone(kIz);
         shooterMaster.getPIDController().setFF(kFF);
         shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
+        shooterMaster.burnFlash(); // Save in case of brownout!
+        shooterFollower.burnFlash();
     }
 
     /**
