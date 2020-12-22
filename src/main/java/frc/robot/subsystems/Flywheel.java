@@ -16,11 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Flywheel extends TerribleSubsystem {
     private static final double SPEED_THRESHOLD = 50.0;
     private CANSparkMax shooterMaster, shooterFollower;
-    private static final double kP = 0.001;
-    private static final double kI = 0;
-    private static final double kD = 0;
-    private static final double kIz = 0;
-    private static final double kFF = 0.00018;
+    private static final double kP = 1.0/500.0;
+    private static final double kI = 0.0;
+    private static final double kD = 0.0;
+    private static final double kIz = 0.0;
+    private static final double kFF = 1.0/5676.0;
     private static final double kMaxOutput = 1.0;
     private static final double kMinOutput = 0.0;
     // private static final double maxRPM = 5700;
@@ -33,12 +33,12 @@ public class Flywheel extends TerribleSubsystem {
         setName("Flywheel");
         shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
         shooterMaster.restoreFactoryDefaults();
-        shooterMaster.setInverted(true);
+        shooterMaster.setInverted(false);
         shooterMaster.setIdleMode(IdleMode.kCoast);
         shooterMaster.setSmartCurrentLimit(40);
         shooterFollower = new CANSparkMax(2, MotorType.kBrushless);
         shooterFollower.restoreFactoryDefaults();
-        shooterFollower.follow(shooterMaster, true);
+        shooterFollower.follow(shooterMaster, true); // Do not touch, this means inverted from master
         shooterFollower.setIdleMode(IdleMode.kCoast);
         shooterFollower.setSmartCurrentLimit(40);
 

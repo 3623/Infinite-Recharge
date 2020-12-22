@@ -141,6 +141,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
         drivetrain.model.setPosition(FieldPositions.RIGHT.START);
         // drivetrain.runTests();
+        shooter.enable();
+        shooter.setDistance(0.0);
     }
 
 
