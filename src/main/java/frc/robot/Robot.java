@@ -112,6 +112,8 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) m_autonomousCommand.cancel();
         drivetrain.setShiftMode(true);
         shooter.enable();
+        shooter.setDistance(0.0);
+
     }
 
 
@@ -142,12 +144,10 @@ public class Robot extends TimedRobot {
         drivetrain.model.setPosition(FieldPositions.RIGHT.START);
         // drivetrain.runTests();
         shooter.enable();
-        shooter.setDistance(0.0);
     }
 
 
     @Override
     public void testPeriodic() {
-
     }
 }

@@ -165,7 +165,7 @@ public class Shooter extends TerribleSubsystem {
      * @param angle
      */
     public void setDistance(double distance) {
-        flywheel.setSpeed(8000.0);
+        flywheel.setSpeed(4700.0);
         // hood.setSetpoint(0.0);
     }
 
