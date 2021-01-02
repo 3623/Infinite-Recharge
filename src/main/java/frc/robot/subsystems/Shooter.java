@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.cscore.HttpCamera;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -42,6 +43,8 @@ public class Shooter extends TerribleSubsystem {
     NetworkTableEntry targetY = Lime.getEntry("ty"); // Vertical Offset From Crosshair to Target (-20.5 to 20.5 degrees)
     NetworkTableEntry ta = Lime.getEntry("ta"); // Target Area (0% of Image to 100% of Image)
     NetworkTableEntry targets = Lime.getEntry("tv"); // Valid Targets (0 or 1)
+    private HttpCamera limeCam;
+
 
     private final double LIMELIGHT_ELEVATION_OFFSET = 20.5; // deg
     private final double TARGET_RELATIVE_HEIGHT = 2.0; // meters
@@ -69,7 +72,8 @@ public class Shooter extends TerribleSubsystem {
         hood = new Hood();
         feeder = new Feeder();
         flywheel = new Flywheel();
-
+        limeCam= new HttpCamera("limelight",
+                                   "http://limelight.local:5800/stream.mjpg");
         this.updateThreadStart();
         disable();
     }
@@ -165,7 +169,7 @@ public class Shooter extends TerribleSubsystem {
      * @param angle
      */
     public void setDistance(double distance) {
-        flywheel.setSpeed(4700.0);
+        flywheel.setSpeed(4650.0);
         // hood.setSetpoint(0.0);
     }
 

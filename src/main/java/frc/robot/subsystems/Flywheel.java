@@ -14,11 +14,11 @@ import frc.util.Utils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Flywheel extends TerribleSubsystem {
-    private static final double SPEED_THRESHOLD = 50.0;
+    private static final double SPEED_THRESHOLD = 20.0;
     private CANSparkMax shooterMaster, shooterFollower;
     private static final double kP = 1.0/500.0;
     private static final double kI = 0.0;
-    private static final double kD = 18.0;
+    private static final double kD = 20.0;
     private static final double kIz = 0.0;
     private static final double kFF = 1.0/5676.0;
     private static final double kMaxOutput = 1.0;
@@ -48,8 +48,8 @@ public class Flywheel extends TerribleSubsystem {
         shooterMaster.getPIDController().setIZone(kIz);
         shooterMaster.getPIDController().setFF(kFF);
         shooterMaster.getPIDController().setOutputRange(kMinOutput, kMaxOutput);
-        // shooterMaster.burnFlash(); // Save in case of brownout!
-        // shooterFollower.burnFlash();
+        shooterMaster.burnFlash(); // Save in case of brownout!
+        shooterFollower.burnFlash();
     }
 
     /**
