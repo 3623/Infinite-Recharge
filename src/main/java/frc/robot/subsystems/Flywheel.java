@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Flywheel extends TerribleSubsystem {
     private static final double SPEED_THRESHOLD = 20.0;
     private CANSparkMax shooterMaster, shooterFollower;
-    private static final double kP = 1.0/500.0;
+    private static final double kP = 1.0/450.0;
     private static final double kI = 0.0;
-    private static final double kD = 20.0;
+    private static final double kD = 60.0;
     private static final double kIz = 0.0;
     private static final double kFF = 1.0/5676.0;
     private static final double kMaxOutput = 1.0;
