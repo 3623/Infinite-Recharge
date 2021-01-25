@@ -37,6 +37,10 @@ public class ShootCommand extends SequentialCommandGroup{
         public boolean isFinished() {
             return shooter.readyToFire;
         }
+
+        @Override
+        public void execute() {
+        }
     }
 
     private static class Fire extends CommandBase {
