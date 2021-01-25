@@ -18,10 +18,10 @@ import frc.robot.Constants;
 * An example subsystem. You can replace me with your own Subsystem.
 */
 public class Spindexer extends SubsystemBase {
-    public static final double SHOOT_TIME = 10.0;
-    public static final double INDEX_TIME = 1.0;
-    private static final double INDEX_SPEED = 0.5;
-    private static final double SHOOT_SPEED = 1.0;
+    public static final double SHOOT_TIME = 1.5;
+    public static final double INDEX_TIME = 5.0;
+    private static final double INDEX_SPEED = 0.4;
+    private static final double SHOOT_SPEED = 0.9;
     private boolean indexing = false;
     private boolean shooting = false;
     private WPI_VictorSPX spindexerSPX;
@@ -29,7 +29,7 @@ public class Spindexer extends SubsystemBase {
     // private DigitalInput ballSensor1, ballSensor2, ballSensor3, ballSensor4,
     // ballSensor5;
 
-    public Spindexer() { 
+    public Spindexer() {
         spindexerSPX = new WPI_VictorSPX(Constants.Shooter.SPINDEXER_MOTOR_SPX);
     }
 
