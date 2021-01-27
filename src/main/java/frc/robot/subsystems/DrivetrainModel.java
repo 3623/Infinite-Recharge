@@ -21,7 +21,7 @@ public class DrivetrainModel {
 	public double topSpeed;
 	protected static final double MAX_SPEED_LOW = 2.4;
 	protected static final double MAX_SPEED_HIGH = 4.0;
-	public static final double WHEEL_BASE = 0.68; // meters
+	public static final double WHEEL_BASE = 0.65; // meters
 	private Boolean COAST_MODE = false;
 	public Pose center;
 	private DrivetrainSide left, right;

@@ -10,7 +10,7 @@ import frc.modeling.FieldPositions.RIGHT;
 public class OurTrench extends SequentialCommandGroup{
 
     public OurTrench(Drivetrain drive, Intake intake, Shooter shooter, Spindexer spindexer) {
-        super(new DrivePath(drive, RIGHT.START, RIGHT.WAYPOINTS[0])
+        super(new DrivePath(drive, false, RIGHT.START, RIGHT.WAYPOINTS[0])
                     .deadlineWith(new IntakeCommand(intake, spindexer)),
               new DrivePath(drive, RIGHT.WAYPOINTS[1])
                     .alongWith(new ShootCommand.Prepare(shooter, spindexer)),

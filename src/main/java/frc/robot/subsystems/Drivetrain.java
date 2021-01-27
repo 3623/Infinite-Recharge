@@ -58,7 +58,7 @@ public class Drivetrain extends TerribleSubsystem {
 	private static final double kD_LOW = 0.0;
 	private static final double kI_LOW = 0.0;
 	private static final double kFF_HIGH = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_HIGH);
-	private static final double kP_HIGH = 0.04;
+	private static final double kP_HIGH = 0.01;
 	private static final double kD_HIGH = 0.0;
 	private static final double kI_HIGH = 0.0;
 

@@ -56,16 +56,16 @@ public class FieldPositions {
 
 	public static class BARREL implements PATH_SET {
 		public static final Pose START = new Pose(0.0, -1.0, -10.0);
-		public static final Waypoint[] WAYPOINTS = { new Waypoint(-1.0, -4.0, 90.0, -1.0, false), // 1st
-													new Waypoint(-1.5, -3.5, -180.0, -1.0, false),
-													new Waypoint(-1.0, -3.0, -90.0, -1.0, false),
-													new Waypoint(1.0, -6.5, -90.0, -1.0, false), // 2nd
-													new Waypoint(1.5, -6.0, 180.0, -1.0, false),
-													new Waypoint(1.0, -5.5, 90.0, -1.0, false),
-													new Waypoint(-1.5, -7.6, 0.0, -1.0, false), // 3rd
-													new Waypoint(-1.0, -8.1, -90.0, -1.0, false),
+		public static final Waypoint[] WAYPOINTS = { new Waypoint(-1.0, -4.0, 90.0, -1.0*0.3, false), // 1st
+													new Waypoint(-1.5, -3.5, -180.0, -1.0*0.3, false),
+													new Waypoint(-1.0, -3.0, -90.0, -1.0*0.3, false),
+													new Waypoint(1.0, -6.5, -90.0, -1.0*0.3, false), // 2nd
+													new Waypoint(1.5, -6.0, 180.0, -1.0*0.3, false),
+													new Waypoint(1.0, -5.5, 90.0, -1.0*0.3, false),
+													new Waypoint(-1.5, -7.6, 0.0, -1.0*0.3, false), // 3rd
+													new Waypoint(-1.0, -8.1, -90.0, -1.0*0.3, false),
 													// new Waypoint(-0.5, -7.6, 180.0, -1.0, false),
-													new Waypoint(0.0, 0.0, -170.0, -1.0, false) };
+													new Waypoint(0.0, 0.0, -170.0, -1.0*0.3, false) };
 	}
 
 	public static class SLALOM implements PATH_SET {
@@ -82,13 +82,13 @@ public class FieldPositions {
 
 	public static class BOUNCE implements PATH_SET {
 		public static final Pose START = new Pose(0.0, -1.0, -15.0);
-		public static final Waypoint[] WAYPOINTS = { new Waypoint(2.0, -2.25, -90.0, -1.0, true), // 1st
-													new Waypoint(-1.5, -3.8, -180.0, 1.0, false),
-													new Waypoint(2.0, -4.5, 90.0, 1.0, true),
-													new Waypoint(-1.25, -5.25, 20.0, -1.0, false),
-													new Waypoint(-1.25, -6.25, -20.0, -1.0, false),
-													new Waypoint(2.0, -6.9, -90.0, -1.0, true),
-													new Waypoint(0.0, -8.25, -165.0, 1.0, true),
+		public static final Waypoint[] WAYPOINTS = { new Waypoint(1.2, -2.25, -90.0, -1.0*0.3, true), // 1st
+													new Waypoint(-1.1, -3.0, -180.0, 1.0*0.3, false),
+													new Waypoint(1.2, -3.8, 90.0, 1.0*0.3, true),
+													new Waypoint(-.95, -4.5, 20.0, -1.0*0.3, false),
+													new Waypoint(-.95, -5.4, -20.0, -1.0*0.3, false),
+													new Waypoint(1.2, -6.1, -90.0, -1.0*0.3, true),
+													new Waypoint(0.0, -8.25, -165.0, 1.0*0.3, true),
 												};
 	}
 

@@ -18,15 +18,16 @@ public class DrivePath extends CommandBase {
     private Pose startPose;
     private Waypoint[] waypoints;
 
-    public DrivePath(Drivetrain drive, Pose startPose, Waypoint... waypoints) {
+    public DrivePath(Drivetrain drive, Boolean highSpeed, Pose startPose, Waypoint... waypoints) {
         dt = drive;
         addRequirements(dt);
         this.startPose = startPose;
         this.waypoints = waypoints;
+        dt.setShiftMode(highSpeed);
     }
 
     public DrivePath(Drivetrain drive, Waypoint... waypoints) {
-        this(drive, null, waypoints);
+        this(drive, false, null, waypoints);
     }
 
     @Override

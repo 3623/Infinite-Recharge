@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.modeling.FieldPositions;
 import frc.robot.commands.AssistedTrenchDrive;
+import frc.robot.commands.BarrelAuto;
+import frc.robot.commands.BounceAuto;
 import frc.robot.commands.DriverControl;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.OurTrench;
@@ -33,7 +35,7 @@ public class Robot extends TimedRobot {
     private Drivetrain drivetrain;
     private Intake intake;
     private Spindexer spindexer;
-    private Shooter shooter;
+    // private Shooter shooter;
 
     AnalogInput transducer = new AnalogInput(0);
 
@@ -46,7 +48,7 @@ public class Robot extends TimedRobot {
         trenchDriveButton = new Button(() -> (driver.getTriggerAxis(Hand.kRight) > 0.1));
         shooterButton= new Button(() -> operator.getXButton());
         drivetrain = new Drivetrain();
-        shooter = new Shooter(drivetrain.model.center);
+        // shooter = new Shooter(drivetrain.model.center);
         intake = new Intake();
         spindexer = new Spindexer();
         // climber = new Climber();
@@ -60,7 +62,7 @@ public class Robot extends TimedRobot {
         new DriverControl(drivetrain, () -> driver.getY(Hand.kLeft), () -> driver.getX(Hand.kRight)));
 
         intakeButton.whenPressed(new IntakeCommand(intake, spindexer).withInterrupt(()-> !intakeButton.get()));
-        shooterButton.whenPressed(new ShootCommand(shooter, spindexer));
+        // shooterButton.whenPressed(new ShootCommand(shooter, spindexer));
         trenchDriveButton.whileActiveOnce(new AssistedTrenchDrive(drivetrain,
                                                 () -> driver.getTriggerAxis(Hand.kRight)));
     }
@@ -76,7 +78,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         drivetrain.disable();
-        shooter.disable();
+        // shooter.disable();
     }
 
 
@@ -88,11 +90,10 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         drivetrain.zeroSensors();
-        shooter.zeroSensors();
+        // shooter.zeroSensors();
 
-        drivetrain.setShiftMode(true);
-
-        m_autonomousCommand = new OurTrench(drivetrain, intake, shooter, spindexer);
+        // m_autonomousCommand = new OurTrench(drivetrain, intake, shooter, spindexer);
+        m_autonomousCommand = new BarrelAuto(drivetrain);
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
@@ -111,8 +112,8 @@ public class Robot extends TimedRobot {
         // stop running autonomous command
         if (m_autonomousCommand != null) m_autonomousCommand.cancel();
         drivetrain.setShiftMode(true);
-        shooter.enable();
-        shooter.setDistance(0.0);
+        // shooter.enable();
+        // shooter.setDistance(0.0);
 
     }
 
@@ -143,7 +144,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
         drivetrain.model.setPosition(FieldPositions.RIGHT.START);
         // drivetrain.runTests();
-        shooter.enable();
+        // shooter.enable();
     }
 
 

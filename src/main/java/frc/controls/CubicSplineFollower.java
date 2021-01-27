@@ -28,15 +28,15 @@ public class CubicSplineFollower {
 
     public Boolean isFinished = false;
 
-    private double kMaxAccel = 0.05; // m/s^2 * 200
-    private static final double kMaxAngularDiff = 2.3; // m/s * 2
+    private double kMaxAccel = 0.2; // m/s^2 * 200
+    private static final double kMaxAngularDiff = 1.9; // m/s * 2
     private static final double kSlowdownRadius = 1.0; // m
     private static final double kMinApproachSpeedCritical = 0.2; // %
     private static final double kRadiusCritical = 0.1;; // m
     private static final double kScaleRadiusPath = 0.1; // constant
     private double kRadiusPath = 0.0; // this updates dynamically
     // deg, keeping this because this dictates when the robot switches
-    private static final double kAngularErrorPath = 5.0;
+    private static final double kAngularErrorPath = 10.0;
     private static final double kMaxSplineAngle = Math.PI * 0.3;
 
     private DrivetrainModel drivetrainState;
@@ -72,9 +72,11 @@ public class CubicSplineFollower {
         ffSpeed = curWaypoint.speed();
         maxTurn = kMaxAngularDiff;
         boolean nextWaypoint = false;
+        if (true) System.out.println("Seeking: " + curWaypoint.toString());
         if (curWaypoint.isCritical) { // important to be at exactly
             if (distanceFromWaypoint < Math.abs(ffSpeed) * kSlowdownRadius) {
                 // speed reduces as distance gets smaller
+                if (true) System.out.println("Slowing down");
                 ffSpeed = Math.copySign(distanceFromWaypoint / kSlowdownRadius, ffSpeed);
                 maxTurn *= (distanceFromWaypoint / kSlowdownRadius);
                 if (Math.abs(ffSpeed) < kMinApproachSpeedCritical) // TODO this might not be necessary
@@ -93,6 +95,7 @@ public class CubicSplineFollower {
             return updatePursuit(robotPose);
         }
         // if not in a special case, just run path following
+        if (true) System.out.println("Max turn: " + maxTurn);
         return pathFollowing(robotPose);
     }
 
@@ -139,19 +142,24 @@ public class CubicSplineFollower {
         // Convert from derivative to angle
 
         double desiredSpeed = ffSpeed * maxSpeed;
+        if (true) System.out.println(robotPose.velocity);
+        if (true) System.out.println(desiredSpeed + "raw");
         if (desiredSpeed - robotPose.velocity > kMaxAccel)
             desiredSpeed = robotPose.velocity + kMaxAccel;
         else if (desiredSpeed - robotPose.velocity < -kMaxAccel)
             desiredSpeed = robotPose.velocity - kMaxAccel;
+        if (true) System.out.println(desiredSpeed + "accel");
         double lrSpeedDifference = omega * WHEEL_BASE;
         lrSpeedDifference = Utils.limit(lrSpeedDifference, maxTurn, -maxTurn);
         if (desiredSpeed + Math.abs(lrSpeedDifference) > maxSpeed)
             desiredSpeed = maxSpeed - Math.abs(lrSpeedDifference);
         else if (desiredSpeed - Math.abs(lrSpeedDifference) < -maxSpeed)
             desiredSpeed = -maxSpeed + Math.abs(lrSpeedDifference);
+        if (true) System.out.println(desiredSpeed  + "turn");
         double leftSpeed = desiredSpeed - (lrSpeedDifference / 2);
         double rightSpeed = desiredSpeed + (lrSpeedDifference / 2);
-        if (debug) System.out.println(desiredSpeed + " " + lrSpeedDifference);
+        if (true) System.out.println(desiredSpeed + " " + lrSpeedDifference);
+        if (true) System.out.println(leftSpeed + " " + rightSpeed);
         return new Tuple(leftSpeed, rightSpeed);
     }
 
