@@ -38,10 +38,10 @@ public class Hood extends PIDSubsystem {
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Hood Position", this.getMeasurement() + 45);
-        SmartDashboard.putNumber("Hood Output", (int) motor.getMotorOutputPercent() * 100);
-        SmartDashboard.putNumber("Hood Error", getController().getPositionError());
-        SmartDashboard.putNumber("Hood Setpoint", getController().getSetpoint());
+        SmartDashboard.putNumber("Shooter/Hood/Position", this.getMeasurement() + 45);
+        SmartDashboard.putNumber("Shooter/Hood/Output", (int) motor.getMotorOutputPercent() * 100);
+        SmartDashboard.putNumber("Shooter/Hood/Error", getController().getPositionError());
+        SmartDashboard.putNumber("Shooter/Hood/Setpoint", getController().getSetpoint());
     }
 
     public void setPosition(double position) {

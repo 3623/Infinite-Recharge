@@ -30,7 +30,7 @@ public class Flywheel extends TerribleSubsystem {
     public double x, y, area;
 
     public Flywheel() {
-        setName("Flywheel");
+        setName("Shooter/Flywheel");
         shooterMaster = new CANSparkMax(1, MotorType.kBrushless);
         shooterMaster.restoreFactoryDefaults();
         shooterMaster.setInverted(false);

@@ -55,7 +55,7 @@ public class Spindexer extends SubsystemBase {
         else setSpinning(0.0);
     }
 
-    private void setSpinning(double feederSpeed) {
-        spindexerSPX.set(ControlMode.PercentOutput, feederSpeed);
+    private void setSpinning(double speed) {
+        spindexerSPX.set(ControlMode.PercentOutput, speed);
     }
 }

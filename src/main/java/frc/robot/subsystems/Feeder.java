@@ -22,11 +22,11 @@ public class Feeder extends SubsystemBase {
         feederSRX = new WPI_TalonSRX(Constants.Shooter.FEEDER_MOTOR_SRX);
     }
 
-    public void runFeeder(double feederSpeed) {
+    public void run(double feederSpeed) {
         feederSRX.set(ControlMode.PercentOutput, feederSpeed);
     }
 
-    public void stopFeeder() {
+    public void stop() {
         feederSRX.set(ControlMode.PercentOutput, 0.0);
     }
 

@@ -199,6 +199,7 @@ public class Shooter extends TerribleSubsystem {
         turret.disable();
         hood.disable();
         flywheel.disable();
+        feeder.stop();
     }
 
     public void enable() {
@@ -207,7 +208,7 @@ public class Shooter extends TerribleSubsystem {
     }
 
     public void fire() {
-        feeder.runFeeder(1.0);
+        feeder.run(1.0);
     }
 
     public void zeroSensors() {

@@ -39,10 +39,10 @@ public class Turret extends PIDSubsystem {
     }
 
     public void monitor() {
-        SmartDashboard.putNumber("Turret Angle", this.getMeasurement());
-        SmartDashboard.putNumber("Turret Output", (int) turretMotor.getMotorOutputPercent() * 100);
-        SmartDashboard.putNumber("Turret Error", getController().getPositionError());
-        SmartDashboard.putNumber("Turret Setpoint", this.getController().getSetpoint());
+        SmartDashboard.putNumber("Shooter/Turret/Angle", this.getMeasurement());
+        SmartDashboard.putNumber("Shooter/Turret/Output", (int) turretMotor.getMotorOutputPercent() * 100);
+        SmartDashboard.putNumber("Shooter/Turret/Error", getController().getPositionError());
+        SmartDashboard.putNumber("Shooter/Turret/Setpoint", this.getController().getSetpoint());
     }
 
     public void zero() {
