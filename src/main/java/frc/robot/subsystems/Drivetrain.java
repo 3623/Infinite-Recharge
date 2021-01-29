@@ -54,7 +54,7 @@ public class Drivetrain extends TerribleSubsystem {
 
 	// TODO CHECK, should be (1023 * duty-cycle /  sensor-velocity-sensor-units-per-100ms).
 	private static final double kFF_LOW = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_LOW);
-	private static final double kP_LOW = 0.04;
+	private static final double kP_LOW = 0.2;
 	private static final double kD_LOW = 0.0;
 	private static final double kI_LOW = 0.0;
 	private static final double kFF_HIGH = 1023.0 / linearSpeedToTalonSpeed(DrivetrainModel.MAX_SPEED_HIGH);

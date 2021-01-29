@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
         // shooter.zeroSensors();
 
         // m_autonomousCommand = new OurTrench(drivetrain, intake, shooter, spindexer);
-        m_autonomousCommand = new BarrelAuto(drivetrain);
+        m_autonomousCommand = new BounceAuto(drivetrain);
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
