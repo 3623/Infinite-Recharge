@@ -82,13 +82,13 @@ public class FieldPositions {
 
 	public static class BOUNCE implements PATH_SET {
 		public static final Pose START = new Pose(0.0, -1.0, -15.0);
-		public static final Waypoint[] WAYPOINTS = { new Waypoint(1.2, -2.25, -90.0, -1.0*0.8, true), // 1st
-													new Waypoint(-1.1, -3.0, -180.0, 1.0*0.8, false),
-													new Waypoint(1.2, -3.8, 90.0, 1.0*0.8, true),
-													new Waypoint(-.95, -4.5, 20.0, -1.0*0.8, false),
-													new Waypoint(-.95, -5.4, -20.0, -1.0*0.8, false),
-													new Waypoint(1.2, -6.1, -90.0, -1.0*0.8, true),
-													new Waypoint(0.0, -8.25, -165.0, 1.0*0.8, true),
+		public static final Waypoint[] WAYPOINTS = { new Waypoint(1.2, -2.25, -90.0, -1.0*0.3, true), // 1st
+													new Waypoint(-1.1, -3.0, -180.0, 1.0*0.3, false),
+													new Waypoint(1.2, -3.8, 90.0, 1.0*0.3, true),
+													new Waypoint(-.95, -4.5, 20.0, -1.0*0.3, false),
+													new Waypoint(-.95, -5.4, -20.0, -1.0*0.3, false),
+													new Waypoint(1.2, -6.1, -90.0, -1.0*0.3, true),
+													new Waypoint(0.0, -8.25, -165.0, 1.0*0.3, true),
 												};
 	}
 
