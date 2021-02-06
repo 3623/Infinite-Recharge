@@ -58,4 +58,8 @@ public class Spindexer extends SubsystemBase {
     private void setSpinning(double speed) {
         spindexerSPX.set(ControlMode.PercentOutput, speed);
     }
+
+    public boolean getShooting(){
+        return shooting;
+    }
 }
